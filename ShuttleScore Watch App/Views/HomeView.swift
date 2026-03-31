@@ -11,20 +11,28 @@ struct HomeView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 10) {
+            ScrollView {
+                VStack(spacing: 10) {
                     Image("CatIcon")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 100, height: 100)
                         .clipShape(RoundedRectangle(cornerRadius: 20))
 
-                    // 快速开始（橙色大按钮，有上次设置时显示）
+                    // 快速开始（橙色大按钮）
                     if let last = MatchStore.shared.loadLastSettings() {
                         Button(action: { quickStart(with: last) }) {
-                            Label("快速开始", systemImage: "bolt.fill")
-                                .font(.system(.body, design: .rounded))
-                                .bold()
-                                .frame(maxWidth: .infinity)
+                            Label {
+                                Text("快速开始")
+                                    .font(.system(.body, design: .rounded))
+                                    .bold()
+                            } icon: {
+                                Image("cat_orange")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 22, height: 22)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.borderedProminent)
                         .tint(.orange)
@@ -32,23 +40,37 @@ struct HomeView: View {
 
                     // 新建比赛（蓝绿色大按钮）
                     Button(action: { showSetup = true }) {
-                        Label("新建比赛", systemImage: "plus.circle.fill")
-                            .font(.system(.body, design: .rounded))
-                            .bold()
-                            .frame(maxWidth: .infinity)
+                        Label {
+                            Text("新建比赛")
+                                .font(.system(.body, design: .rounded))
+                                .bold()
+                        } icon: {
+                            Image("cat_robe")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 22, height: 22)
+                        }
+                        .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
                     .tint(teal)
 
-                    // 继续上场（橙色描边中按钮，有进行中比赛时显示）
+                    // 继续上场（橙色描边中按钮）
                     if let match = MatchStore.shared.load(), !match.isMatchOver {
                         Button(action: {
                             activeMatch = match
                             showActiveMatch = true
                         }) {
-                            Label("继续上场", systemImage: "arrow.clockwise")
-                                .font(.system(.footnote, design: .rounded))
-                                .frame(maxWidth: .infinity)
+                            Label {
+                                Text("继续上场")
+                                    .font(.system(.footnote, design: .rounded))
+                            } icon: {
+                                Image("cat_scarf")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 20, height: 20)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
                         .buttonStyle(.bordered)
                         .tint(.orange)
@@ -62,8 +84,9 @@ struct HomeView: View {
                     }
                     .buttonStyle(.bordered)
                     .tint(.gray)
+                }
+                .padding()
             }
-            .padding()
             .navigationTitle("")
             .containerBackground(.black, for: .navigation)
             .sheet(isPresented: $showSetup) {

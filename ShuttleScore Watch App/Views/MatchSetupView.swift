@@ -69,10 +69,14 @@ struct MatchSetupView: View {
 
                 Section {
                     Button(action: startMatch) {
-                        HStack {
-                            Image(systemName: "flag.checkered")
+                        Label {
                             Text("开始比赛")
                                 .bold()
+                        } icon: {
+                            Image("cat_scarf")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 20, height: 20)
                         }
                         .font(.system(.body, design: .rounded))
                         .frame(maxWidth: .infinity)

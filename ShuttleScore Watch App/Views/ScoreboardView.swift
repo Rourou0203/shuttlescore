@@ -12,6 +12,7 @@ struct ScoreboardView: View {
     @State private var crownValue: Double = 0
     @State private var lastCrownValue: Double = 0
     @State private var transferMessage: String?
+    @State private var extendedSession: WKExtendedRuntimeSession?
 
     var body: some View {
         ZStack {
@@ -54,37 +55,27 @@ struct ScoreboardView: View {
                 }
                 .padding(.horizontal, 8)
 
-                // Score row - tap left/right to score, long-press to transfer
+                // Score row
                 GeometryReader { _ in
                     HStack(spacing: 0) {
-                        // Team A score (tap to score, long-press to transfer)
-                        Button(action: { scorePoint(teamA: true) }) {
-                            Text("\(match.currentGame.scoreA)")
-                                .font(.system(size: 52, weight: .black, design: .rounded))
-                                .foregroundStyle(match.currentGame.servingTeamIsA ? .yellow : .white)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        }
-                        .buttonStyle(.plain)
-                        .onLongPressGesture(minimumDuration: 0.5) {
-                            transferPoint(toTeamA: true)
-                        }
+                        // Team A: tap = add, swipe up = add, swipe down = undo A
+                        scoreHalf(
+                            score: match.currentGame.scoreA,
+                            isServing: match.currentGame.servingTeamIsA,
+                            teamA: true
+                        )
 
                         // Divider
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 1)
 
-                        // Team B score (tap to score, long-press to transfer)
-                        Button(action: { scorePoint(teamA: false) }) {
-                            Text("\(match.currentGame.scoreB)")
-                                .font(.system(size: 52, weight: .black, design: .rounded))
-                                .foregroundStyle(!match.currentGame.servingTeamIsA ? .yellow : .white)
-                                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        }
-                        .buttonStyle(.plain)
-                        .onLongPressGesture(minimumDuration: 0.5) {
-                            transferPoint(toTeamA: false)
-                        }
+                        // Team B: tap = add, swipe up = add, swipe down = undo B
+                        scoreHalf(
+                            score: match.currentGame.scoreB,
+                            isServing: !match.currentGame.servingTeamIsA,
+                            teamA: false
+                        )
                     }
                 }
                 .frame(height: 70)
@@ -118,6 +109,7 @@ struct ScoreboardView: View {
             if newVal < lastCrownValue - 3 {
                 ScoringEngine.undo(match: match)
                 MatchStore.shared.save(match)
+                WatchSessionManager.shared.sendMatchState(match: match)
                 lastCrownValue = newVal
             } else {
                 lastCrownValue = newVal
@@ -133,6 +125,8 @@ struct ScoreboardView: View {
                 MatchStore.shared.save(match)
             }
         }
+        .onAppear { startExtendedSession() }
+        .onDisappear { extendedSession?.invalidate() }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
@@ -148,6 +142,7 @@ struct ScoreboardView: View {
                 showGameOver = false
                 ScoringEngine.startNextGame(match: match)
                 MatchStore.shared.save(match)
+                WatchSessionManager.shared.sendMatchState(match: match)
             })
         }
         .fullScreenCover(isPresented: $showMatchOver) {
@@ -187,10 +182,7 @@ struct ScoreboardView: View {
                     .foregroundStyle(.white)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(Color.green.opacity(0.85))
-                    )
+                    .background(Capsule().fill(Color.green.opacity(0.85)))
                     .transition(.opacity)
                     .allowsHitTesting(false)
             }
@@ -198,9 +190,7 @@ struct ScoreboardView: View {
         .animation(.easeInOut(duration: 0.3), value: transferMessage)
         .confirmationDialog("退出比赛", isPresented: $showExitAlert) {
             Button("继续比赛", role: .cancel) { }
-            Button("保存并退出") {
-                savePartialMatchAndExit()
-            }
+            Button("保存并退出") { savePartialMatchAndExit() }
             Button("放弃本场", role: .destructive) {
                 MatchStore.shared.clear()
                 dismiss()
@@ -208,9 +198,51 @@ struct ScoreboardView: View {
         }
     }
 
+    // MARK: - Score Half View
+
+    @ViewBuilder
+    private func scoreHalf(score: Int, isServing: Bool, teamA: Bool) -> some View {
+        ZStack {
+            VStack(spacing: 2) {
+                // Cat mascot above score
+                Image(teamA ? "cat_orange" : "cat_robe")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 24, height: 24)
+                    .clipShape(Circle())
+                    .opacity(isServing ? 1.0 : 0.5)
+
+                Text("\(score)")
+                    .font(.system(size: 48, weight: .black, design: .rounded))
+                    .foregroundStyle(isServing ? .yellow : .white)
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            scorePoint(teamA: teamA)
+        }
+        .gesture(
+            DragGesture(minimumDistance: 25, coordinateSpace: .local)
+                .onEnded { value in
+                    let dy = value.translation.height
+                    if dy < -25 {
+                        // Swipe up = add point
+                        scorePoint(teamA: teamA)
+                    } else if dy > 25 {
+                        // Swipe down = undo this team's last point
+                        undoPointForTeam(teamA: teamA)
+                    }
+                }
+        )
+    }
+
+    // MARK: - Actions
+
     private func scorePoint(teamA: Bool) {
         ScoringEngine.addPoint(to: match, teamAScores: teamA)
         MatchStore.shared.save(match)
+        WatchSessionManager.shared.sendMatchState(match: match)
     }
 
     private func savePartialMatchAndExit() {
@@ -220,21 +252,40 @@ struct ScoreboardView: View {
         dismiss()
     }
 
-    private func transferPoint(toTeamA: Bool) {
-        guard !match.currentGame.history.isEmpty else { return }
-        ScoringEngine.transferLastPoint(to: match, toTeamA: toTeamA)
-        MatchStore.shared.save(match)
+    private func undoPointForTeam(teamA: Bool) {
+        let game = match.currentGame
+        guard !game.history.isEmpty else {
+            WKInterfaceDevice.current().play(.failure)
+            return
+        }
+        let prev = game.history[game.history.count - 1]
+        let teamAScored = game.scoreA > prev.scoreA
+        let teamBScored = game.scoreB > prev.scoreB
 
-        // Haptic notification
-        WKInterfaceDevice.current().play(.notification)
+        if (teamA && teamAScored) || (!teamA && teamBScored) {
+            ScoringEngine.undo(match: match)
+            MatchStore.shared.save(match)
+            WatchSessionManager.shared.sendMatchState(match: match)
+            WKInterfaceDevice.current().play(.notification)
+            showMessage("撤销 \(teamA ? match.teamAName : match.teamBName) 得分")
+        } else {
+            WKInterfaceDevice.current().play(.failure)
+            showMessage("最后一分不是\(teamA ? match.teamAName : match.teamBName)得的")
+        }
+    }
 
-        // Show confirmation message
-        let teamName = toTeamA ? match.teamAName : match.teamBName
-        transferMessage = "已将分数转给\(teamName)"
-
-        // Auto-dismiss after 1.5s
+    private func showMessage(_ text: String) {
+        transferMessage = text
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             transferMessage = nil
         }
+    }
+
+    // MARK: - Extended Runtime Session (keep alive on wrist raise)
+
+    private func startExtendedSession() {
+        let session = WKExtendedRuntimeSession()
+        session.start()
+        extendedSession = session
     }
 }

@@ -26,20 +26,29 @@ struct HistoryView: View {
                 }
 
                 ForEach(records) { record in
-                    VStack(alignment: .leading, spacing: 2) {
-                        HStack {
-                            Text("\(Self.timeFormatter.string(from: record.startTime))-\(Self.timeFormatter.string(from: record.endTime))")
-                                .font(.system(.caption2, design: .monospaced))
-                                .foregroundStyle(.secondary)
-                            Spacer()
-                            Text("\(record.elapsedMinutes)分钟")
-                                .font(.system(.caption2, design: .rounded))
-                                .foregroundStyle(.secondary)
-                        }
-                        HStack {
-                            Text("\(record.teamAName) \(record.gamesWonByA):\(record.gamesWonByB) \(record.teamBName)")
-                                .font(.system(.footnote, design: .rounded))
-                                .bold()
+                    HStack(spacing: 6) {
+                        // Winner's cat avatar
+                        Image(record.gamesWonByA >= record.gamesWonByB ? "cat_orange" : "cat_robe")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 28, height: 28)
+                            .clipShape(Circle())
+
+                        VStack(alignment: .leading, spacing: 2) {
+                            HStack {
+                                Text("\(Self.timeFormatter.string(from: record.startTime))-\(Self.timeFormatter.string(from: record.endTime))")
+                                    .font(.system(.caption2, design: .monospaced))
+                                    .foregroundStyle(.secondary)
+                                Spacer()
+                                Text("\(record.elapsedMinutes)分钟")
+                                    .font(.system(.caption2, design: .rounded))
+                                    .foregroundStyle(.secondary)
+                            }
+                            HStack {
+                                Text("\(record.teamAName) \(record.gamesWonByA):\(record.gamesWonByB) \(record.teamBName)")
+                                    .font(.system(.footnote, design: .rounded))
+                                    .bold()
+                            }
                         }
                     }
                     .padding(.vertical, 2)

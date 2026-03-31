@@ -35,9 +35,16 @@ struct GameSummaryView: View {
                 .foregroundStyle(.orange)
 
             Button(action: onContinue) {
-                Text("开始第\(match.currentGameIndex + 2)局")
-                    .font(.system(.footnote, design: .rounded))
-                    .frame(maxWidth: .infinity)
+                Label {
+                    Text("开始第\(match.currentGameIndex + 2)局")
+                        .font(.system(.footnote, design: .rounded))
+                } icon: {
+                    Image("cat_orange")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 20, height: 20)
+                }
+                .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
             .tint(.green)
