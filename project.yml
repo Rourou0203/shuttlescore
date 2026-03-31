@@ -1,0 +1,64 @@
+name: ShuttleScore
+options:
+  bundleIdPrefix: com.clawd
+  deploymentTarget:
+    iOS: "26.0"
+    watchOS: "10.0"
+schemes:
+  ShuttleScoreConnector:
+    build:
+      targets:
+        ShuttleScoreConnector: all
+    run:
+      config: Debug
+    test:
+      config: Debug
+    archive:
+      config: Release
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+targets:
+  ShuttleScoreConnector:
+    type: application
+    platform: iOS
+    sources:
+      - ShuttleScoreConnector
+    dependencies:
+      - target: ShuttleScore Watch App
+        embed: true
+    info:
+      path: ShuttleScoreConnector/Info.plist
+      properties:
+        UIRequiresFullScreen: true
+        UISupportedInterfaceOrientations:
+          - UIInterfaceOrientationPortrait
+          - UIInterfaceOrientationPortraitUpsideDown
+          - UIInterfaceOrientationLandscapeLeft
+          - UIInterfaceOrientationLandscapeRight
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.clawd.shuttlescore
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: RWHXW7J963
+
+  ShuttleScore Watch App:
+    type: application
+    platform: watchOS
+    sources:
+      - ShuttleScore Watch App
+    info:
+      path: ShuttleScore Watch App/Info.plist
+      properties:
+        CFBundleDisplayName: 羽毛球计分器
+        WKApplication: true
+        WKCompanionAppBundleIdentifier: com.clawd.shuttlescore
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.clawd.shuttlescore.watchkitapp
+        SWIFT_VERSION: "5.0"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: RWHXW7J963

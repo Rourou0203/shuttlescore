@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShuttleScore Watch — 界面原型图</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: #1a1a2e;
+      font-family: -apple-system, "SF Pro Display", "SF Pro Text", system-ui, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 32px 64px;
+      gap: 0;
+    }
+
+    h1 {
+      color: #e0e0e0;
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: #666a7a;
+      font-size: 13px;
+      margin-bottom: 48px;
+      letter-spacing: 0.3px;
+    }
+
+    .screens-row {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 40px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .screen-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .screen-label {
+      color: #9a9eb5;
+      font-size: 13px;
+      font-weight: 500;
+      text-align: center;
+      letter-spacing: 0.3px;
+    }
+
+    /* Apple Watch shell */
+    .watch-shell {
+      position: relative;
+      width: 210px;
+      height: 252px;
+      background: linear-gradient(160deg, #3a3a3c 0%, #2c2c2e 40%, #1c1c1e 100%);
+      border-radius: 54px;
+      box-shadow:
+        0 0 0 1px #484848,
+        0 4px 32px rgba(0,0,0,0.7),
+        0 2px 8px rgba(0,0,0,0.5),
+        inset 0 1px 0 rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 表冠 crown */
+    .watch-shell::before {
+      content: '';
+      position: absolute;
+      right: -8px;
+      top: 68px;
+      width: 8px;
+      height: 36px;
+      background: linear-gradient(to right, #3a3a3c, #2c2c2e);
+      border-radius: 0 6px 6px 0;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.4), inset -1px 0 0 rgba(255,255,255,0.06);
+    }
+
+    /* 侧边按钮 side button */
+    .watch-shell::after {
+      content: '';
+      position: absolute;
+      right: -7px;
+      top: 116px;
+      width: 7px;
+      height: 22px;
+      background: linear-gradient(to right, #3a3a3c, #2c2c2e);
+      border-radius: 0 4px 4px 0;
+      box-shadow: 2px 0 4px rgba(0,0,0,0.4);
+    }
+
+    /* 表盘屏幕 */
+    .watch-screen {
+      width: 184px;
+      height: 224px;
+      border-radius: 40px;
+      background: #000;
+      overflow: hidden;
+      position: relative;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04);
+    }
+
+    /* ==================== PAGE 1: 主菜单 ==================== */
+    .page-home {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 14px;
+      background: #000;
+    }
+
+    .page-home .app-icon {
+      font-size: 52px;
+      line-height: 1;
+      filter: drop-shadow(0 0 12px rgba(255,220,80,0.4));
+    }
+
+    .page-home .btn-new-game {
+      background: linear-gradient(135deg, #30d158, #25a244);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 22px;
+      border-radius: 20px;
+      letter-spacing: 0.2px;
+      box-shadow: 0 2px 10px rgba(48,209,88,0.35);
+    }
+
+    .page-home .link-history {
+      color: #636366;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.2px;
+    }
+
+    /* ==================== PAGE 2: 赛前设置 ==================== */
+    .page-setup {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #000;
+      padding: 14px 14px 14px;
+      gap: 10px;
+    }
+
+    .page-setup .section-title {
+      color: #8e8e93;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding-bottom: 2px;
+    }
+
+    .toggle-row {
+      display: flex;
+      gap: 6px;
+    }
+
+    .toggle-btn {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .toggle-btn.active {
+      background: linear-gradient(135deg, #30d158, #25a244);
+      color: #fff;
+      box-shadow: 0 1px 6px rgba(48,209,88,0.3);
+    }
+
+    .toggle-btn.inactive {
+      background: #1c1c1e;
+      color: #636366;
+      border: 1px solid #2c2c2e;
+    }
+
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      background: #1c1c1e;
+      border-radius: 10px;
+    }
+
+    .setting-row .setting-label {
+      color: #ebebf5;
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .setting-row .setting-value {
+      color: #30d158;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .page-setup .btn-start {
+      margin-top: auto;
+      background: linear-gradient(135deg, #30d158, #25a244);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 0;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(48,209,88,0.35);
+      letter-spacing: 0.3px;
+    }
+
+    /* ==================== PAGE 3: 计分主界面 ==================== */
+    .page-score {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      background: #000;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 左右分区背景 */
+    .score-zone-left {
+      position: absolute;
+      left: 0; top: 0;
+      width: 50%; height: 100%;
+      background: rgba(255, 200, 80, 0.04);
+      border-radius: 40px 0 0 40px;
+    }
+
+    .score-zone-right {
+      position: absolute;
+      right: 0; top: 0;
+      width: 50%; height: 100%;
+      background: rgba(100, 180, 255, 0.04);
+      border-radius: 0 40px 40px 0;
+    }
+
+    /* 中间分隔线 */
+    .score-divider-v {
+      position: absolute;
+      left: 50%;
+      top: 28%;
+      height: 52%;
+      width: 1px;
+      background: linear-gradient(to bottom, transparent, rgba(255,255,255,0.12) 20%, rgba(255,255,255,0.12) 80%, transparent);
+      transform: translateX(-0.5px);
+    }
+
+    .score-header {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 16px 4px;
+    }
+
+    .player-label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #ebebf5;
+      letter-spacing: 0.2px;
+    }
+
+    .serve-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #ffd60a;
+      box-shadow: 0 0 6px rgba(255,214,10,0.8), 0 0 12px rgba(255,214,10,0.4);
+      flex-shrink: 0;
+    }
+
+    .score-main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex: 1;
+      gap: 0;
+    }
+
+    .score-num {
+      width: 72px;
+      text-align: center;
+      font-size: 58px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -2px;
+    }
+
+    .score-num.mine {
+      color: #ffd60a;
+      text-shadow: 0 0 20px rgba(255,214,10,0.4);
+    }
+
+    .score-num.opponent {
+      color: #ebebf5;
+    }
+
+    .score-footer {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      padding: 4px 16px 16px;
+    }
+
+    .footer-tag {
+      color: #636366;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .footer-divider {
+      width: 1px;
+      height: 10px;
+      background: #333;
+    }
+
+    .footer-set-score {
+      color: #8e8e93;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+    }
+
+    /* ==================== PAGE 4: 局间结算 ==================== */
+    .page-set-end {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: #000;
+      padding: 12px 14px;
+      gap: 6px;
+    }
+
+    .check-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #30d158, #25a244);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 0 16px rgba(48,209,88,0.4);
+      margin-bottom: 2px;
+    }
+
+    .set-result-title {
+      color: #ebebf5;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+    }
+
+    .set-result-score {
+      color: #30d158;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+    }
+
+    .side-change {
+      background: rgba(255, 149, 0, 0.15);
+      border: 1px solid rgba(255,149,0,0.3);
+      color: #ff9500;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 10px;
+      text-align: center;
+      letter-spacing: 0.2px;
+    }
+
+    .page-set-end .btn-next-set {
+      background: linear-gradient(135deg, #0a84ff, #0060df);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(10,132,255,0.35);
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+    }
+
+    /* ==================== PAGE 5: 比赛结束 ==================== */
+    .page-match-end {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: radial-gradient(ellipse at center top, #1a1200 0%, #000 60%);
+      padding: 12px 14px;
+      gap: 6px;
+    }
+
+    .trophy-icon {
+      font-size: 44px;
+      line-height: 1;
+      filter: drop-shadow(0 0 16px rgba(255,214,10,0.6)) drop-shadow(0 0 32px rgba(255,180,0,0.3));
+    }
+
+    .match-win-text {
+      color: #ffd60a;
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-shadow: 0 0 20px rgba(255,214,10,0.5);
+    }
+
+    .match-sets {
+      color: #ebebf5;
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .match-duration {
+      color: #636366;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+    }
+
+    .page-match-end .btn-new-game {
+      background: linear-gradient(135deg, #30d158, #25a244);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 8px 16px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(48,209,88,0.35);
+      margin-top: 2px;
+      letter-spacing: 0.2px;
+      width: 120px;
+    }
+
+    /* annotation style */
+    .screen-anno {
+      color: #666a7a;
+      font-size: 11px;
+      text-align: center;
+      max-width: 180px;
+      line-height: 1.5;
+    }
+
+    /* page number badge */
+    .page-badge {
+      display: inline-block;
+      background: #2c2c3e;
+      color: #9a9eb5;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 8px;
+      letter-spacing: 0.5px;
+      margin-bottom: 2px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>ShuttleScore Watch</h1>
+  <p class="subtitle">Apple Watch 45mm — 界面原型图 · 所有5个页面</p>
+
+  <div class="screens-row">
+
+    <!-- PAGE 1: 主菜单 -->
+    <div class="screen-wrapper">
+      <div class="page-badge">01</div>
+      <div class="watch-shell">
+        <div class="watch-screen">
+          <div class="page-home">
+            <div class="app-icon">🏸</div>
+            <div class="btn-new-game">新建比赛</div>
+            <div class="link-history">历史记录</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">主菜单</div>
+      <div class="screen-anno">App 首屏入口</div>
+    </div>
+
+    <!-- PAGE 2: 赛前设置 -->
+    <div class="screen-wrapper">
+      <div class="page-badge">02</div>
+      <div class="watch-shell">
+        <div class="watch-screen">
+          <div class="page-setup">
+            <div class="section-title">比赛设置</div>
+            <div class="toggle-row">
+              <div class="toggle-btn active">单打</div>
+              <div class="toggle-btn inactive">双打</div>
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">局数</span>
+              <span class="setting-value">3 局</span>
+            </div>
+            <div class="setting-row">
+              <span class="setting-label">每局分数</span>
+              <span class="setting-value">21 分</span>
+            </div>
+            <div class="btn-start">开始比赛</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">赛前设置</div>
+      <div class="screen-anno">选择模式与规则</div>
+    </div>
+
+    <!-- PAGE 3: 计分主界面 -->
+    <div class="screen-wrapper">
+      <div class="page-badge">03</div>
+      <div class="watch-shell">
+        <div class="watch-screen">
+          <div class="page-score">
+            <div class="score-zone-left"></div>
+            <div class="score-zone-right"></div>
+            <div class="score-divider-v"></div>
+
+            <div class="score-header">
+              <div class="player-label">
+                <div class="serve-dot"></div>
+                <span>我方</span>
+              </div>
+              <div class="player-label">
+                <span>对手</span>
+              </div>
+            </div>
+
+            <div class="score-main">
+              <div class="score-num mine">21</div>
+              <div class="score-num opponent">19</div>
+            </div>
+
+            <div class="score-footer">
+              <span class="footer-tag">第 2 局</span>
+              <div class="footer-divider"></div>
+              <span class="footer-set-score">2 : 1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">计分主界面</div>
+      <div class="screen-anno">点左/右半屏加分<br>黄点 = 发球方</div>
+    </div>
+
+    <!-- PAGE 4: 局间结算 -->
+    <div class="screen-wrapper">
+      <div class="page-badge">04</div>
+      <div class="watch-shell">
+        <div class="watch-screen">
+          <div class="page-set-end">
+            <div class="check-icon">✓</div>
+            <div class="set-result-title">你赢得第 2 局</div>
+            <div class="set-result-score">21 : 18</div>
+            <div class="side-change">请换边！</div>
+            <div class="btn-next-set">开始第 3 局</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">局间结算</div>
+      <div class="screen-anno">局结果 + 换边提醒</div>
+    </div>
+
+    <!-- PAGE 5: 比赛结束 -->
+    <div class="screen-wrapper">
+      <div class="page-badge">05</div>
+      <div class="watch-shell">
+        <div class="watch-screen">
+          <div class="page-match-end">
+            <div class="trophy-icon">🏆</div>
+            <div class="match-win-text">你赢了！</div>
+            <div class="match-sets">2 : 1</div>
+            <div class="match-duration">用时 32 分钟</div>
+            <div class="btn-new-game">新建比赛</div>
+          </div>
+        </div>
+      </div>
+      <div class="screen-label">比赛结束</div>
+      <div class="screen-anno">最终结果 + 用时</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

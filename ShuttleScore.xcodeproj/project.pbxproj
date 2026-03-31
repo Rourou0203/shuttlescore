@@ -1,0 +1,506 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */; };
+		1D3EF542E502710F63A5B0CB /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */; };
+		3B8A6731D5EF188CF90027A9 /* MatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93879B7BB627CB1C015B8E97 /* MatchState.swift */; };
+		4BC37ED18B6DFF9EDDD90CAD /* ShuttleScore Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		637CC176E45FECDF9632E18D /* MatchSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */; };
+		68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */; };
+		75ED4FA5B2386DD869960DAB /* MatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9F63E609D70A9A8189E88F /* MatchStore.swift */; };
+		789027CDD89D066DB9889383 /* GameSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */; };
+		8BB35D2575D65EF8AB7C2C99 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C32531C4B13146E51281BDBD /* Assets.xcassets */; };
+		924ABCCADD92540F720A2EF8 /* MatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */; };
+		94942911283ABA44B51E1905 /* ScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AAE3025E8644366F6584D2 /* ScoreboardView.swift */; };
+		ABC2A3BC2CA7FCE02646D657 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97867A228741914FE779FA8E /* HomeView.swift */; };
+		ABD4B6C27E219DA4F8D27A30 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92632864E7497DA235168CDA /* HistoryView.swift */; };
+		BCABCF8313A7B75291A18780 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B38426058D38867EA758D49 /* MatchSetupView.swift */; };
+		CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32E88CD821CC3B825FD474E /* ContentView.swift */; };
+		D5E679D3740FE8C1892D9E02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */; };
+		E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8988A353CC635E5510E0F1BC /* ScoringEngine.swift */; };
+		EA1C49CF177CD19C24C512BC /* MatchRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0251DA83DE4A75884A7B29E /* MatchRecord.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		518ABC07DC06BB8A08174876 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03F4BA3E47B39748CF6E9949 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 39A2D03C98856226B5CD074C;
+			remoteInfo = "ShuttleScore Watch App";
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		334EB78E9E8C9EC912BC6508 /* Embed Watch Content */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "$(CONTENTS_FOLDER_PATH)/Watch";
+			dstSubfolderSpec = 16;
+			files = (
+				4BC37ED18B6DFF9EDDD90CAD /* ShuttleScore Watch App.app in Embed Watch Content */,
+			);
+			name = "Embed Watch Content";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ShuttleScore Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		1C9F63E609D70A9A8189E88F /* MatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStore.swift; sourceTree = "<group>"; };
+		1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreConnectorApp.swift; sourceTree = "<group>"; };
+		2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreApp.swift; sourceTree = "<group>"; };
+		32AAE3025E8644366F6584D2 /* ScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardView.swift; sourceTree = "<group>"; };
+		4572C434833278FDF6CAA0E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDetailView.swift; sourceTree = "<group>"; };
+		51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ShuttleScoreConnector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8988A353CC635E5510E0F1BC /* ScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringEngine.swift; sourceTree = "<group>"; };
+		92632864E7497DA235168CDA /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		93879B7BB627CB1C015B8E97 /* MatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchState.swift; sourceTree = "<group>"; };
+		97867A228741914FE779FA8E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		9B38426058D38867EA758D49 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
+		A32E88CD821CC3B825FD474E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B0251DA83DE4A75884A7B29E /* MatchRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRecord.swift; sourceTree = "<group>"; };
+		B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSummaryView.swift; sourceTree = "<group>"; };
+		B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSummaryView.swift; sourceTree = "<group>"; };
+		C32531C4B13146E51281BDBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		D7A3EFDF62F81503C3865DA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		047F190AA8326036AAECEE2C = {
+			isa = PBXGroup;
+			children = (
+				CA863DBE8A5108A8F461E01B /* ShuttleScore Watch App */,
+				8F218B670F8AB57AD6A22293 /* ShuttleScoreConnector */,
+				D1C791D87A174EB577A6A763 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		44F0431C595B18E347C230B8 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B0251DA83DE4A75884A7B29E /* MatchRecord.swift */,
+				93879B7BB627CB1C015B8E97 /* MatchState.swift */,
+				1C9F63E609D70A9A8189E88F /* MatchStore.swift */,
+				8988A353CC635E5510E0F1BC /* ScoringEngine.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		6DD1CCE4C487C746DEFC3A51 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */,
+				B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */,
+				92632864E7497DA235168CDA /* HistoryView.swift */,
+				97867A228741914FE779FA8E /* HomeView.swift */,
+				48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */,
+				9B38426058D38867EA758D49 /* MatchSetupView.swift */,
+				B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */,
+				32AAE3025E8644366F6584D2 /* ScoreboardView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		8F218B670F8AB57AD6A22293 /* ShuttleScoreConnector */ = {
+			isa = PBXGroup;
+			children = (
+				C32531C4B13146E51281BDBD /* Assets.xcassets */,
+				A32E88CD821CC3B825FD474E /* ContentView.swift */,
+				D7A3EFDF62F81503C3865DA0 /* Info.plist */,
+				1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */,
+			);
+			path = ShuttleScoreConnector;
+			sourceTree = "<group>";
+		};
+		CA863DBE8A5108A8F461E01B /* ShuttleScore Watch App */ = {
+			isa = PBXGroup;
+			children = (
+				D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */,
+				4572C434833278FDF6CAA0E4 /* Info.plist */,
+				2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */,
+				44F0431C595B18E347C230B8 /* Models */,
+				6DD1CCE4C487C746DEFC3A51 /* Views */,
+			);
+			path = "ShuttleScore Watch App";
+			sourceTree = "<group>";
+		};
+		D1C791D87A174EB577A6A763 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */,
+				51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		39A2D03C98856226B5CD074C /* ShuttleScore Watch App */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3FEFD478712E9E6751D15084 /* Build configuration list for PBXNativeTarget "ShuttleScore Watch App" */;
+			buildPhases = (
+				C75484A7446A83005329E8AA /* Sources */,
+				8C56F40F29F7C1641320F6E2 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "ShuttleScore Watch App";
+			packageProductDependencies = (
+			);
+			productName = "ShuttleScore Watch App";
+			productReference = 0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */;
+			productType = "com.apple.product-type.application";
+		};
+		8C729187F72903C606D163A7 /* ShuttleScoreConnector */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 04D0C16352B762D1095686F3 /* Build configuration list for PBXNativeTarget "ShuttleScoreConnector" */;
+			buildPhases = (
+				4E4526E70F4DD1502F5A7DCB /* Sources */,
+				19C061BD6E29A65AF816A9C1 /* Resources */,
+				334EB78E9E8C9EC912BC6508 /* Embed Watch Content */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				04E5B0F75F3A6F39B116BB0B /* PBXTargetDependency */,
+			);
+			name = ShuttleScoreConnector;
+			packageProductDependencies = (
+			);
+			productName = ShuttleScoreConnector;
+			productReference = 51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		03F4BA3E47B39748CF6E9949 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					39A2D03C98856226B5CD074C = {
+						DevelopmentTeam = RWHXW7J963;
+						ProvisioningStyle = Automatic;
+					};
+					8C729187F72903C606D163A7 = {
+						DevelopmentTeam = RWHXW7J963;
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 2769A5CD63B2C2EDB5017CD0 /* Build configuration list for PBXProject "ShuttleScore" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 047F190AA8326036AAECEE2C;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = D1C791D87A174EB577A6A763 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				39A2D03C98856226B5CD074C /* ShuttleScore Watch App */,
+				8C729187F72903C606D163A7 /* ShuttleScoreConnector */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		19C061BD6E29A65AF816A9C1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8BB35D2575D65EF8AB7C2C99 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8C56F40F29F7C1641320F6E2 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D5E679D3740FE8C1892D9E02 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		4E4526E70F4DD1502F5A7DCB /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */,
+				68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C75484A7446A83005329E8AA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1D3EF542E502710F63A5B0CB /* CalendarView.swift in Sources */,
+				789027CDD89D066DB9889383 /* GameSummaryView.swift in Sources */,
+				ABD4B6C27E219DA4F8D27A30 /* HistoryView.swift in Sources */,
+				ABC2A3BC2CA7FCE02646D657 /* HomeView.swift in Sources */,
+				924ABCCADD92540F720A2EF8 /* MatchDetailView.swift in Sources */,
+				EA1C49CF177CD19C24C512BC /* MatchRecord.swift in Sources */,
+				BCABCF8313A7B75291A18780 /* MatchSetupView.swift in Sources */,
+				3B8A6731D5EF188CF90027A9 /* MatchState.swift in Sources */,
+				75ED4FA5B2386DD869960DAB /* MatchStore.swift in Sources */,
+				637CC176E45FECDF9632E18D /* MatchSummaryView.swift in Sources */,
+				94942911283ABA44B51E1905 /* ScoreboardView.swift in Sources */,
+				E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */,
+				15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		04E5B0F75F3A6F39B116BB0B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 39A2D03C98856226B5CD074C /* ShuttleScore Watch App */;
+			targetProxy = 518ABC07DC06BB8A08174876 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		5980096C93C641778838FBAA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = ShuttleScoreConnector/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		5B2328F1BBF1285C7813289F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		BE37938BA523C4DCBC8DD56D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = ShuttleScoreConnector/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore;
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		C231B7814F05CEF61D2474F5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = "ShuttleScore Watch App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Debug;
+		};
+		D0E861C7177418920D890B18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		F0B35AC86273906F7D03A20D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = "ShuttleScore Watch App/Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		04D0C16352B762D1095686F3 /* Build configuration list for PBXNativeTarget "ShuttleScoreConnector" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5980096C93C641778838FBAA /* Debug */,
+				BE37938BA523C4DCBC8DD56D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		2769A5CD63B2C2EDB5017CD0 /* Build configuration list for PBXProject "ShuttleScore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D0E861C7177418920D890B18 /* Debug */,
+				5B2328F1BBF1285C7813289F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3FEFD478712E9E6751D15084 /* Build configuration list for PBXNativeTarget "ShuttleScore Watch App" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C231B7814F05CEF61D2474F5 /* Debug */,
+				F0B35AC86273906F7D03A20D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 03F4BA3E47B39748CF6E9949 /* Project object */;
+}
