@@ -8,15 +8,22 @@
 
 /* Begin PBXBuildFile section */
 		0C8C66369674B977275E5EE2 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7DA1D76F4D90473686F723 /* AchievementsView.swift */; };
+		133A5711B48C277FD33A9A09 /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF8309CD5200894E3C2137A /* WorkoutManager.swift */; };
 		14303571A6A9C0423F8A6AA3 /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2280464BBAB7C522B7023135 /* ProfileStore.swift */; };
 		15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */; };
 		1D3EF542E502710F63A5B0CB /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */; };
 		24D36C44E38DB5CE4A2283A3 /* MatchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DE722D63C101868D12120A /* MatchType.swift */; };
 		2E704B4646A5E4CFE2F106A2 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */; };
 		3B8A6731D5EF188CF90027A9 /* MatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93879B7BB627CB1C015B8E97 /* MatchState.swift */; };
+		3E4225A6885D1EBEEDE6F0E2 /* PhoneMatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52815D76D29DD739D37A6626 /* PhoneMatchState.swift */; };
 		3EB30AE2C3F6B5A9145FF8CA /* LiveScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0349602CE7184D76ACBB0821 /* LiveScoreView.swift */; };
+		3FAA3678062BE813FEDF3D82 /* CalendarHeatmapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4EA3416B160A334BBABECF7E /* CalendarHeatmapView.swift */; };
 		4BC37ED18B6DFF9EDDD90CAD /* ShuttleScore Watch App.app in Embed Watch Content */ = {isa = PBXBuildFile; fileRef = 0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		569A59B4F6B3EE4533E5BBBF /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26A6F0DA2E085A7E01F15A4E /* ShareCardView.swift */; };
+		5FAE60297E60C79027EB4D00 /* SessionState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C322F7954141A8E1702B4B22 /* SessionState.swift */; };
 		637CC176E45FECDF9632E18D /* MatchSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */; };
+		678EF1BB9F9886DEA9D3EE2B /* OpponentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF24A93A92E6734818B843D /* OpponentPickerView.swift */; };
+		68BD258E9328029C7522C6E4 /* OpponentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990DBDD6051263160776AF92 /* OpponentStore.swift */; };
 		68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */; };
 		75ED4FA5B2386DD869960DAB /* MatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9F63E609D70A9A8189E88F /* MatchStore.swift */; };
 		789027CDD89D066DB9889383 /* GameSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */; };
@@ -27,16 +34,20 @@
 		9A2948160FC3829D0A68231A /* GameScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D7788DB2434F6026890F7 /* GameScore.swift */; };
 		ABC2A3BC2CA7FCE02646D657 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97867A228741914FE779FA8E /* HomeView.swift */; };
 		ABD4B6C27E219DA4F8D27A30 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92632864E7497DA235168CDA /* HistoryView.swift */; };
+		B4078389FD11B4D7211E8245 /* OpponentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4CFC34A60598EEDBC0D5C /* OpponentStore.swift */; };
+		B72B8B1B2E9C2CD4189DE0A1 /* OpponentStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245C244C3922134B605B485A /* OpponentStatsView.swift */; };
 		BCABCF8313A7B75291A18780 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B38426058D38867EA758D49 /* MatchSetupView.swift */; };
 		C8931343CAD1E042BAA5AEC0 /* MatchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */; };
 		CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32E88CD821CC3B825FD474E /* ContentView.swift */; };
 		CE41CBE8B6FFB7717F23B535 /* PhoneSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9755260AAA61661926806462 /* PhoneSessionManager.swift */; };
 		D5E679D3740FE8C1892D9E02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */; };
+		D5EA99819BA988E3C6A0E217 /* PhoneScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */; };
 		E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8988A353CC635E5510E0F1BC /* ScoringEngine.swift */; };
 		EA1C49CF177CD19C24C512BC /* MatchRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0251DA83DE4A75884A7B29E /* MatchRecord.swift */; };
 		EFF2B4ADA612A71A7CF3A032 /* MatchRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39A5254489B4585754A184D /* MatchRecord.swift */; };
 		F2A4B5F3845180B7A76A1BCC /* MatchHistoryStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01BF03913B2D2924A83D46CB /* MatchHistoryStore.swift */; };
 		F8E7463DD329675024CACB97 /* Achievement.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8B315CC9A2B86E2D902D942 /* Achievement.swift */; };
+		FEC32ECAE91678028D50CF63 /* PhoneSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F39C30C9F2AB736029A9BE55 /* PhoneSetupView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -68,35 +79,47 @@
 		0349602CE7184D76ACBB0821 /* LiveScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveScoreView.swift; sourceTree = "<group>"; };
 		0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ShuttleScore Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		1BA4CFC34A60598EEDBC0D5C /* OpponentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStore.swift; sourceTree = "<group>"; };
 		1C7DA1D76F4D90473686F723 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		1C9F63E609D70A9A8189E88F /* MatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStore.swift; sourceTree = "<group>"; };
 		1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreConnectorApp.swift; sourceTree = "<group>"; };
 		2280464BBAB7C522B7023135 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
+		245C244C3922134B605B485A /* OpponentStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStatsView.swift; sourceTree = "<group>"; };
+		26A6F0DA2E085A7E01F15A4E /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
 		2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreApp.swift; sourceTree = "<group>"; };
 		32AAE3025E8644366F6584D2 /* ScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardView.swift; sourceTree = "<group>"; };
 		4572C434833278FDF6CAA0E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHistoryView.swift; sourceTree = "<group>"; };
 		48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDetailView.swift; sourceTree = "<group>"; };
+		4EA3416B160A334BBABECF7E /* CalendarHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeatmapView.swift; sourceTree = "<group>"; };
 		51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ShuttleScoreConnector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52815D76D29DD739D37A6626 /* PhoneMatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneMatchState.swift; sourceTree = "<group>"; };
 		5844C25E6AB9B38449CA5FCF /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		5FF8309CD5200894E3C2137A /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
 		61DE722D63C101868D12120A /* MatchType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchType.swift; sourceTree = "<group>"; };
+		6BF24A93A92E6734818B843D /* OpponentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentPickerView.swift; sourceTree = "<group>"; };
 		8988A353CC635E5510E0F1BC /* ScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringEngine.swift; sourceTree = "<group>"; };
 		92632864E7497DA235168CDA /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		93879B7BB627CB1C015B8E97 /* MatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchState.swift; sourceTree = "<group>"; };
 		9755260AAA61661926806462 /* PhoneSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSessionManager.swift; sourceTree = "<group>"; };
 		97867A228741914FE779FA8E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		990DBDD6051263160776AF92 /* OpponentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStore.swift; sourceTree = "<group>"; };
 		9B38426058D38867EA758D49 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
 		A32E88CD821CC3B825FD474E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B0251DA83DE4A75884A7B29E /* MatchRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRecord.swift; sourceTree = "<group>"; };
 		B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSummaryView.swift; sourceTree = "<group>"; };
 		B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSummaryView.swift; sourceTree = "<group>"; };
+		C322F7954141A8E1702B4B22 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		C32531C4B13146E51281BDBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA9D7788DB2434F6026890F7 /* GameScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScore.swift; sourceTree = "<group>"; };
 		D39A5254489B4585754A184D /* MatchRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRecord.swift; sourceTree = "<group>"; };
 		D7A3EFDF62F81503C3865DA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneScoreboardView.swift; sourceTree = "<group>"; };
 		E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		F39C30C9F2AB736029A9BE55 /* PhoneSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSetupView.swift; sourceTree = "<group>"; };
 		F8B315CC9A2B86E2D902D942 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
+		F8E39C666BE7D210598D80E1 /* ShuttleScore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShuttleScore.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -104,9 +127,14 @@
 			isa = PBXGroup;
 			children = (
 				1C7DA1D76F4D90473686F723 /* AchievementsView.swift */,
+				4EA3416B160A334BBABECF7E /* CalendarHeatmapView.swift */,
 				0349602CE7184D76ACBB0821 /* LiveScoreView.swift */,
 				4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */,
+				245C244C3922134B605B485A /* OpponentStatsView.swift */,
+				E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */,
+				F39C30C9F2AB736029A9BE55 /* PhoneSetupView.swift */,
 				5844C25E6AB9B38449CA5FCF /* ProfileView.swift */,
+				26A6F0DA2E085A7E01F15A4E /* ShareCardView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -126,8 +154,11 @@
 				B0251DA83DE4A75884A7B29E /* MatchRecord.swift */,
 				93879B7BB627CB1C015B8E97 /* MatchState.swift */,
 				1C9F63E609D70A9A8189E88F /* MatchStore.swift */,
+				990DBDD6051263160776AF92 /* OpponentStore.swift */,
 				8988A353CC635E5510E0F1BC /* ScoringEngine.swift */,
+				C322F7954141A8E1702B4B22 /* SessionState.swift */,
 				11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */,
+				5FF8309CD5200894E3C2137A /* WorkoutManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -142,6 +173,7 @@
 				48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */,
 				9B38426058D38867EA758D49 /* MatchSetupView.swift */,
 				B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */,
+				6BF24A93A92E6734818B843D /* OpponentPickerView.swift */,
 				32AAE3025E8644366F6584D2 /* ScoreboardView.swift */,
 			);
 			path = Views;
@@ -168,6 +200,8 @@
 				01BF03913B2D2924A83D46CB /* MatchHistoryStore.swift */,
 				D39A5254489B4585754A184D /* MatchRecord.swift */,
 				61DE722D63C101868D12120A /* MatchType.swift */,
+				1BA4CFC34A60598EEDBC0D5C /* OpponentStore.swift */,
+				52815D76D29DD739D37A6626 /* PhoneMatchState.swift */,
 				9755260AAA61661926806462 /* PhoneSessionManager.swift */,
 				2280464BBAB7C522B7023135 /* ProfileStore.swift */,
 			);
@@ -179,6 +213,7 @@
 			children = (
 				D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */,
 				4572C434833278FDF6CAA0E4 /* Info.plist */,
+				F8E39C666BE7D210598D80E1 /* ShuttleScore.entitlements */,
 				2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */,
 				44F0431C595B18E347C230B8 /* Models */,
 				6DD1CCE4C487C746DEFC3A51 /* Views */,
@@ -301,6 +336,7 @@
 			files = (
 				F8E7463DD329675024CACB97 /* Achievement.swift in Sources */,
 				0C8C66369674B977275E5EE2 /* AchievementsView.swift in Sources */,
+				3FAA3678062BE813FEDF3D82 /* CalendarHeatmapView.swift in Sources */,
 				CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */,
 				9A2948160FC3829D0A68231A /* GameScore.swift in Sources */,
 				3EB30AE2C3F6B5A9145FF8CA /* LiveScoreView.swift in Sources */,
@@ -308,9 +344,15 @@
 				C8931343CAD1E042BAA5AEC0 /* MatchHistoryView.swift in Sources */,
 				EFF2B4ADA612A71A7CF3A032 /* MatchRecord.swift in Sources */,
 				24D36C44E38DB5CE4A2283A3 /* MatchType.swift in Sources */,
+				B72B8B1B2E9C2CD4189DE0A1 /* OpponentStatsView.swift in Sources */,
+				B4078389FD11B4D7211E8245 /* OpponentStore.swift in Sources */,
+				3E4225A6885D1EBEEDE6F0E2 /* PhoneMatchState.swift in Sources */,
+				D5EA99819BA988E3C6A0E217 /* PhoneScoreboardView.swift in Sources */,
 				CE41CBE8B6FFB7717F23B535 /* PhoneSessionManager.swift in Sources */,
+				FEC32ECAE91678028D50CF63 /* PhoneSetupView.swift in Sources */,
 				14303571A6A9C0423F8A6AA3 /* ProfileStore.swift in Sources */,
 				7A855D1D35C127B98A081668 /* ProfileView.swift in Sources */,
+				569A59B4F6B3EE4533E5BBBF /* ShareCardView.swift in Sources */,
 				68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -329,10 +371,14 @@
 				3B8A6731D5EF188CF90027A9 /* MatchState.swift in Sources */,
 				75ED4FA5B2386DD869960DAB /* MatchStore.swift in Sources */,
 				637CC176E45FECDF9632E18D /* MatchSummaryView.swift in Sources */,
+				678EF1BB9F9886DEA9D3EE2B /* OpponentPickerView.swift in Sources */,
+				68BD258E9328029C7522C6E4 /* OpponentStore.swift in Sources */,
 				94942911283ABA44B51E1905 /* ScoreboardView.swift in Sources */,
 				E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */,
+				5FAE60297E60C79027EB4D00 /* SessionState.swift in Sources */,
 				15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */,
 				2E704B4646A5E4CFE2F106A2 /* WatchSessionManager.swift in Sources */,
+				133A5711B48C277FD33A9A09 /* WorkoutManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -445,9 +491,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ShuttleScore Watch App/ShuttleScore.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = RWHXW7J963;
 				INFOPLIST_FILE = "ShuttleScore Watch App/Info.plist";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "ShuttleScore 需要写入运动数据以记录您的羽毛球比赛";
 				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;
@@ -523,9 +572,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = "ShuttleScore Watch App/ShuttleScore.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = RWHXW7J963;
 				INFOPLIST_FILE = "ShuttleScore Watch App/Info.plist";
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "ShuttleScore 需要写入运动数据以记录您的羽毛球比赛";
 				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp;
 				SDKROOT = watchos;
 				SKIP_INSTALL = YES;

@@ -52,9 +52,11 @@ struct ScoringEngine {
             WKInterfaceDevice.current().play(.click)    // normal point
         }
 
-        // If match over, record end time
+        // If match over, record end time and save to history immediately
+        // (view lifecycle methods like .task/.onAppear/.onDisappear are unreliable on watchOS)
         if match.isMatchOver {
             match.endTime = Date()
+            MatchStore.shared.saveToHistory(match)
         }
 
         return serveChanged

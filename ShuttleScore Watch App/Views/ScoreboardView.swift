@@ -1,9 +1,11 @@
 import SwiftUI
 import WatchKit
+import HealthKit
 
 struct ScoreboardView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var match: MatchState
+    @ObservedObject var workoutManager = WorkoutManager.shared
     @State private var showExitAlert = false
     @State private var showGameOver = false
     @State private var showMatchOver = false
@@ -12,7 +14,6 @@ struct ScoreboardView: View {
     @State private var crownValue: Double = 0
     @State private var lastCrownValue: Double = 0
     @State private var transferMessage: String?
-    @State private var extendedSession: WKExtendedRuntimeSession?
 
     var body: some View {
         ZStack {
@@ -80,17 +81,33 @@ struct ScoreboardView: View {
                 }
                 .frame(height: 70)
 
-                // Footer: game info + serve court
+                // Footer: game info + serve court + workout stats
                 HStack {
-                    Text("第\(match.currentGameIndex + 1)局")
+                    Text("\(match.matchType.rawValue) · 第\(match.currentGameIndex + 1)局")
                         .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(.gray)
 
                     Spacer()
 
-                    Text("\(match.gamesWonByA)-\(match.gamesWonByB)")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
-                        .foregroundStyle(.gray)
+                    // Heart rate & calories
+                    if workoutManager.isWorkoutActive {
+                        HStack(spacing: 3) {
+                            if workoutManager.heartRate > 0 {
+                                Text("\u{2764}\u{FE0F}\(Int(workoutManager.heartRate))")
+                                    .font(.system(size: 9, design: .rounded))
+                                    .foregroundStyle(.red.opacity(0.8))
+                            }
+                            if workoutManager.activeCalories > 0 {
+                                Text("\u{1F525}\(Int(workoutManager.activeCalories))")
+                                    .font(.system(size: 9, design: .rounded))
+                                    .foregroundStyle(.orange.opacity(0.8))
+                            }
+                        }
+                    } else {
+                        Text("\(match.gamesWonByA)-\(match.gamesWonByB)")
+                            .font(.system(size: 11, weight: .bold, design: .rounded))
+                            .foregroundStyle(.gray)
+                    }
 
                     Spacer()
 
@@ -106,7 +123,7 @@ struct ScoreboardView: View {
         .focusable()
         .digitalCrownRotation($crownValue, from: -100, through: 100, sensitivity: .medium)
         .onChange(of: crownValue) { _, newVal in
-            if newVal < lastCrownValue - 3 {
+            if newVal < lastCrownValue - 3 && !match.isMatchOver {
                 ScoringEngine.undo(match: match)
                 MatchStore.shared.save(match)
                 WatchSessionManager.shared.sendMatchState(match: match)
@@ -117,20 +134,36 @@ struct ScoreboardView: View {
         }
         .onChange(of: match.currentGame.isOver) { _, isOver in
             if isOver {
+                MatchStore.shared.save(match)
+
                 if match.isMatchOver {
-                    showMatchOver = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                        workoutManager.pauseSession()
+                    }
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        showMatchOver = true
+                    }
                 } else {
                     showGameOver = true
                 }
-                MatchStore.shared.save(match)
             }
         }
-        .onAppear { startExtendedSession() }
-        .onDisappear { extendedSession?.invalidate() }
+        .onAppear { workoutManager.startOrResumeSession() }
+        .onDisappear {
+            // Always save to history if match is over, no matter how user exits
+            if match.isMatchOver {
+                match.endTime = match.endTime ?? Date()
+                MatchStore.shared.saveToHistory(match)
+                WatchSessionManager.shared.sendMatchHistory(match: match)
+            }
+            workoutManager.pauseSession()
+        }
         .navigationBarBackButtonHidden(true)
         .toolbar {
             ToolbarItem(placement: .topBarLeading) {
-                Button(action: { showExitAlert = true }) {
+                Button(action: {
+                    showExitAlert = true
+                }) {
                     Image(systemName: "xmark")
                         .foregroundStyle(.gray)
                         .font(.footnote)
@@ -145,7 +178,16 @@ struct ScoreboardView: View {
                 WatchSessionManager.shared.sendMatchState(match: match)
             })
         }
-        .fullScreenCover(isPresented: $showMatchOver) {
+        .fullScreenCover(isPresented: $showMatchOver, onDismiss: {
+            // 用户按数码表冠关闭了 MatchSummaryView，确保记录已保存
+            if match.isMatchOver {
+                match.endTime = match.endTime ?? Date()
+                MatchStore.shared.saveToHistory(match)
+                WatchSessionManager.shared.sendMatchHistory(match: match)
+                OpponentStore.shared.add(match.teamAName)
+                OpponentStore.shared.add(match.teamBName)
+            }
+        }) {
             MatchSummaryView(match: match)
         }
         .onChange(of: showMatchOver) { _, isShowing in
@@ -190,8 +232,23 @@ struct ScoreboardView: View {
         .animation(.easeInOut(duration: 0.3), value: transferMessage)
         .confirmationDialog("退出比赛", isPresented: $showExitAlert) {
             Button("继续比赛", role: .cancel) { }
-            Button("保存并退出") { savePartialMatchAndExit() }
+            Button("保存并退出") {
+                // Save to history (even if match not fully over)
+                let hasScores = match.games.contains { $0.scoreA > 0 || $0.scoreB > 0 }
+                if hasScores {
+                    match.endTime = match.endTime ?? Date()
+                    MatchStore.shared.saveToHistory(match)
+                    WatchSessionManager.shared.sendMatchHistory(match: match)
+                    OpponentStore.shared.add(match.teamAName)
+                    OpponentStore.shared.add(match.teamBName)
+                }
+                workoutManager.pauseSession()
+                MatchStore.shared.clear()
+                dismiss()
+            }
             Button("放弃本场", role: .destructive) {
+                workoutManager.pauseSession()
+                WatchSessionManager.shared.sendMatchTerminated(match: match)
                 MatchStore.shared.clear()
                 dismiss()
             }
@@ -240,19 +297,29 @@ struct ScoreboardView: View {
     // MARK: - Actions
 
     private func scorePoint(teamA: Bool) {
+        guard !match.currentGame.isOver else { return }
         ScoringEngine.addPoint(to: match, teamAScores: teamA)
-        MatchStore.shared.save(match)
+
+        // Throttle saves: only persist every 5 points or when game/match is over
+        let totalScore = match.currentGame.scoreA + match.currentGame.scoreB
+        if totalScore % 5 == 0 || match.currentGame.isOver {
+            MatchStore.shared.save(match)
+        }
+
+        // Send live score to iPhone
         WatchSessionManager.shared.sendMatchState(match: match)
     }
 
     private func savePartialMatchAndExit() {
-        match.endTime = Date()
-        MatchStore.shared.saveToHistory(match)
-        MatchStore.shared.clear()
+        // 暂停比赛，保留到 current_match 供"继续上场"，不写入历史
+        MatchStore.shared.save(match)
+        workoutManager.pauseSession()
+        WatchSessionManager.shared.sendMatchTerminated(match: match)
         dismiss()
     }
 
     private func undoPointForTeam(teamA: Bool) {
+        guard !match.currentGame.isOver else { return }
         let game = match.currentGame
         guard !game.history.isEmpty else {
             WKInterfaceDevice.current().play(.failure)
@@ -281,11 +348,4 @@ struct ScoreboardView: View {
         }
     }
 
-    // MARK: - Extended Runtime Session (keep alive on wrist raise)
-
-    private func startExtendedSession() {
-        let session = WKExtendedRuntimeSession()
-        session.start()
-        extendedSession = session
-    }
 }

@@ -17,12 +17,19 @@ class MatchStore: ObservableObject {
         currentMatch = match
     }
 
+    @discardableResult
     func load() -> MatchState? {
-        guard let data = UserDefaults.standard.data(forKey: key) else { return nil }
+        guard let data = UserDefaults.standard.data(forKey: key) else {
+            currentMatch = nil
+            return nil
+        }
         do {
-            return try JSONDecoder().decode(MatchState.self, from: data)
+            let match = try JSONDecoder().decode(MatchState.self, from: data)
+            currentMatch = match
+            return match
         } catch {
             print("[MatchStore] 读取比赛失败: \(error)")
+            currentMatch = nil
             return nil
         }
     }
@@ -37,17 +44,21 @@ class MatchStore: ObservableObject {
     private let historyKey = "match_history"
 
     func saveToHistory(_ match: MatchState) {
-        guard let record = MatchRecord.from(match) else { return }
+        guard let record = MatchRecord.from(match) else {
+            print("[MatchStore] saveToHistory: MatchRecord.from returned nil (endTime=\(String(describing: match.endTime)))")
+            return
+        }
+
         var history = loadHistory()
+        // Dedup by startTime — same match always has the same startTime,
+        // whereas MatchRecord.id is a fresh UUID each call
+        if history.contains(where: { $0.startTime == record.startTime }) { return }
+
         history.insert(record, at: 0)
-        // Only keep records from the last 30 days
         let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
         history = history.filter { $0.startTime > cutoff }
-        do {
-            let data = try JSONEncoder().encode(history)
+        if let data = try? JSONEncoder().encode(history) {
             UserDefaults.standard.set(data, forKey: historyKey)
-        } catch {
-            print("[MatchStore] 保存历史失败: \(error)")
         }
     }
 

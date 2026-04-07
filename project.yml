@@ -31,6 +31,7 @@ targets:
     info:
       path: ShuttleScoreConnector/Info.plist
       properties:
+        UILaunchScreen: {}
         UIRequiresFullScreen: true
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
@@ -56,9 +57,17 @@ targets:
         CFBundleDisplayName: 羽毛球计分器
         WKApplication: true
         WKCompanionAppBundleIdentifier: com.clawd.shuttlescore
+        NSHealthShareUsageDescription: "ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里"
+        NSHealthUpdateUsageDescription: "ShuttleScore 需要写入运动数据以记录您的羽毛球比赛"
+    entitlements:
+      path: ShuttleScore Watch App/ShuttleScore.entitlements
+      properties:
+        com.apple.developer.healthkit: true
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.clawd.shuttlescore.watchkitapp
         SWIFT_VERSION: "5.0"
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: RWHXW7J963
+        INFOPLIST_KEY_NSHealthShareUsageDescription: "ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里"
+        INFOPLIST_KEY_NSHealthUpdateUsageDescription: "ShuttleScore 需要写入运动数据以记录您的羽毛球比赛"

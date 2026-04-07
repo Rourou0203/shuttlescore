@@ -31,6 +31,22 @@ struct MatchSetupView: View {
                 Section("队伍名称") {
                     TextField("A队名称", text: $teamAName)
                     TextField("B队名称", text: $teamBName)
+                    NavigationLink {
+                        OpponentPickerView(selectedName: $teamBName)
+                    } label: {
+                        HStack {
+                            Image(systemName: "person.2.fill")
+                                .foregroundStyle(.orange)
+                            Text("选择对手")
+                                .font(.system(.footnote, design: .rounded))
+                            Spacer()
+                            if teamBName != "对手" {
+                                Text(teamBName)
+                                    .font(.system(.caption, design: .rounded))
+                                    .foregroundStyle(.gray)
+                            }
+                        }
+                    }
                 }
 
                 Section("局数") {

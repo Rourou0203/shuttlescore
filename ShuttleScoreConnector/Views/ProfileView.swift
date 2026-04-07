@@ -5,85 +5,88 @@ struct ProfileView: View {
     @StateObject private var store = MatchHistoryStore.shared
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.black.ignoresSafeArea()
+        ZStack {
+            Color.black.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 24) {
-                        // Avatar section
-                        VStack(spacing: 12) {
-                            Image(profile.favoriteCat)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 100, height: 100)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.orange, lineWidth: 3))
-                                .shadow(color: .orange.opacity(0.3), radius: 10)
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("我的")
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                            Text("羽毛球小将")
-                                .font(.system(.title2, design: .rounded, weight: .bold))
-                                .foregroundColor(.white)
-                        }
-                        .padding(.top, 10)
+                    // Avatar + name
+                    VStack(spacing: 8) {
+                        Image(profile.favoriteCat)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 90, height: 90)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.orange, lineWidth: 3))
+                            .shadow(color: .orange.opacity(0.3), radius: 8)
 
-                        // Stats row
-                        HStack(spacing: 16) {
-                            profileStat(title: "胜率", value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-")
-                            divider
-                            profileStat(title: "比赛数", value: "\(store.totalMatches)")
-                            divider
-                            profileStat(title: "总时长", value: formatMinutes(store.totalMinutes))
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-
-                        // Favorite cat selection
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("本命猫")
-                                .font(.system(.headline, design: .rounded))
-                                .foregroundColor(.white)
-
-                            HStack(spacing: 20) {
-                                ForEach(Array(zip(ProfileStore.availableCats, ProfileStore.catNames)), id: \.0) { cat, name in
-                                    catSelector(cat: cat, name: name)
-                                }
-                            }
-                            .frame(maxWidth: .infinity)
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-
-                        // Additional stats
-                        VStack(alignment: .leading, spacing: 14) {
-                            Text("更多数据")
-                                .font(.system(.headline, design: .rounded))
-                                .foregroundColor(.white)
-
-                            detailRow(icon: "flame", title: "最长连胜", value: "\(store.longestWinStreak) 场")
-                            detailRow(icon: "trophy", title: "总胜场", value: "\(store.totalWins) 场")
-                            detailRow(icon: "sportscourt", title: "总比赛", value: "\(store.totalMatches) 场")
-                        }
-                        .padding()
-                        .background(Color.white.opacity(0.06))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-
-                        // Version
-                        Text("ShuttleScore v1.0")
-                            .font(.system(.caption, design: .rounded))
-                            .foregroundColor(.gray.opacity(0.5))
-                            .padding(.top, 10)
+                        Text("羽毛球小将")
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundColor(.white)
                     }
-                    .padding()
+
+                    // Stats row
+                    HStack(spacing: 16) {
+                        profileStat(title: "胜率", value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-")
+                        divider
+                        profileStat(title: "比赛数", value: "\(store.totalMatches)")
+                        divider
+                        profileStat(title: "总时长", value: formatMinutes(store.totalMinutes))
+                    }
+                    .padding(.vertical, 12)
+                    .padding(.horizontal)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                    // Favorite cat selection
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("本命猫")
+                            .font(.system(.headline, design: .rounded))
+                            .foregroundColor(.white)
+
+                        HStack(spacing: 16) {
+                            ForEach(Array(zip(ProfileStore.availableCats, ProfileStore.catNames)), id: \.0) { cat, name in
+                                catSelector(cat: cat, name: name)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                    // Additional stats
+                    VStack(alignment: .leading, spacing: 14) {
+                        Text("更多数据")
+                            .font(.system(.headline, design: .rounded))
+                            .foregroundColor(.white)
+
+                        detailRow(icon: "flame", title: "最长连胜", value: "\(store.longestWinStreak) 场")
+                        detailRow(icon: "trophy", title: "总胜场", value: "\(store.totalWins) 场")
+                        detailRow(icon: "sportscourt", title: "总比赛", value: "\(store.totalMatches) 场")
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
+                    Text("ShuttleScore v1.0")
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding(.top, 4)
                 }
+                .padding(.horizontal, 16)
             }
-            .navigationTitle("我的")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .onAppear { store.refresh() }
         }
+        .onAppear { store.refresh() }
     }
 
     private func catSelector(cat: String, name: String) -> some View {
@@ -93,39 +96,29 @@ struct ProfileView: View {
                 profile.favoriteCat = cat
             }
         } label: {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 Image(cat)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: isSelected ? 70 : 55, height: isSelected ? 70 : 55)
+                    .frame(width: isSelected ? 60 : 50, height: isSelected ? 60 : 50)
                     .clipShape(Circle())
                     .overlay(
                         Circle()
                             .stroke(isSelected ? Color.orange : Color.gray.opacity(0.3), lineWidth: isSelected ? 3 : 1)
                     )
-                    .shadow(color: isSelected ? .orange.opacity(0.4) : .clear, radius: 8)
-
+                    .shadow(color: isSelected ? .orange.opacity(0.4) : .clear, radius: 6)
                 Text(name)
                     .font(.system(.caption, design: .rounded))
                     .foregroundColor(isSelected ? .orange : .gray)
-
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.caption)
-                        .foregroundColor(.orange)
-                } else {
-                    Image(systemName: "circle")
-                        .font(.caption)
-                        .foregroundColor(.gray.opacity(0.3))
-                }
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .font(.caption2)
+                    .foregroundColor(isSelected ? .orange : .gray.opacity(0.3))
             }
         }
     }
 
     private var divider: some View {
-        Rectangle()
-            .fill(Color.gray.opacity(0.3))
-            .frame(width: 1, height: 40)
+        Rectangle().fill(Color.gray.opacity(0.3)).frame(width: 1, height: 36)
     }
 
     private func profileStat(title: String, value: String) -> some View {
@@ -143,29 +136,22 @@ struct ProfileView: View {
     private func detailRow(icon: String, title: String, value: String) -> some View {
         HStack {
             Image(systemName: icon)
-                .font(.system(.body, design: .rounded))
+                .font(.system(.callout, design: .rounded))
                 .foregroundColor(.orange)
-                .frame(width: 30)
-
+                .frame(width: 28)
             Text(title)
-                .font(.system(.body, design: .rounded))
+                .font(.system(.callout, design: .rounded))
                 .foregroundColor(.white)
-
             Spacer()
-
             Text(value)
-                .font(.system(.body, design: .rounded, weight: .medium))
+                .font(.system(.callout, design: .rounded, weight: .medium))
                 .foregroundColor(.gray)
         }
     }
 
     private func formatMinutes(_ minutes: Int) -> String {
-        if minutes < 60 {
-            return "\(minutes)分"
-        }
-        let hours = minutes / 60
-        let mins = minutes % 60
-        return "\(hours)时\(mins)分"
+        if minutes < 60 { return "\(minutes)分" }
+        return "\(minutes / 60)时\(minutes % 60)分"
     }
 }
 

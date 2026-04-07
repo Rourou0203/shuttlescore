@@ -26,15 +26,21 @@ struct ContentView: View {
                 }
                 .tag(2)
 
+            OpponentStatsView()
+                .tabItem {
+                    Image(systemName: "person.2")
+                    Text("对手")
+                }
+                .tag(3)
+
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
                     Text("我的")
                 }
-                .tag(3)
+                .tag(4)
         }
         .tint(.orange)
-        .preferredColorScheme(.dark)
         .onAppear {
             PhoneSessionManager.shared.activateSession()
         }

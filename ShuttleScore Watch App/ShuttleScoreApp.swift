@@ -7,6 +7,8 @@ struct ShuttleScoreApp: App {
             HomeView()
                 .onAppear {
                     WatchSessionManager.shared.activateSession()
+                    WorkoutManager.shared.requestAuthorization()
+                    WorkoutManager.shared.checkAndRecoverSession()
                 }
         }
     }

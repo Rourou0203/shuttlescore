@@ -5,49 +5,51 @@ struct AchievementsView: View {
     @State private var achievements: [Achievement] = []
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.black.ignoresSafeArea()
+        ZStack {
+            Color.black.ignoresSafeArea()
 
-                ScrollView {
-                    VStack(spacing: 16) {
-                        // Header
-                        VStack(spacing: 8) {
-                            Image("cat_orange")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 80, height: 80)
-                                .clipShape(Circle())
-                                .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
+            ScrollView {
+                VStack(spacing: 16) {
+                    Text("成就")
+                        .font(.system(.title2, design: .rounded))
+                        .fontWeight(.bold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity, alignment: .leading)
 
-                            let unlocked = achievements.filter(\.isUnlocked).count
-                            Text("\(unlocked) / \(achievements.count)")
-                                .font(.system(.title2, design: .rounded, weight: .bold))
-                                .foregroundColor(.white)
+                    // Header
+                    VStack(spacing: 8) {
+                        Image("cat_orange")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 100, height: 100)
+                            .clipShape(Circle())
+                            .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
 
-                            Text("已解锁成就")
-                                .font(.system(.subheadline, design: .rounded))
-                                .foregroundColor(.gray)
-                        }
-                        .padding(.top, 10)
+                        let unlocked = achievements.filter(\.isUnlocked).count
+                        Text("\(unlocked) / \(achievements.count)")
+                            .font(.system(.title, design: .rounded, weight: .bold))
+                            .foregroundColor(.white)
 
-                        // Achievement grid
-                        LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 14) {
-                            ForEach(achievements) { achievement in
-                                AchievementCard(achievement: achievement)
-                            }
+                        Text("已解锁成就")
+                            .font(.system(.subheadline, design: .rounded))
+                            .foregroundColor(.gray)
+                    }
+                    .frame(maxWidth: .infinity)
+
+                    // Achievement grid
+                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                        ForEach(achievements) { achievement in
+                            AchievementCard(achievement: achievement)
                         }
                     }
-                    .padding()
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 16)
             }
-            .navigationTitle("成就")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .onAppear {
-                store.refresh()
-                achievements = AchievementManager.evaluate(with: store)
-            }
+        }
+        .onAppear {
+            store.refresh()
+            achievements = AchievementManager.evaluate(with: store)
         }
     }
 }
@@ -72,7 +74,7 @@ struct AchievementCard: View {
                 Image(catImage)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 50, height: 50)
+                    .frame(width: 60, height: 60)
                     .clipShape(Circle())
                     .saturation(achievement.isUnlocked ? 1 : 0)
                     .opacity(achievement.isUnlocked ? 1 : 0.3)
@@ -97,8 +99,8 @@ struct AchievementCard: View {
                 .foregroundColor(.gray.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
-        .padding(.vertical, 16)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 18)
+        .padding(.horizontal, 12)
         .frame(maxWidth: .infinity)
         .background(
             achievement.isUnlocked

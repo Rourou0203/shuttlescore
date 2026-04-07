@@ -24,5 +24,9 @@
 	<true/>
 	<key>WKCompanionAppBundleIdentifier</key>
 	<string>com.clawd.shuttlescore</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>ShuttleScore 需要写入运动数据以记录您的羽毛球比赛</string>
 </dict>
 </plist>
