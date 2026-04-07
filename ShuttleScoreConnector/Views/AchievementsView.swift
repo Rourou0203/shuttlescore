@@ -18,11 +18,7 @@ struct AchievementsView: View {
 
                     // Header
                     VStack(spacing: 8) {
-                        Image("cat_orange")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 100, height: 100)
-                            .clipShape(Circle())
+                        TeamAvatarView(isTeamA: true, size: 100)
                             .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
 
                         let unlocked = achievements.filter(\.isUnlocked).count

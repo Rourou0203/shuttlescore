@@ -29,7 +29,6 @@ struct PhoneScoreboardView: View {
                             isTeamA: true,
                             name: match.teamAName,
                             score: match.currentGame.scoreA,
-                            avatar: "cat_orange",
                             accentColor: .orange,
                             avatarSize: avatarSize,
                             scoreFontSize: scoreFontSize
@@ -46,7 +45,6 @@ struct PhoneScoreboardView: View {
                             isTeamA: false,
                             name: match.teamBName,
                             score: match.currentGame.scoreB,
-                            avatar: "cat_robe",
                             accentColor: .cyan,
                             avatarSize: avatarSize,
                             scoreFontSize: scoreFontSize
@@ -134,7 +132,6 @@ struct PhoneScoreboardView: View {
         isTeamA: Bool,
         name: String,
         score: Int,
-        avatar: String,
         accentColor: Color,
         avatarSize: CGFloat,
         scoreFontSize: CGFloat
@@ -142,64 +139,76 @@ struct PhoneScoreboardView: View {
         let isServing = match.currentGame.servingTeamIsA == isTeamA
         let isGameOver = match.currentGame.isOver
 
-        return Button(action: {
+        return VStack(spacing: 16) {
+            // Serving indicator
+            if isServing && !isGameOver {
+                HStack(spacing: 4) {
+                    Circle()
+                        .fill(Color.yellow)
+                        .frame(width: 6, height: 6)
+                    Text("发球")
+                        .font(.system(.caption2, design: .rounded))
+                        .foregroundColor(.yellow)
+                }
+                .transition(.opacity)
+            } else {
+                Color.clear.frame(height: 14)
+            }
+
+            // Avatar
+            TeamAvatarView(isTeamA: isTeamA, size: avatarSize)
+                .overlay(
+                    Circle().stroke(
+                        isServing ? Color.yellow.opacity(0.6) : Color.clear,
+                        lineWidth: 2
+                    )
+                )
+
+            // Name
+            Text(name)
+                .font(.system(.headline, design: .rounded))
+                .foregroundColor(accentColor)
+
+            // Score
+            Text("\(score)")
+                .font(.system(size: scoreFontSize, weight: .bold, design: .rounded))
+                .foregroundColor(.white)
+                .contentTransition(.numericText())
+                .opacity(isServing || isGameOver ? 1.0 : 0.6)
+
+            // Gesture hint
+            if !isGameOver {
+                Text("↑加分  ↓撤销")
+                    .font(.system(.caption2, design: .rounded))
+                    .foregroundColor(.gray.opacity(0.5))
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .contentShape(Rectangle())
+        .onTapGesture {
             guard !isGameOver else { return }
             withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                 match.addPoint(teamA: isTeamA)
             }
-        }) {
-            VStack(spacing: 16) {
-                // Serving indicator
-                if isServing && !isGameOver {
-                    HStack(spacing: 4) {
-                        Circle()
-                            .fill(Color.yellow)
-                            .frame(width: 6, height: 6)
-                        Text("发球")
-                            .font(.system(.caption2, design: .rounded))
-                            .foregroundColor(.yellow)
-                    }
-                    .transition(.opacity)
-                } else {
-                    Color.clear.frame(height: 14)
-                }
-
-                // Avatar
-                Image(avatar)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: avatarSize, height: avatarSize)
-                    .clipShape(Circle())
-                    .overlay(
-                        Circle().stroke(
-                            isServing ? Color.yellow.opacity(0.6) : Color.clear,
-                            lineWidth: 2
-                        )
-                    )
-
-                // Name
-                Text(name)
-                    .font(.system(.headline, design: .rounded))
-                    .foregroundColor(accentColor)
-
-                // Score
-                Text("\(score)")
-                    .font(.system(size: scoreFontSize, weight: .bold, design: .rounded))
-                    .foregroundColor(.white)
-                    .contentTransition(.numericText())
-                    .opacity(isServing || isGameOver ? 1.0 : 0.6)
-
-                // Tap hint
-                if !isGameOver {
-                    Text("点击加分")
-                        .font(.system(.caption2, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.5))
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .contentShape(Rectangle())
         }
-        .buttonStyle(.plain)
+        .gesture(
+            DragGesture(minimumDistance: 30, coordinateSpace: .local)
+                .onEnded { value in
+                    guard !isGameOver else { return }
+                    let dy = value.translation.height
+                    if dy < -30 {
+                        // Swipe up = add point
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                            match.addPoint(teamA: isTeamA)
+                        }
+                    } else if dy > 30 {
+                        // Swipe down = undo last point for this team
+                        withAnimation(.spring(response: 0.3)) {
+                            match.undoForTeam(teamA: isTeamA)
+                        }
+                    }
+                }
+        )
     }
 
     // MARK: - Bottom Bar
@@ -323,14 +332,9 @@ struct PhoneScoreboardView: View {
                 // Winner announcement
                 let winnerIsA = match.matchWinner == true
                 let winnerName = winnerIsA ? match.teamAName : match.teamBName
-                let winnerAvatar = winnerIsA ? "cat_orange" : "cat_robe"
                 let winnerColor: Color = winnerIsA ? .orange : .cyan
 
-                Image(winnerAvatar)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 100, height: 100)
-                    .clipShape(Circle())
+                TeamAvatarView(isTeamA: winnerIsA, size: 100)
                     .overlay(Circle().stroke(winnerColor, lineWidth: 3))
 
                 Text("\(winnerName) 获胜!")

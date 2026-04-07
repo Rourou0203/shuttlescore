@@ -23,11 +23,7 @@ struct PhoneSetupView: View {
                 VStack(spacing: 28) {
                     // Header
                     VStack(spacing: 8) {
-                        Image("cat_orange")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 80, height: 80)
-                            .clipShape(Circle())
+                        TeamAvatarView(isTeamA: true, size: 80)
                             .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
 
                         Text("赛前设置")
@@ -59,11 +55,7 @@ struct PhoneSetupView: View {
                     settingSection(title: "队伍名称") {
                         HStack(spacing: 16) {
                             VStack(spacing: 6) {
-                                Image("cat_orange")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40, height: 40)
-                                    .clipShape(Circle())
+                                TeamAvatarView(isTeamA: true, size: 40)
                                 TextField("A队", text: $teamAName)
                                     .textFieldStyle(.plain)
                                     .font(.system(.body, design: .rounded))
@@ -80,11 +72,7 @@ struct PhoneSetupView: View {
                                 .foregroundColor(.gray)
 
                             VStack(spacing: 6) {
-                                Image("cat_robe")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 40, height: 40)
-                                    .clipShape(Circle())
+                                TeamAvatarView(isTeamA: false, size: 40)
                                 TextField("B队", text: $teamBName)
                                     .textFieldStyle(.plain)
                                     .font(.system(.body, design: .rounded))

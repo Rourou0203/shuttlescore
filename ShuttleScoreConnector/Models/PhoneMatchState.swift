@@ -116,6 +116,28 @@ class PhoneMatchState: ObservableObject, Identifiable {
         endTime = nil
     }
 
+    /// Undo the last point only if it was scored by the specified team.
+    /// Returns true if undo succeeded, false if the last point wasn't from that team.
+    @discardableResult
+    func undoForTeam(teamA: Bool) -> Bool {
+        guard !currentGame.history.isEmpty else { return false }
+        let game = currentGame
+        let prev = game.history.last!
+        // Determine who scored the last point by comparing current vs previous snapshot
+        let lastPointWasTeamA = game.scoreA > prev.scoreA
+        if lastPointWasTeamA == teamA {
+            undo()
+            let impact = UIImpactFeedbackGenerator(style: .medium)
+            impact.impactOccurred()
+            return true
+        } else {
+            // Wrong team — give error feedback
+            let feedback = UINotificationFeedbackGenerator()
+            feedback.notificationOccurred(.error)
+            return false
+        }
+    }
+
     func startNextGame() {
         guard currentGame.isOver && !isMatchOver else { return }
         // BWF 规则：下一局由输局方先发

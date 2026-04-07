@@ -47,6 +47,8 @@ class WorkoutManager: NSObject, ObservableObject {
             if isPaused {
                 session.resume()
                 isPaused = false
+                // Begin a new activity segment for this match
+                beginMatchActivity()
                 if var state = SessionState.load() {
                     state.isPaused = false
                     state.matchCount += 1
@@ -79,15 +81,8 @@ class WorkoutManager: NSObject, ObservableObject {
     func pauseSession() {
         guard let session = workoutSession else { return }
 
-        // Add a lap event so Fitness app shows each match as a segment
-        if let builder = workoutBuilder {
-            let event = HKWorkoutEvent(type: .lap, dateInterval: DateInterval(start: Date(), duration: 1), metadata: nil)
-            builder.addWorkoutEvents([event]) { _, error in
-                if let error = error {
-                    print("[WorkoutManager] Add lap event failed: \(error.localizedDescription)")
-                }
-            }
-        }
+        // End current match activity segment so Fitness shows per-match duration/calories
+        session.endCurrentActivity(on: Date())
 
         session.pause()
         isPaused = true
@@ -205,10 +200,12 @@ class WorkoutManager: NSObject, ObservableObject {
             let now = Date()
 
             session.startActivity(with: now)
-            builder.beginCollection(withStart: now) { success, error in
+            builder.beginCollection(withStart: now) { [weak self] success, error in
                 if let error = error {
                     print("[WorkoutManager] Begin collection failed: \(error.localizedDescription)")
                 }
+                // Begin first match activity segment after collection starts
+                self?.beginMatchActivity()
             }
 
             var state = SessionState()
@@ -224,6 +221,15 @@ class WorkoutManager: NSObject, ObservableObject {
         } catch {
             print("[WorkoutManager] Failed to create workout session: \(error.localizedDescription)")
         }
+    }
+
+    /// Begin a new HKWorkoutActivity for the current match, so Fitness shows per-match stats
+    private func beginMatchActivity() {
+        guard let session = workoutSession else { return }
+        let config = HKWorkoutConfiguration()
+        config.activityType = .badminton
+        config.locationType = .indoor
+        session.beginNewActivity(configuration: config, date: Date(), metadata: nil)
     }
 
     // MARK: - Helpers

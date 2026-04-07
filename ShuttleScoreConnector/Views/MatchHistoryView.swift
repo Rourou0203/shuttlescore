@@ -6,6 +6,9 @@ struct MatchHistoryView: View {
     @State private var recordToDelete: MatchRecord?
     @State private var showDeleteConfirmation = false
     @State private var selectedDate: String?
+    @State private var isEditing = false
+    @State private var selectedRecordIds: Set<UUID> = []
+    @State private var showBatchDeleteConfirm = false
 
     var body: some View {
         NavigationStack {
@@ -50,6 +53,20 @@ struct MatchHistoryView: View {
             if let record = recordToDelete {
                 Text("确定要删除 \(record.teamAName) vs \(record.teamBName) 的比赛记录吗？")
             }
+        }
+        .alert("确认删除", isPresented: $showBatchDeleteConfirm) {
+            Button("删除\(selectedRecordIds.count)条记录", role: .destructive) {
+                withAnimation {
+                    for id in selectedRecordIds {
+                        store.deleteRecord(id: id)
+                    }
+                    selectedRecordIds.removeAll()
+                    isEditing = false
+                }
+            }
+            Button("取消", role: .cancel) {}
+        } message: {
+            Text("确定要删除选中的\(selectedRecordIds.count)条比赛记录吗？此操作不可撤销。")
         }
     }
 
@@ -113,7 +130,7 @@ struct MatchHistoryView: View {
 
                     Spacer()
 
-                    if selectedDate != nil {
+                    if selectedDate != nil && !isEditing {
                         Button {
                             withAnimation { selectedDate = nil }
                         } label: {
@@ -122,10 +139,21 @@ struct MatchHistoryView: View {
                                 .foregroundColor(.orange)
                         }
                     }
+
+                    Button {
+                        withAnimation {
+                            isEditing.toggle()
+                            if !isEditing { selectedRecordIds.removeAll() }
+                        }
+                    } label: {
+                        Text(isEditing ? "完成" : "编辑")
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundColor(.orange)
+                    }
                 }
 
-                if selectedDate == nil {
-                    Text("长按编辑比分，左滑删除")
+                if selectedDate == nil && !isEditing {
+                    Text("长按记录可编辑或删除")
                         .font(.system(.caption2, design: .rounded))
                         .foregroundColor(.gray.opacity(0.6))
                 }
@@ -161,25 +189,77 @@ struct MatchHistoryView: View {
                         }
 
                         ForEach(group.records) { record in
-                            NavigationLink(destination: MatchDetailView(record: record)) {
-                                MatchRowView(record: record)
-                            }
-                            .contextMenu {
-                                Button {
-                                    recordToEdit = record
-                                } label: {
-                                    Label("编辑比分", systemImage: "pencil")
-                                }
+                            if isEditing {
+                                HStack(spacing: 12) {
+                                    Image(systemName: selectedRecordIds.contains(record.id) ? "checkmark.circle.fill" : "circle")
+                                        .font(.system(.title3))
+                                        .foregroundColor(selectedRecordIds.contains(record.id) ? .orange : .gray)
 
-                                Button(role: .destructive) {
-                                    recordToDelete = record
-                                    showDeleteConfirmation = true
-                                } label: {
-                                    Label("删除记录", systemImage: "trash")
+                                    MatchRowView(record: record)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    withAnimation(.easeInOut(duration: 0.15)) {
+                                        if selectedRecordIds.contains(record.id) {
+                                            selectedRecordIds.remove(record.id)
+                                        } else {
+                                            selectedRecordIds.insert(record.id)
+                                        }
+                                    }
+                                }
+                            } else {
+                                NavigationLink(destination: MatchDetailView(record: record)) {
+                                    MatchRowView(record: record)
+                                }
+                                .contextMenu {
+                                    Button {
+                                        recordToEdit = record
+                                    } label: {
+                                        Label("编辑比分", systemImage: "pencil")
+                                    }
+                                    Button(role: .destructive) {
+                                        recordToDelete = record
+                                        showDeleteConfirmation = true
+                                    } label: {
+                                        Label("删除记录", systemImage: "trash")
+                                    }
                                 }
                             }
                         }
                     }
+                }
+
+                // Batch action bar in edit mode
+                if isEditing {
+                    HStack {
+                        Button {
+                            withAnimation {
+                                let allIds = Set(filteredRecordsByDate.flatMap { $0.records.map { $0.id } })
+                                if selectedRecordIds.isSuperset(of: allIds) {
+                                    selectedRecordIds.removeAll()
+                                } else {
+                                    selectedRecordIds.formUnion(allIds)
+                                }
+                            }
+                        } label: {
+                            let allIds = Set(filteredRecordsByDate.flatMap { $0.records.map { $0.id } })
+                            Text(selectedRecordIds.isSuperset(of: allIds) ? "取消全选" : "全选")
+                                .font(.system(.subheadline, design: .rounded))
+                                .foregroundColor(.orange)
+                        }
+
+                        Spacer()
+
+                        Button {
+                            showBatchDeleteConfirm = true
+                        } label: {
+                            Text("删除(\(selectedRecordIds.count))")
+                                .font(.system(.subheadline, design: .rounded, weight: .medium))
+                                .foregroundColor(selectedRecordIds.isEmpty ? .gray : .red)
+                        }
+                        .disabled(selectedRecordIds.isEmpty)
+                    }
+                    .padding(.vertical, 8)
                 }
             }
         }
@@ -188,11 +268,7 @@ struct MatchHistoryView: View {
 
     private var emptyState: some View {
         VStack(spacing: 16) {
-            Image("cat_orange")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 120, height: 120)
-                .clipShape(Circle())
+            TeamAvatarView(isTeamA: true, size: 120)
                 .opacity(0.5)
 
             Text("还没有比赛记录")
@@ -438,12 +514,8 @@ struct MatchRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // Cat avatar: orange for win, robe for loss
-            Image(record.teamAWon ? "cat_orange" : "cat_robe")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 50, height: 50)
-                .clipShape(Circle())
+            // Cat avatar: custom/orange for win, robe for loss
+            TeamAvatarView(isTeamA: record.teamAWon, size: 50)
 
             VStack(alignment: .leading, spacing: 4) {
                 HStack {
@@ -535,11 +607,7 @@ struct MatchDetailView: View {
 
     private var winnerBanner: some View {
         VStack(spacing: 8) {
-            Image(record.teamAWon ? "cat_orange" : "cat_robe")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 80, height: 80)
-                .clipShape(Circle())
+            TeamAvatarView(isTeamA: record.teamAWon, size: 80)
                 .overlay(
                     Circle().stroke(Color.yellow, lineWidth: 3)
                 )

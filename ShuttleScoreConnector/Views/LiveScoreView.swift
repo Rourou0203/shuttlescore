@@ -125,11 +125,7 @@ struct LiveScoreView: View {
                 // Main score display
                 HStack(spacing: 0) {
                     VStack(spacing: 16) {
-                        Image("cat_orange")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: avatarSize, height: avatarSize)
-                            .clipShape(Circle())
+                        TeamAvatarView(isTeamA: true, size: avatarSize)
                         Text(session.teamAName)
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.orange)
@@ -146,11 +142,7 @@ struct LiveScoreView: View {
                         .frame(width: 44)
 
                     VStack(spacing: 16) {
-                        Image("cat_robe")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: avatarSize, height: avatarSize)
-                            .clipShape(Circle())
+                        TeamAvatarView(isTeamA: false, size: avatarSize)
                         Text(session.teamBName)
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.cyan)

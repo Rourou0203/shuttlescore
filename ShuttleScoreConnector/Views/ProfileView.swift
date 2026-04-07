@@ -1,8 +1,13 @@
 import SwiftUI
+import PhotosUI
 
 struct ProfileView: View {
     @StateObject private var profile = ProfileStore.shared
     @StateObject private var store = MatchHistoryStore.shared
+
+    @State private var selectedPhoto: PhotosPickerItem?
+    @State private var isEditingName = false
+    @State private var editedName = ""
 
     var body: some View {
         ZStack {
@@ -18,17 +23,84 @@ struct ProfileView: View {
 
                     // Avatar + name
                     VStack(spacing: 8) {
-                        Image(profile.favoriteCat)
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 90, height: 90)
-                            .clipShape(Circle())
-                            .overlay(Circle().stroke(Color.orange, lineWidth: 3))
-                            .shadow(color: .orange.opacity(0.3), radius: 8)
+                        PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                            ZStack(alignment: .bottomTrailing) {
+                                if let uiImage = profile.avatarImage {
+                                    Image(uiImage: uiImage)
+                                        .resizable()
+                                        .scaledToFill()
+                                        .frame(width: 90, height: 90)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.orange, lineWidth: 3))
+                                        .shadow(color: .orange.opacity(0.3), radius: 8)
+                                } else {
+                                    Image(profile.favoriteCat)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 90, height: 90)
+                                        .clipShape(Circle())
+                                        .overlay(Circle().stroke(Color.orange, lineWidth: 3))
+                                        .shadow(color: .orange.opacity(0.3), radius: 8)
+                                }
 
-                        Text("羽毛球小将")
-                            .font(.system(.title3, design: .rounded, weight: .bold))
-                            .foregroundColor(.white)
+                                // Camera badge
+                                Image(systemName: "camera.circle.fill")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.orange)
+                                    .background(Circle().fill(Color.black).frame(width: 20, height: 20))
+                            }
+                        }
+                        .onChange(of: selectedPhoto) { _, item in
+                            Task {
+                                if let data = try? await item?.loadTransferable(type: Data.self) {
+                                    // Compress to reasonable size for UserDefaults
+                                    if let uiImage = UIImage(data: data),
+                                       let compressed = uiImage.jpegData(compressionQuality: 0.6) {
+                                        profile.customAvatarData = compressed
+                                    } else {
+                                        profile.customAvatarData = data
+                                    }
+                                }
+                            }
+                        }
+
+                        // Reset avatar button
+                        if profile.customAvatarData != nil {
+                            Button {
+                                profile.customAvatarData = nil
+                            } label: {
+                                Label("恢复本命猫头像", systemImage: "arrow.uturn.backward")
+                                    .font(.system(.caption2, design: .rounded))
+                                    .foregroundColor(.gray)
+                            }
+                        }
+
+                        // Editable username
+                        Button {
+                            editedName = profile.username
+                            isEditingName = true
+                        } label: {
+                            HStack(spacing: 4) {
+                                Text(profile.username)
+                                    .font(.system(.title3, design: .rounded, weight: .bold))
+                                    .foregroundColor(.white)
+                                Image(systemName: "pencil")
+                                    .font(.caption)
+                                    .foregroundColor(.gray)
+                            }
+                        }
+                    }
+                    .alert("修改昵称", isPresented: $isEditingName) {
+                        TextField("输入昵称", text: $editedName)
+                        Button("取消", role: .cancel) {}
+                        Button("确定") {
+                            let trimmed = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
+                            if !trimmed.isEmpty {
+                                profile.username = trimmed
+                            }
+                        }
+                    } message: {
+                        Text("给自己取个响亮的名字吧")
                     }
 
                     // Stats row
