@@ -30,7 +30,8 @@ struct ScoringEngine {
         game.history.append(.init(
             scoreA: game.scoreA,
             scoreB: game.scoreB,
-            servingTeamIsA: game.servingTeamIsA
+            servingTeamIsA: game.servingTeamIsA,
+            opponentStreak: game.opponentStreak
         ))
 
         // Add score
@@ -39,6 +40,13 @@ struct ScoringEngine {
         // Update serve: scorer gets/keeps serve
         game.servingTeamIsA = teamAScores
 
+        // 更新对方连分计数（"对方" = teamB，即 !teamAScores）
+        if teamAScores {
+            game.opponentStreak = 0
+        } else {
+            game.opponentStreak += 1
+        }
+
         match.currentGame = game
 
         let serveChanged = wasServingA != teamAScores
@@ -46,6 +54,8 @@ struct ScoringEngine {
         // Haptic feedback
         if game.isOver {
             WKInterfaceDevice.current().play(.success)
+        } else if game.opponentStreak == 3 {
+            WKInterfaceDevice.current().play(.notification) // 连得3分预警
         } else if serveChanged {
             WKInterfaceDevice.current().play(.retry)    // serve changes
         } else {
@@ -71,6 +81,7 @@ struct ScoringEngine {
         game.scoreA = prev.scoreA
         game.scoreB = prev.scoreB
         game.servingTeamIsA = prev.servingTeamIsA
+        game.opponentStreak = prev.opponentStreak
         match.currentGame = game
 
         WKInterfaceDevice.current().play(.directionDown)

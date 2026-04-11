@@ -7,13 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		09298D9C65C803D05AAAEFC4 /* ELOManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E72EE733F82ADE4060575D0F /* ELOManager.swift */; };
 		0C8C66369674B977275E5EE2 /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C7DA1D76F4D90473686F723 /* AchievementsView.swift */; };
 		133A5711B48C277FD33A9A09 /* WorkoutManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FF8309CD5200894E3C2137A /* WorkoutManager.swift */; };
 		14303571A6A9C0423F8A6AA3 /* ProfileStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2280464BBAB7C522B7023135 /* ProfileStore.swift */; };
 		15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */; };
 		1D3EF542E502710F63A5B0CB /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */; };
+		1E01E8188AA409EFBEB79C64 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3E1BFA6903FA9E1343E61F /* LanguageManager.swift */; };
 		24D36C44E38DB5CE4A2283A3 /* MatchType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 61DE722D63C101868D12120A /* MatchType.swift */; };
 		2E704B4646A5E4CFE2F106A2 /* WatchSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */; };
+		2FE637A80D5D10F13E5A6296 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F629F925B0F52997D85DC0F /* SettingsView.swift */; };
 		3B8A6731D5EF188CF90027A9 /* MatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93879B7BB627CB1C015B8E97 /* MatchState.swift */; };
 		3E4225A6885D1EBEEDE6F0E2 /* PhoneMatchState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52815D76D29DD739D37A6626 /* PhoneMatchState.swift */; };
 		3EB30AE2C3F6B5A9145FF8CA /* LiveScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0349602CE7184D76ACBB0821 /* LiveScoreView.swift */; };
@@ -25,23 +28,30 @@
 		678EF1BB9F9886DEA9D3EE2B /* OpponentPickerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6BF24A93A92E6734818B843D /* OpponentPickerView.swift */; };
 		68BD258E9328029C7522C6E4 /* OpponentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 990DBDD6051263160776AF92 /* OpponentStore.swift */; };
 		68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */; };
+		75CF0603A137EADD2B06C85F /* ShuttleScoreComplicationExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = C003454255E8CBF5AE10AF4F /* ShuttleScoreComplicationExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		75ED4FA5B2386DD869960DAB /* MatchStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C9F63E609D70A9A8189E88F /* MatchStore.swift */; };
 		789027CDD89D066DB9889383 /* GameSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */; };
 		7A855D1D35C127B98A081668 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5844C25E6AB9B38449CA5FCF /* ProfileView.swift */; };
 		8BB35D2575D65EF8AB7C2C99 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C32531C4B13146E51281BDBD /* Assets.xcassets */; };
+		8C4E86D2F6E8EAAEF5799826 /* PeriodShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2C2C988B76453E7FCF445C45 /* PeriodShareCardView.swift */; };
 		924ABCCADD92540F720A2EF8 /* MatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */; };
 		94942911283ABA44B51E1905 /* ScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 32AAE3025E8644366F6584D2 /* ScoreboardView.swift */; };
 		9A2948160FC3829D0A68231A /* GameScore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA9D7788DB2434F6026890F7 /* GameScore.swift */; };
+		A07FA4903F0D0336DF8F969B /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 8D3F1D9A6FE5F7592BC83522 /* Localizable.xcstrings */; };
+		A620120E090654E98E6C6DD3 /* WatchLanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31ED7310B37AF5A1DC9321F8 /* WatchLanguageManager.swift */; };
 		ABC2A3BC2CA7FCE02646D657 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 97867A228741914FE779FA8E /* HomeView.swift */; };
 		ABD4B6C27E219DA4F8D27A30 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 92632864E7497DA235168CDA /* HistoryView.swift */; };
 		B4078389FD11B4D7211E8245 /* OpponentStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BA4CFC34A60598EEDBC0D5C /* OpponentStore.swift */; };
 		B72B8B1B2E9C2CD4189DE0A1 /* OpponentStatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 245C244C3922134B605B485A /* OpponentStatsView.swift */; };
+		B8C4F6B38CC98247A178FC6B /* ShuttleScoreComplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87EC5900A8517C8B03980548 /* ShuttleScoreComplication.swift */; };
 		BCABCF8313A7B75291A18780 /* MatchSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B38426058D38867EA758D49 /* MatchSetupView.swift */; };
 		C8931343CAD1E042BAA5AEC0 /* MatchHistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */; };
 		CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A32E88CD821CC3B825FD474E /* ContentView.swift */; };
 		CE41CBE8B6FFB7717F23B535 /* PhoneSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9755260AAA61661926806462 /* PhoneSessionManager.swift */; };
 		D5E679D3740FE8C1892D9E02 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */; };
 		D5EA99819BA988E3C6A0E217 /* PhoneScoreboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */; };
+		DC43005984797A39438BC062 /* ScoreAnnouncer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9ED94E6D1E21020AD65E1254 /* ScoreAnnouncer.swift */; };
+		DEC829974344F64A667D98DD /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 150AFF76C4190B6EB00B53F6 /* Localizable.xcstrings */; };
 		E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8988A353CC635E5510E0F1BC /* ScoringEngine.swift */; };
 		EA1C49CF177CD19C24C512BC /* MatchRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0251DA83DE4A75884A7B29E /* MatchRecord.swift */; };
 		EFF2B4ADA612A71A7CF3A032 /* MatchRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = D39A5254489B4585754A184D /* MatchRecord.swift */; };
@@ -58,6 +68,13 @@
 			remoteGlobalIDString = 39A2D03C98856226B5CD074C;
 			remoteInfo = "ShuttleScore Watch App";
 		};
+		55E5DE7749430C654A6F39A0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 03F4BA3E47B39748CF6E9949 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F2FCE25CB5C6AFDAF220122;
+			remoteInfo = ShuttleScoreComplicationExtension;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -72,6 +89,17 @@
 			name = "Embed Watch Content";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		BB4CD9553DDE44779E28F0ED /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				75CF0603A137EADD2B06C85F /* ShuttleScoreComplicationExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
@@ -79,6 +107,7 @@
 		0349602CE7184D76ACBB0821 /* LiveScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LiveScoreView.swift; sourceTree = "<group>"; };
 		0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "ShuttleScore Watch App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchSessionManager.swift; sourceTree = "<group>"; };
+		150AFF76C4190B6EB00B53F6 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		1BA4CFC34A60598EEDBC0D5C /* OpponentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStore.swift; sourceTree = "<group>"; };
 		1C7DA1D76F4D90473686F723 /* AchievementsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AchievementsView.swift; sourceTree = "<group>"; };
 		1C9F63E609D70A9A8189E88F /* MatchStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchStore.swift; sourceTree = "<group>"; };
@@ -86,29 +115,37 @@
 		2280464BBAB7C522B7023135 /* ProfileStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileStore.swift; sourceTree = "<group>"; };
 		245C244C3922134B605B485A /* OpponentStatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStatsView.swift; sourceTree = "<group>"; };
 		26A6F0DA2E085A7E01F15A4E /* ShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareCardView.swift; sourceTree = "<group>"; };
+		2C2C988B76453E7FCF445C45 /* PeriodShareCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeriodShareCardView.swift; sourceTree = "<group>"; };
 		2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreApp.swift; sourceTree = "<group>"; };
+		31ED7310B37AF5A1DC9321F8 /* WatchLanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchLanguageManager.swift; sourceTree = "<group>"; };
 		32AAE3025E8644366F6584D2 /* ScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreboardView.swift; sourceTree = "<group>"; };
 		4572C434833278FDF6CAA0E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchHistoryView.swift; sourceTree = "<group>"; };
 		48BB91CECF9A8FF0CAFF410D /* MatchDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchDetailView.swift; sourceTree = "<group>"; };
 		4EA3416B160A334BBABECF7E /* CalendarHeatmapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHeatmapView.swift; sourceTree = "<group>"; };
+		4F629F925B0F52997D85DC0F /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
 		51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ShuttleScoreConnector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		52815D76D29DD739D37A6626 /* PhoneMatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneMatchState.swift; sourceTree = "<group>"; };
 		5844C25E6AB9B38449CA5FCF /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		5FF8309CD5200894E3C2137A /* WorkoutManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorkoutManager.swift; sourceTree = "<group>"; };
 		61DE722D63C101868D12120A /* MatchType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchType.swift; sourceTree = "<group>"; };
 		6BF24A93A92E6734818B843D /* OpponentPickerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentPickerView.swift; sourceTree = "<group>"; };
+		87EC5900A8517C8B03980548 /* ShuttleScoreComplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShuttleScoreComplication.swift; sourceTree = "<group>"; };
 		8988A353CC635E5510E0F1BC /* ScoringEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoringEngine.swift; sourceTree = "<group>"; };
+		8D3F1D9A6FE5F7592BC83522 /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		9160E0C53C34B75C48B4BE8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		92632864E7497DA235168CDA /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
 		93879B7BB627CB1C015B8E97 /* MatchState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchState.swift; sourceTree = "<group>"; };
 		9755260AAA61661926806462 /* PhoneSessionManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSessionManager.swift; sourceTree = "<group>"; };
 		97867A228741914FE779FA8E /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		990DBDD6051263160776AF92 /* OpponentStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpponentStore.swift; sourceTree = "<group>"; };
 		9B38426058D38867EA758D49 /* MatchSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSetupView.swift; sourceTree = "<group>"; };
+		9ED94E6D1E21020AD65E1254 /* ScoreAnnouncer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreAnnouncer.swift; sourceTree = "<group>"; };
 		A32E88CD821CC3B825FD474E /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		B0251DA83DE4A75884A7B29E /* MatchRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchRecord.swift; sourceTree = "<group>"; };
 		B08A152A3FFE3942CB344F2A /* GameSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSummaryView.swift; sourceTree = "<group>"; };
 		B11E5A1471E18323B5CD48BA /* MatchSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchSummaryView.swift; sourceTree = "<group>"; };
+		C003454255E8CBF5AE10AF4F /* ShuttleScoreComplicationExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ShuttleScoreComplicationExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		C322F7954141A8E1702B4B22 /* SessionState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SessionState.swift; sourceTree = "<group>"; };
 		C32531C4B13146E51281BDBD /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CA9D7788DB2434F6026890F7 /* GameScore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameScore.swift; sourceTree = "<group>"; };
@@ -117,9 +154,11 @@
 		D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneScoreboardView.swift; sourceTree = "<group>"; };
 		E1E8BF1DB478668DC6EF2036 /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
+		E72EE733F82ADE4060575D0F /* ELOManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ELOManager.swift; sourceTree = "<group>"; };
 		F39C30C9F2AB736029A9BE55 /* PhoneSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneSetupView.swift; sourceTree = "<group>"; };
 		F8B315CC9A2B86E2D902D942 /* Achievement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Achievement.swift; sourceTree = "<group>"; };
 		F8E39C666BE7D210598D80E1 /* ShuttleScore.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ShuttleScore.entitlements; sourceTree = "<group>"; };
+		FC3E1BFA6903FA9E1343E61F /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -131,9 +170,11 @@
 				0349602CE7184D76ACBB0821 /* LiveScoreView.swift */,
 				4883371B60AEDAB359B55BDD /* MatchHistoryView.swift */,
 				245C244C3922134B605B485A /* OpponentStatsView.swift */,
+				2C2C988B76453E7FCF445C45 /* PeriodShareCardView.swift */,
 				E0CA0FA3ABC29C25D5691411 /* PhoneScoreboardView.swift */,
 				F39C30C9F2AB736029A9BE55 /* PhoneSetupView.swift */,
 				5844C25E6AB9B38449CA5FCF /* ProfileView.swift */,
+				4F629F925B0F52997D85DC0F /* SettingsView.swift */,
 				26A6F0DA2E085A7E01F15A4E /* ShareCardView.swift */,
 			);
 			path = Views;
@@ -143,9 +184,19 @@
 			isa = PBXGroup;
 			children = (
 				CA863DBE8A5108A8F461E01B /* ShuttleScore Watch App */,
+				188AD6F514FC83B8D32607A1 /* ShuttleScoreComplication */,
 				8F218B670F8AB57AD6A22293 /* ShuttleScoreConnector */,
 				D1C791D87A174EB577A6A763 /* Products */,
 			);
+			sourceTree = "<group>";
+		};
+		188AD6F514FC83B8D32607A1 /* ShuttleScoreComplication */ = {
+			isa = PBXGroup;
+			children = (
+				9160E0C53C34B75C48B4BE8E /* Info.plist */,
+				87EC5900A8517C8B03980548 /* ShuttleScoreComplication.swift */,
+			);
+			path = ShuttleScoreComplication;
 			sourceTree = "<group>";
 		};
 		44F0431C595B18E347C230B8 /* Models */ = {
@@ -155,8 +206,10 @@
 				93879B7BB627CB1C015B8E97 /* MatchState.swift */,
 				1C9F63E609D70A9A8189E88F /* MatchStore.swift */,
 				990DBDD6051263160776AF92 /* OpponentStore.swift */,
+				9ED94E6D1E21020AD65E1254 /* ScoreAnnouncer.swift */,
 				8988A353CC635E5510E0F1BC /* ScoringEngine.swift */,
 				C322F7954141A8E1702B4B22 /* SessionState.swift */,
+				31ED7310B37AF5A1DC9321F8 /* WatchLanguageManager.swift */,
 				11F4C1FA91F0ACA550239735 /* WatchSessionManager.swift */,
 				5FF8309CD5200894E3C2137A /* WorkoutManager.swift */,
 			);
@@ -185,6 +238,7 @@
 				C32531C4B13146E51281BDBD /* Assets.xcassets */,
 				A32E88CD821CC3B825FD474E /* ContentView.swift */,
 				D7A3EFDF62F81503C3865DA0 /* Info.plist */,
+				8D3F1D9A6FE5F7592BC83522 /* Localizable.xcstrings */,
 				1D80FD54DEF1B0C87FB54012 /* ShuttleScoreConnectorApp.swift */,
 				AE4DCFF78EAA611594CA6AE3 /* Models */,
 				024C44E4FB03280A1068C31A /* Views */,
@@ -196,7 +250,9 @@
 			isa = PBXGroup;
 			children = (
 				F8B315CC9A2B86E2D902D942 /* Achievement.swift */,
+				E72EE733F82ADE4060575D0F /* ELOManager.swift */,
 				CA9D7788DB2434F6026890F7 /* GameScore.swift */,
+				FC3E1BFA6903FA9E1343E61F /* LanguageManager.swift */,
 				01BF03913B2D2924A83D46CB /* MatchHistoryStore.swift */,
 				D39A5254489B4585754A184D /* MatchRecord.swift */,
 				61DE722D63C101868D12120A /* MatchType.swift */,
@@ -213,6 +269,7 @@
 			children = (
 				D8DCB2D4EF0FC2D6964C9AE7 /* Assets.xcassets */,
 				4572C434833278FDF6CAA0E4 /* Info.plist */,
+				150AFF76C4190B6EB00B53F6 /* Localizable.xcstrings */,
 				F8E39C666BE7D210598D80E1 /* ShuttleScore.entitlements */,
 				2EE6BE6AC93965AB8F967022 /* ShuttleScoreApp.swift */,
 				44F0431C595B18E347C230B8 /* Models */,
@@ -225,6 +282,7 @@
 			isa = PBXGroup;
 			children = (
 				0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */,
+				C003454255E8CBF5AE10AF4F /* ShuttleScoreComplicationExtension.appex */,
 				51E96E07023016C00233CFD9 /* ShuttleScoreConnector.app */,
 			);
 			name = Products;
@@ -239,10 +297,12 @@
 			buildPhases = (
 				C75484A7446A83005329E8AA /* Sources */,
 				8C56F40F29F7C1641320F6E2 /* Resources */,
+				BB4CD9553DDE44779E28F0ED /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				A98F61D74A1927F874AAC326 /* PBXTargetDependency */,
 			);
 			name = "ShuttleScore Watch App";
 			packageProductDependencies = (
@@ -250,6 +310,23 @@
 			productName = "ShuttleScore Watch App";
 			productReference = 0B041AE4FFCB46E9AD989BDD /* ShuttleScore Watch App.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4F2FCE25CB5C6AFDAF220122 /* ShuttleScoreComplicationExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3B47A9D8F98A06BBBCDF0CD9 /* Build configuration list for PBXNativeTarget "ShuttleScoreComplicationExtension" */;
+			buildPhases = (
+				3BE192235D2C00982C57E969 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ShuttleScoreComplicationExtension;
+			packageProductDependencies = (
+			);
+			productName = ShuttleScoreComplicationExtension;
+			productReference = C003454255E8CBF5AE10AF4F /* ShuttleScoreComplicationExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		8C729187F72903C606D163A7 /* ShuttleScoreConnector */ = {
 			isa = PBXNativeTarget;
@@ -284,6 +361,10 @@
 						DevelopmentTeam = RWHXW7J963;
 						ProvisioningStyle = Automatic;
 					};
+					4F2FCE25CB5C6AFDAF220122 = {
+						DevelopmentTeam = RWHXW7J963;
+						ProvisioningStyle = Automatic;
+					};
 					8C729187F72903C606D163A7 = {
 						DevelopmentTeam = RWHXW7J963;
 						ProvisioningStyle = Automatic;
@@ -296,6 +377,7 @@
 			knownRegions = (
 				Base,
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 047F190AA8326036AAECEE2C;
 			minimizedProjectReferenceProxies = 1;
@@ -305,6 +387,7 @@
 			projectRoot = "";
 			targets = (
 				39A2D03C98856226B5CD074C /* ShuttleScore Watch App */,
+				4F2FCE25CB5C6AFDAF220122 /* ShuttleScoreComplicationExtension */,
 				8C729187F72903C606D163A7 /* ShuttleScoreConnector */,
 			);
 		};
@@ -316,6 +399,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8BB35D2575D65EF8AB7C2C99 /* Assets.xcassets in Resources */,
+				A07FA4903F0D0336DF8F969B /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,12 +408,21 @@
 			buildActionMask = 2147483647;
 			files = (
 				D5E679D3740FE8C1892D9E02 /* Assets.xcassets in Resources */,
+				DEC829974344F64A667D98DD /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3BE192235D2C00982C57E969 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B8C4F6B38CC98247A178FC6B /* ShuttleScoreComplication.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		4E4526E70F4DD1502F5A7DCB /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -338,7 +431,9 @@
 				0C8C66369674B977275E5EE2 /* AchievementsView.swift in Sources */,
 				3FAA3678062BE813FEDF3D82 /* CalendarHeatmapView.swift in Sources */,
 				CA56B8AE0CDFE03E70C99846 /* ContentView.swift in Sources */,
+				09298D9C65C803D05AAAEFC4 /* ELOManager.swift in Sources */,
 				9A2948160FC3829D0A68231A /* GameScore.swift in Sources */,
+				1E01E8188AA409EFBEB79C64 /* LanguageManager.swift in Sources */,
 				3EB30AE2C3F6B5A9145FF8CA /* LiveScoreView.swift in Sources */,
 				F2A4B5F3845180B7A76A1BCC /* MatchHistoryStore.swift in Sources */,
 				C8931343CAD1E042BAA5AEC0 /* MatchHistoryView.swift in Sources */,
@@ -346,12 +441,14 @@
 				24D36C44E38DB5CE4A2283A3 /* MatchType.swift in Sources */,
 				B72B8B1B2E9C2CD4189DE0A1 /* OpponentStatsView.swift in Sources */,
 				B4078389FD11B4D7211E8245 /* OpponentStore.swift in Sources */,
+				8C4E86D2F6E8EAAEF5799826 /* PeriodShareCardView.swift in Sources */,
 				3E4225A6885D1EBEEDE6F0E2 /* PhoneMatchState.swift in Sources */,
 				D5EA99819BA988E3C6A0E217 /* PhoneScoreboardView.swift in Sources */,
 				CE41CBE8B6FFB7717F23B535 /* PhoneSessionManager.swift in Sources */,
 				FEC32ECAE91678028D50CF63 /* PhoneSetupView.swift in Sources */,
 				14303571A6A9C0423F8A6AA3 /* ProfileStore.swift in Sources */,
 				7A855D1D35C127B98A081668 /* ProfileView.swift in Sources */,
+				2FE637A80D5D10F13E5A6296 /* SettingsView.swift in Sources */,
 				569A59B4F6B3EE4533E5BBBF /* ShareCardView.swift in Sources */,
 				68E1C0200DCD9ADBCA1A5E20 /* ShuttleScoreConnectorApp.swift in Sources */,
 			);
@@ -373,10 +470,12 @@
 				637CC176E45FECDF9632E18D /* MatchSummaryView.swift in Sources */,
 				678EF1BB9F9886DEA9D3EE2B /* OpponentPickerView.swift in Sources */,
 				68BD258E9328029C7522C6E4 /* OpponentStore.swift in Sources */,
+				DC43005984797A39438BC062 /* ScoreAnnouncer.swift in Sources */,
 				94942911283ABA44B51E1905 /* ScoreboardView.swift in Sources */,
 				E06495B015994DFBEC50F0F1 /* ScoringEngine.swift in Sources */,
 				5FAE60297E60C79027EB4D00 /* SessionState.swift in Sources */,
 				15845B70A325410494A4D5AD /* ShuttleScoreApp.swift in Sources */,
+				A620120E090654E98E6C6DD3 /* WatchLanguageManager.swift in Sources */,
 				2E704B4646A5E4CFE2F106A2 /* WatchSessionManager.swift in Sources */,
 				133A5711B48C277FD33A9A09 /* WorkoutManager.swift in Sources */,
 			);
@@ -389,6 +488,11 @@
 			isa = PBXTargetDependency;
 			target = 39A2D03C98856226B5CD074C /* ShuttleScore Watch App */;
 			targetProxy = 518ABC07DC06BB8A08174876 /* PBXContainerItemProxy */;
+		};
+		A98F61D74A1927F874AAC326 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F2FCE25CB5C6AFDAF220122 /* ShuttleScoreComplicationExtension */;
+			targetProxy = 55E5DE7749430C654A6F39A0 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -464,6 +568,46 @@
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Release;
+		};
+		72B40F1337F8E155D93E2BDA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = ShuttleScoreComplication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp.complication1;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
+				WATCHOS_DEPLOYMENT_TARGET = 10.0;
+			};
+			name = Debug;
+		};
+		B2EDB8E89488AFFF140A4DB5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RWHXW7J963;
+				INFOPLIST_FILE = ShuttleScoreComplication/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.clawd.shuttlescore.watchkitapp.complication1;
+				SDKROOT = watchos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 4;
 				WATCHOS_DEPLOYMENT_TARGET = 10.0;
 			};
 			name = Release;
@@ -603,6 +747,15 @@
 			buildConfigurations = (
 				D0E861C7177418920D890B18 /* Debug */,
 				5B2328F1BBF1285C7813289F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		3B47A9D8F98A06BBBCDF0CD9 /* Build configuration list for PBXNativeTarget "ShuttleScoreComplicationExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				72B40F1337F8E155D93E2BDA /* Debug */,
+				B2EDB8E89488AFFF140A4DB5 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

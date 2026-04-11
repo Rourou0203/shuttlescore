@@ -3,11 +3,13 @@ import SwiftUI
 struct CalendarHeatmapView: View {
     let records: [MatchRecord]
     @Binding var selectedDate: String?
+    var period: ReportPeriod = .day
+    @Binding var periodDate: Date
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var displayedMonth: Date = Date()
 
     private let calendar = Calendar.current
-    private let weekdays = ["日", "一", "二", "三", "四", "五", "六"]
 
     private var dateFormatter: DateFormatter {
         let f = DateFormatter()
@@ -28,10 +30,7 @@ struct CalendarHeatmapView: View {
     // MARK: - Month info
 
     private var monthTitle: String {
-        let fmt = DateFormatter()
-        fmt.dateFormat = "yyyy年M月"
-        fmt.locale = Locale(identifier: "zh_CN")
-        return fmt.string(from: displayedMonth)
+        languageManager.formatMonthTitle(displayedMonth)
     }
 
     private var daysInMonth: [Date?] {
@@ -39,21 +38,36 @@ struct CalendarHeatmapView: View {
         let firstDay = calendar.date(from: calendar.dateComponents([.year, .month], from: displayedMonth))!
         let firstWeekday = calendar.component(.weekday, from: firstDay) // 1=Sun
 
-        // Leading empty cells
         var days: [Date?] = Array(repeating: nil, count: firstWeekday - 1)
-
-        // Actual days
         for day in range {
             if let date = calendar.date(byAdding: .day, value: day - 1, to: firstDay) {
                 days.append(date)
             }
         }
-
         return days
     }
 
     private var isCurrentMonth: Bool {
         calendar.isDate(displayedMonth, equalTo: Date(), toGranularity: .month)
+    }
+
+    // MARK: - Week range helper
+
+    private func weekRange(for date: Date) -> (start: Date, end: Date) {
+        var cal = calendar
+        cal.firstWeekday = 2
+        let weekday = cal.component(.weekday, from: date)
+        let daysToMonday = (weekday + 5) % 7
+        let monday = cal.date(byAdding: .day, value: -daysToMonday, to: cal.startOfDay(for: date))!
+        let sunday = cal.date(byAdding: .day, value: 6, to: monday)!
+        return (monday, sunday)
+    }
+
+    private func isInCurrentWeek(_ date: Date) -> Bool {
+        guard period == .week else { return false }
+        let range = weekRange(for: periodDate)
+        let dayStart = calendar.startOfDay(for: date)
+        return dayStart >= range.start && dayStart <= range.end
     }
 
     // MARK: - Stats for displayed month
@@ -76,53 +90,56 @@ struct CalendarHeatmapView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            // Month nav header
-            HStack {
-                Button {
-                    withAnimation { goToPreviousMonth() }
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(.body, design: .rounded))
-                        .foregroundColor(.orange)
-                }
-
-                Spacer()
-
-                Text(monthTitle)
-                    .font(.system(.headline, design: .rounded))
-                    .foregroundColor(.white)
-
-                Spacer()
-
-                if isCurrentMonth {
-                    // Disabled forward button
-                    Image(systemName: "chevron.right")
-                        .font(.system(.body, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.3))
-                } else {
+            // Month nav header — hidden in week mode (parent handles navigation)
+            if period != .week {
+                HStack {
                     Button {
-                        withAnimation { goToNextMonth() }
+                        withAnimation { goToPreviousMonth() }
                     } label: {
-                        Image(systemName: "chevron.right")
+                        Image(systemName: "chevron.left")
                             .font(.system(.body, design: .rounded))
                             .foregroundColor(.orange)
+                    }
+
+                    Spacer()
+
+                    Text(monthTitle)
+                        .font(.system(.headline, design: .rounded))
+                        .foregroundColor(.white)
+
+                    Spacer()
+
+                    if isCurrentMonth {
+                        Image(systemName: "chevron.right")
+                            .font(.system(.body, design: .rounded))
+                            .foregroundColor(.gray.opacity(0.3))
+                    } else {
+                        Button {
+                            withAnimation { goToNextMonth() }
+                        } label: {
+                            Image(systemName: "chevron.right")
+                                .font(.system(.body, design: .rounded))
+                                .foregroundColor(.orange)
+                        }
                     }
                 }
             }
 
-            // Month stats summary
-            let stats = monthStats
-            if stats.matches > 0 {
-                HStack(spacing: 16) {
-                    miniStat(value: "\(stats.matches)", label: "场")
-                    miniStat(value: "\(stats.wins)", label: "胜")
-                    miniStat(value: "\(stats.days)", label: "天")
+            // Month stats summary (day mode only, to avoid duplication with period stats section)
+            if period == .day {
+                let stats = monthStats
+                if stats.matches > 0 {
+                    HStack(spacing: 16) {
+                        miniStat(value: "\(stats.matches)", label: languageManager.calendarMatches)
+                        miniStat(value: "\(stats.wins)", label: languageManager.calendarWins)
+                        miniStat(value: "\(stats.days)", label: languageManager.calendarDays)
+                    }
                 }
             }
 
             // Weekday headers
             HStack(spacing: 0) {
-                ForEach(weekdays, id: \.self) { day in
+                ForEach(languageManager.calendarWeekdays, id: \.self) { day in
                     Text(day)
                         .font(.system(.caption2, design: .rounded))
                         .foregroundColor(.gray.opacity(0.6))
@@ -139,37 +156,44 @@ struct CalendarHeatmapView: View {
                         let key = dateFormatter.string(from: date)
                         let count = matchCountByDate[key] ?? 0
                         let isToday = calendar.isDateInToday(date)
-                        let isSelected = selectedDate == key
+                        let isSelected = period == .day && selectedDate == key
+                        let isWeekHighlight = isInCurrentWeek(date)
                         let isFuture = date > Date()
+                        let isMonthMode = period == .month
 
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
-                                selectedDate = selectedDate == key ? nil : key
+                                switch period {
+                                case .day:
+                                    selectedDate = selectedDate == key ? nil : key
+                                case .week:
+                                    periodDate = date
+                                case .month:
+                                    break
+                                }
                             }
                         } label: {
                             ZStack {
-                                // Background
                                 RoundedRectangle(cornerRadius: 8)
-                                    .fill(cellBackground(count: count, isSelected: isSelected))
+                                    .fill(cellBackground(count: count, isSelected: isSelected, isWeekHighlight: isWeekHighlight))
                                     .frame(height: 38)
 
                                 VStack(spacing: 2) {
                                     Text("\(calendar.component(.day, from: date))")
                                         .font(.system(.caption, design: .rounded, weight: isToday ? .bold : .regular))
-                                        .foregroundColor(isFuture ? .gray.opacity(0.3) : (isSelected ? .black : .white))
+                                        .foregroundColor(cellTextColor(isFuture: isFuture, isSelected: isSelected, isWeekHighlight: isWeekHighlight, isMonthMode: isMonthMode))
 
-                                    // Match count dots
                                     if count > 0 {
                                         HStack(spacing: 2) {
                                             ForEach(0..<min(count, 3), id: \.self) { _ in
                                                 Circle()
-                                                    .fill(isSelected ? Color.black.opacity(0.6) : Color.orange)
+                                                    .fill(dotColor(isSelected: isSelected, isWeekHighlight: isWeekHighlight))
                                                     .frame(width: 4, height: 4)
                                             }
                                             if count > 3 {
                                                 Text("+")
                                                     .font(.system(size: 6))
-                                                    .foregroundColor(isSelected ? .black.opacity(0.6) : .orange)
+                                                    .foregroundColor(dotColor(isSelected: isSelected, isWeekHighlight: isWeekHighlight))
                                             }
                                         }
                                     }
@@ -180,9 +204,8 @@ struct CalendarHeatmapView: View {
                                     .stroke(isToday ? Color.orange : Color.clear, lineWidth: 2)
                             )
                         }
-                        .disabled(isFuture)
+                        .disabled(isFuture || isMonthMode)
                     } else {
-                        // Empty cell
                         Color.clear.frame(height: 38)
                     }
                 }
@@ -191,16 +214,45 @@ struct CalendarHeatmapView: View {
         .padding(16)
         .background(Color.white.opacity(0.06))
         .clipShape(RoundedRectangle(cornerRadius: 16))
+        .onAppear {
+            syncDisplayedMonth()
+        }
+        .onChange(of: period) { _ in
+            syncDisplayedMonth()
+        }
+        .onChange(of: periodDate) { _ in
+            if period == .week || period == .month {
+                withAnimation { syncDisplayedMonth() }
+            }
+        }
     }
 
     // MARK: - Helpers
 
-    private func cellBackground(count: Int, isSelected: Bool) -> Color {
+    private func syncDisplayedMonth() {
+        if period == .week || period == .month {
+            displayedMonth = periodDate
+        }
+    }
+
+    private func cellBackground(count: Int, isSelected: Bool, isWeekHighlight: Bool) -> Color {
         if isSelected { return .orange }
+        if isWeekHighlight { return Color.orange.opacity(0.18) }
         if count == 0 { return Color.white.opacity(0.04) }
         if count == 1 { return Color.orange.opacity(0.15) }
         if count == 2 { return Color.orange.opacity(0.3) }
         return Color.orange.opacity(0.45)
+    }
+
+    private func cellTextColor(isFuture: Bool, isSelected: Bool, isWeekHighlight: Bool, isMonthMode: Bool) -> Color {
+        if isFuture { return .gray.opacity(0.3) }
+        if isSelected { return .black }
+        return .white
+    }
+
+    private func dotColor(isSelected: Bool, isWeekHighlight: Bool) -> Color {
+        if isSelected { return Color.black.opacity(0.6) }
+        return Color.orange
     }
 
     private func miniStat(value: String, label: String) -> some View {
@@ -218,6 +270,9 @@ struct CalendarHeatmapView: View {
         if let prev = calendar.date(byAdding: .month, value: -1, to: displayedMonth) {
             displayedMonth = prev
             selectedDate = nil
+            if period == .month {
+                periodDate = prev
+            }
         }
     }
 
@@ -226,6 +281,9 @@ struct CalendarHeatmapView: View {
             if next <= Date() {
                 displayedMonth = next
                 selectedDate = nil
+                if period == .month {
+                    periodDate = next
+                }
             }
         }
     }

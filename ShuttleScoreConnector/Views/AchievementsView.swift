@@ -2,7 +2,18 @@ import SwiftUI
 
 struct AchievementsView: View {
     @StateObject private var store = MatchHistoryStore.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var achievements: [Achievement] = []
+
+    private var bronzeAchievements: [Achievement] {
+        achievements.filter { $0.tier == .bronze }
+    }
+    private var silverAchievements: [Achievement] {
+        achievements.filter { $0.tier == .silver }
+    }
+    private var goldAchievements: [Achievement] {
+        achievements.filter { $0.tier == .gold }
+    }
 
     var body: some View {
         ZStack {
@@ -10,7 +21,7 @@ struct AchievementsView: View {
 
             ScrollView {
                 VStack(spacing: 16) {
-                    Text("成就")
+                    Text(languageManager.achievementsTitle)
                         .font(.system(.title2, design: .rounded))
                         .fontWeight(.bold)
                         .foregroundColor(.white)
@@ -26,18 +37,30 @@ struct AchievementsView: View {
                             .font(.system(.title, design: .rounded, weight: .bold))
                             .foregroundColor(.white)
 
-                        Text("已解锁成就")
+                        Text(languageManager.achievementsUnlocked)
                             .font(.system(.subheadline, design: .rounded))
                             .foregroundColor(.gray)
                     }
                     .frame(maxWidth: .infinity)
 
-                    // Achievement grid
-                    LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
-                        ForEach(achievements) { achievement in
-                            AchievementCard(achievement: achievement)
-                        }
-                    }
+                    // Tier sections
+                    tierSection(
+                        title: languageManager.achievementBronze,
+                        achievements: bronzeAchievements,
+                        tier: .bronze
+                    )
+
+                    tierSection(
+                        title: languageManager.achievementSilver,
+                        achievements: silverAchievements,
+                        tier: .silver
+                    )
+
+                    tierSection(
+                        title: languageManager.achievementGold,
+                        achievements: goldAchievements,
+                        tier: .gold
+                    )
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
@@ -48,68 +71,144 @@ struct AchievementsView: View {
             achievements = AchievementManager.evaluate(with: store)
         }
     }
+
+    @ViewBuilder
+    private func tierSection(title: String, achievements: [Achievement], tier: AchievementTier) -> some View {
+        let unlocked = achievements.filter(\.isUnlocked).count
+
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Image(systemName: tierIcon(for: tier))
+                    .foregroundColor(tierColor(for: tier))
+                    .font(.system(.body, design: .rounded, weight: .semibold))
+
+                Text(title)
+                    .font(.system(.headline, design: .rounded))
+                    .foregroundColor(tierColor(for: tier))
+
+                Spacer()
+
+                Text("\(unlocked)/\(achievements.count)")
+                    .font(.system(.caption, design: .rounded, weight: .medium))
+                    .foregroundColor(.gray)
+            }
+
+            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
+                ForEach(achievements) { achievement in
+                    AchievementCard(achievement: achievement)
+                }
+            }
+        }
+    }
+
+    private func tierIcon(for tier: AchievementTier) -> String {
+        switch tier {
+        case .bronze: return "shield"
+        case .silver: return "shield.fill"
+        case .gold: return "crown.fill"
+        }
+    }
+
+    private func tierColor(for tier: AchievementTier) -> Color {
+        switch tier {
+        case .bronze: return Color(red: 0.8, green: 0.5, blue: 0.2)
+        case .silver: return Color(red: 0.75, green: 0.75, blue: 0.78)
+        case .gold: return Color(red: 1.0, green: 0.84, blue: 0)
+        }
+    }
 }
 
 struct AchievementCard: View {
     let achievement: Achievement
+    @ObservedObject private var languageManager = LanguageManager.shared
 
-    private var catImage: String {
-        switch achievement.id {
-        case "first_match": return "cat_orange"
-        case "gold_cat": return "cat_orange"
-        case "win_streak": return "cat_robe"
-        case "flash_win": return "cat_scarf"
-        case "legend": return "cat_orange"
-        default: return "cat_orange"
+    private var tierColor: Color {
+        switch achievement.tier {
+        case .bronze: return Color(red: 0.8, green: 0.5, blue: 0.2)
+        case .silver: return Color(red: 0.75, green: 0.75, blue: 0.78)
+        case .gold: return Color(red: 1.0, green: 0.84, blue: 0)
         }
     }
 
+    private var progressFraction: Double {
+        guard achievement.maxProgress > 0 else { return 0 }
+        return Double(achievement.currentProgress) / Double(achievement.maxProgress)
+    }
+
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 8) {
+            // Icon
             ZStack {
-                Image(catImage)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 60, height: 60)
-                    .clipShape(Circle())
-                    .saturation(achievement.isUnlocked ? 1 : 0)
-                    .opacity(achievement.isUnlocked ? 1 : 0.3)
+                Circle()
+                    .fill(achievement.isUnlocked ? tierColor.opacity(0.15) : Color.white.opacity(0.04))
+                    .frame(width: 52, height: 52)
+
+                Image(systemName: achievement.icon)
+                    .font(.system(size: 22, weight: .semibold))
+                    .foregroundColor(achievement.isUnlocked ? tierColor : .gray.opacity(0.4))
 
                 if !achievement.isUnlocked {
+                    Circle()
+                        .fill(Color.black.opacity(0.3))
+                        .frame(width: 52, height: 52)
                     Image(systemName: "lock.fill")
-                        .font(.system(.body, design: .rounded))
-                        .foregroundColor(.gray)
+                        .font(.system(size: 12))
+                        .foregroundColor(.gray.opacity(0.6))
                 }
             }
 
-            Image(systemName: achievement.icon)
-                .font(.system(.caption, design: .rounded))
-                .foregroundColor(achievement.isUnlocked ? .yellow : .gray)
-
-            Text(achievement.title)
-                .font(.system(.subheadline, design: .rounded, weight: .semibold))
+            // Title
+            Text(languageManager.language == "zh" ? achievement.title : achievement.titleEn)
+                .font(.system(.caption, design: .rounded, weight: .semibold))
                 .foregroundColor(achievement.isUnlocked ? .white : .gray)
+                .lineLimit(1)
 
-            Text(achievement.description)
-                .font(.system(.caption2, design: .rounded))
-                .foregroundColor(.gray.opacity(0.7))
+            // Description
+            Text(languageManager.language == "zh" ? achievement.description : achievement.descriptionEn)
+                .font(.system(size: 10, weight: .regular, design: .rounded))
+                .foregroundColor(.gray.opacity(0.6))
                 .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .frame(minHeight: 24)
+
+            // Progress bar
+            VStack(spacing: 3) {
+                GeometryReader { geometry in
+                    ZStack(alignment: .leading) {
+                        Capsule()
+                            .fill(Color.white.opacity(0.08))
+
+                        Capsule()
+                            .fill(achievement.isUnlocked ? tierColor : tierColor.opacity(0.5))
+                            .frame(width: geometry.size.width * progressFraction)
+                    }
+                }
+                .frame(height: 4)
+
+                Text("\(achievement.currentProgress)/\(achievement.maxProgress)")
+                    .font(.system(size: 9, weight: .medium, design: .monospaced))
+                    .foregroundColor(achievement.isUnlocked ? tierColor : .gray.opacity(0.5))
+            }
         }
-        .padding(.vertical, 18)
-        .padding(.horizontal, 12)
+        .padding(.vertical, 14)
+        .padding(.horizontal, 10)
         .frame(maxWidth: .infinity)
         .background(
             achievement.isUnlocked
-                ? Color.orange.opacity(0.1)
-                : Color.white.opacity(0.04)
+                ? tierColor.opacity(0.08)
+                : Color.white.opacity(0.03)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
         .overlay(
-            RoundedRectangle(cornerRadius: 16)
+            RoundedRectangle(cornerRadius: 14)
                 .stroke(
-                    achievement.isUnlocked ? Color.orange.opacity(0.3) : Color.clear,
-                    lineWidth: 1
+                    achievement.isUnlocked ? tierColor.opacity(0.4) : Color.white.opacity(0.06),
+                    lineWidth: achievement.isUnlocked ? 1.5 : 0.5
                 )
+        )
+        .shadow(
+            color: achievement.isUnlocked ? tierColor.opacity(0.15) : .clear,
+            radius: 6, x: 0, y: 2
         )
     }
 }

@@ -1,7 +1,37 @@
 import SwiftUI
+import Charts
+
+// MARK: - Weekly Trend Data
+
+struct WeeklyTrend: Identifiable {
+    let id = UUID()
+    let weekLabel: String
+    let winRate: Double
+    let matchCount: Int
+}
+
+// MARK: - Period Type
+
+enum ReportPeriod: String, CaseIterable {
+    case day = "day"
+    case week = "week"
+    case month = "month"
+
+    var localizedName: String {
+        let lang = LanguageManager.shared.language
+        switch self {
+        case .day: return lang == "zh" ? "日" : "D"
+        case .week: return lang == "zh" ? "周" : "W"
+        case .month: return lang == "zh" ? "月" : "M"
+        }
+    }
+}
+
+// MARK: - Match History View
 
 struct MatchHistoryView: View {
     @StateObject private var store = MatchHistoryStore.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var recordToEdit: MatchRecord?
     @State private var recordToDelete: MatchRecord?
     @State private var showDeleteConfirmation = false
@@ -9,6 +39,137 @@ struct MatchHistoryView: View {
     @State private var isEditing = false
     @State private var selectedRecordIds: Set<UUID> = []
     @State private var showBatchDeleteConfirm = false
+    @State private var period: ReportPeriod = .day
+    @State private var periodDate: Date = Date()
+    @State private var showPeriodShareSheet = false
+
+    private var calendar: Calendar { Calendar.current }
+
+    private var dateFmt: DateFormatter {
+        let f = DateFormatter()
+        f.dateFormat = "yyyy-MM-dd"
+        return f
+    }
+
+    // MARK: - Period date range
+
+    private var currentDateRange: (start: Date, end: Date) {
+        switch period {
+        case .day:
+            let base: Date
+            if let ds = selectedDate, let d = dateFmt.date(from: ds) {
+                base = d
+            } else {
+                base = periodDate
+            }
+            let start = calendar.startOfDay(for: base)
+            return (start, start)
+        case .week:
+            var cal = calendar
+            cal.firstWeekday = 2
+            let weekday = cal.component(.weekday, from: periodDate)
+            let daysToMonday = (weekday + 5) % 7
+            let monday = cal.date(byAdding: .day, value: -daysToMonday, to: cal.startOfDay(for: periodDate))!
+            let sunday = cal.date(byAdding: .day, value: 6, to: monday)!
+            return (monday, sunday)
+        case .month:
+            let comps = calendar.dateComponents([.year, .month], from: periodDate)
+            let firstDay = calendar.date(from: comps)!
+            let lastDay = calendar.date(byAdding: DateComponents(month: 1, day: -1), to: firstDay)!
+            return (firstDay, lastDay)
+        }
+    }
+
+    private var periodFilteredRecords: [MatchRecord] {
+        let range = currentDateRange
+        return store.records(from: range.start, to: range.end)
+    }
+
+    private var periodStats: PeriodStats {
+        store.aggregateStats(for: periodFilteredRecords)
+    }
+
+    // MARK: - Period title
+
+    private var periodTitle: String {
+        switch period {
+        case .day:
+            let date: Date
+            if let ds = selectedDate, let d = dateFmt.date(from: ds) {
+                date = d
+            } else {
+                date = periodDate
+            }
+            if calendar.isDateInToday(date) { return languageManager.periodToday }
+            if calendar.isDateInYesterday(date) { return languageManager.periodYesterday }
+            let fmt = DateFormatter()
+            if languageManager.language == "zh" {
+                fmt.locale = Locale(identifier: "zh_CN")
+                fmt.dateFormat = "M月d日 EEEE"
+            } else {
+                fmt.locale = Locale(identifier: "en_US")
+                fmt.dateFormat = "MMM d, EEEE"
+            }
+            return fmt.string(from: date)
+        case .week:
+            let range = currentDateRange
+            let sf = DateFormatter()
+            sf.dateFormat = "M/d"
+            let label = languageManager.periodThisWeek
+            return "\(label) \(sf.string(from: range.start)) - \(sf.string(from: range.end))"
+        case .month:
+            return languageManager.formatMonthTitle(periodDate)
+        }
+    }
+
+    private var shareTitle: String {
+        let fmt = DateFormatter()
+        if languageManager.language == "zh" {
+            fmt.locale = Locale(identifier: "zh_CN")
+        } else {
+            fmt.locale = Locale(identifier: "en_US")
+        }
+        switch period {
+        case .day:
+            let date: Date
+            if let ds = selectedDate, let d = dateFmt.date(from: ds) { date = d } else { date = periodDate }
+            fmt.dateFormat = languageManager.language == "zh" ? "yyyy年M月d日" : "MMM d, yyyy"
+            return "\(fmt.string(from: date)) \(languageManager.periodReport)"
+        case .week:
+            let range = currentDateRange
+            let sf = DateFormatter(); sf.dateFormat = "M/d"
+            return "\(sf.string(from: range.start))-\(sf.string(from: range.end)) \(languageManager.periodReport)"
+        case .month:
+            fmt.dateFormat = languageManager.language == "zh" ? "yyyy年M月" : "MMM yyyy"
+            return "\(fmt.string(from: periodDate)) \(languageManager.periodReport)"
+        }
+    }
+
+    private var canNavigatePeriodForward: Bool {
+        let next: Date
+        switch period {
+        case .day: next = calendar.date(byAdding: .day, value: 1, to: periodDate)!
+        case .week: next = calendar.date(byAdding: .weekOfYear, value: 1, to: periodDate)!
+        case .month: next = calendar.date(byAdding: .month, value: 1, to: periodDate)!
+        }
+        return next <= Date()
+    }
+
+    private func navigatePeriod(by offset: Int) {
+        withAnimation(.easeInOut(duration: 0.2)) {
+            switch period {
+            case .day:
+                periodDate = calendar.date(byAdding: .day, value: offset, to: periodDate)!
+                selectedDate = dateFmt.string(from: periodDate)
+            case .week:
+                periodDate = calendar.date(byAdding: .weekOfYear, value: offset, to: periodDate)!
+            case .month:
+                periodDate = calendar.date(byAdding: .month, value: offset, to: periodDate)!
+            }
+        }
+    }
+
+    // MARK: - Body
 
     var body: some View {
         NavigationStack {
@@ -17,17 +178,48 @@ struct MatchHistoryView: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        Text("历史统计")
-                            .font(.system(.title2, design: .rounded))
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                        // Header
+                        HStack {
+                            Text(languageManager.historyTitle)
+                                .font(.system(.title2, design: .rounded))
+                                .fontWeight(.bold)
+                                .foregroundColor(.white)
+                            Spacer()
+                        }
 
+                        // Simplified 1-row overview (Total, WinRate, Streak)
                         overviewCards
+
+                        // D/W/M period picker
+                        Picker(languageManager.periodDimension, selection: $period) {
+                            ForEach(ReportPeriod.allCases, id: \.self) { p in
+                                Text(p.localizedName).tag(p)
+                            }
+                        }
+                        .pickerStyle(.segmented)
+
+                        // Period navigator (week always; day only when date selected)
+                        if period == .week || (period == .day && selectedDate != nil) {
+                            periodNavigator
+                        }
+
+                        // Calendar heatmap
                         CalendarHeatmapView(
                             records: store.records,
-                            selectedDate: $selectedDate
+                            selectedDate: $selectedDate,
+                            period: period,
+                            periodDate: $periodDate
                         )
+
+                        // Period stats (day: only when date selected; week/month: always)
+                        if period != .day || selectedDate != nil {
+                            periodStatsSection
+                        }
+
+                        // Trend charts (win rate + match frequency)
+                        trendChartsSection
+
+                        // Match list
                         matchListByDate
                     }
                     .padding(.horizontal, 16)
@@ -37,85 +229,374 @@ struct MatchHistoryView: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .onAppear { store.refresh() }
+        .onChange(of: period) { _ in
+            withAnimation {
+                selectedDate = nil
+                periodDate = Date()
+            }
+            isEditing = false
+            selectedRecordIds.removeAll()
+        }
+        .onChange(of: selectedDate) { newDate in
+            if period == .day, let ds = newDate, let d = dateFmt.date(from: ds) {
+                periodDate = d
+            }
+        }
         .sheet(item: $recordToEdit) { record in
             EditScoreSheet(record: record, store: store)
         }
-        .alert("确认删除", isPresented: $showDeleteConfirmation) {
-            Button("删除", role: .destructive) {
-                if let record = recordToDelete {
-                    withAnimation {
-                        store.deleteRecord(id: record.id)
-                    }
-                }
-            }
-            Button("取消", role: .cancel) {}
-        } message: {
-            if let record = recordToDelete {
-                Text("确定要删除 \(record.teamAName) vs \(record.teamBName) 的比赛记录吗？")
+        .sheet(isPresented: $showPeriodShareSheet) {
+            let card = PeriodShareCardView(title: shareTitle, stats: periodStats)
+            if let image = card.renderImage() {
+                ShareSheetView(items: [image])
             }
         }
-        .alert("确认删除", isPresented: $showBatchDeleteConfirm) {
-            Button("删除\(selectedRecordIds.count)条记录", role: .destructive) {
+        .alert(languageManager.historyConfirmDelete, isPresented: $showDeleteConfirmation) {
+            Button(languageManager.historyDeleteRecord, role: .destructive) {
+                if let record = recordToDelete {
+                    withAnimation { store.deleteRecord(id: record.id) }
+                }
+            }
+            Button(languageManager.historyCancel, role: .cancel) {}
+        } message: {
+            if let record = recordToDelete {
+                Text(languageManager.formatDeleteConfirmMessage(teamA: record.teamAName, teamB: record.teamBName))
+            }
+        }
+        .alert(languageManager.historyConfirmDelete, isPresented: $showBatchDeleteConfirm) {
+            Button(languageManager.formatDeleteCount(selectedRecordIds.count), role: .destructive) {
                 withAnimation {
-                    for id in selectedRecordIds {
-                        store.deleteRecord(id: id)
-                    }
+                    for id in selectedRecordIds { store.deleteRecord(id: id) }
                     selectedRecordIds.removeAll()
                     isEditing = false
                 }
             }
-            Button("取消", role: .cancel) {}
+            Button(languageManager.historyCancel, role: .cancel) {}
         } message: {
-            Text("确定要删除选中的\(selectedRecordIds.count)条比赛记录吗？此操作不可撤销。")
+            Text(languageManager.formatBatchDeleteMessage(selectedRecordIds.count))
         }
     }
 
-    // MARK: - Overview Cards (top row)
+    // MARK: - Overview Cards (simplified: 1 row of 3)
 
     private var overviewCards: some View {
-        VStack(spacing: 12) {
-            HStack(spacing: 12) {
-                StatCard(title: "总场次", value: "\(store.totalMatches)", icon: "sportscourt", color: .orange)
-                StatCard(
-                    title: "胜率",
-                    value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-",
-                    icon: "trophy",
-                    color: .yellow
-                )
-                StatCard(title: "胜/负", value: "\(store.totalWins)/\(store.totalLosses)", icon: "chart.bar", color: .green)
+        HStack(spacing: 12) {
+            StatCard(title: languageManager.historyTotalMatches, value: "\(store.totalMatches)", icon: "sportscourt", color: .orange)
+            StatCard(
+                title: languageManager.historyWinRate,
+                value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-",
+                icon: "trophy",
+                color: .yellow
+            )
+            StatCard(
+                title: languageManager.historyStreak,
+                value: store.currentWinStreak > 0 ? "\(store.currentWinStreak)" : "-",
+                icon: "flame",
+                color: .red
+            )
+        }
+    }
+
+    // MARK: - Period Navigator
+
+    private var periodNavigator: some View {
+        HStack {
+            Button { navigatePeriod(by: -1) } label: {
+                Image(systemName: "chevron.left")
+                    .font(.system(.body, weight: .semibold))
+                    .foregroundColor(.orange)
+            }
+            Spacer()
+            Text(periodTitle)
+                .font(.system(.headline, design: .rounded))
+                .foregroundColor(.white)
+            Spacer()
+            Button { navigatePeriod(by: 1) } label: {
+                Image(systemName: "chevron.right")
+                    .font(.system(.body, weight: .semibold))
+                    .foregroundColor(canNavigatePeriodForward ? .orange : .gray.opacity(0.3))
+            }
+            .disabled(!canNavigatePeriodForward)
+        }
+        .padding(.horizontal, 8)
+    }
+
+    // MARK: - Period Stats Section
+
+    private var periodStatsSection: some View {
+        let stats = periodStats
+        return VStack(alignment: .leading, spacing: 12) {
+            // Header with share button
+            HStack {
+                Text(periodTitle)
+                    .font(.system(.subheadline, design: .rounded, weight: .medium))
+                    .foregroundColor(.white)
+                Spacer()
+                Button { showPeriodShareSheet = true } label: {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.system(.subheadline))
+                        .foregroundColor(.orange)
+                }
             }
 
-            HStack(spacing: 12) {
-                StatCard(
-                    title: "连胜",
-                    value: store.currentWinStreak > 0 ? "\(store.currentWinStreak)" : "-",
-                    icon: "flame",
-                    color: .red
-                )
-                StatCard(
-                    title: "总时长",
-                    value: formatMinutes(store.totalMinutes),
-                    icon: "clock",
-                    color: .cyan
-                )
-                StatCard(
-                    title: "周均",
-                    value: String(format: "%.1f场", store.avgMatchesPerWeek),
-                    icon: "calendar",
-                    color: .purple
-                )
+            if stats.totalMatches == 0 {
+                HStack(spacing: 8) {
+                    Image(systemName: "calendar.badge.exclamationmark")
+                        .foregroundColor(.gray.opacity(0.4))
+                    Text(languageManager.periodNoMatches)
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundColor(.gray)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 12)
+            } else {
+                // Row 1: matches / wins / losses
+                HStack(spacing: 8) {
+                    periodStatPill(value: "\(stats.totalMatches)", label: languageManager.periodMatches, color: .orange)
+                    periodStatPill(value: "\(stats.wins)", label: languageManager.periodWins, color: .green)
+                    periodStatPill(value: "\(stats.losses)", label: languageManager.periodLosses, color: .red)
+                }
+
+                // Row 2: win rate / total time / best streak
+                HStack(spacing: 8) {
+                    periodStatPill(value: "\(Int(stats.winRate * 100))%", label: languageManager.periodWinRate, color: .yellow)
+                    periodStatPill(value: languageManager.formatPeriodMinutes(stats.totalMinutes), label: languageManager.periodTotalTime, color: .cyan)
+                    periodStatPill(value: "\(stats.longestWinStreak)", label: languageManager.periodBestStreak, color: .red)
+                }
+
+                // Top opponents
+                if !stats.topOpponents.isEmpty {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(languageManager.periodTopRivals)
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundColor(.gray)
+                        ForEach(stats.topOpponents) { opp in
+                            HStack {
+                                Text(opp.name)
+                                    .font(.system(.caption, design: .rounded))
+                                    .foregroundColor(.white)
+                                Spacer()
+                                Text("\(opp.wins)\(languageManager.periodWinSuffix)")
+                                    .font(.system(.caption, design: .rounded))
+                                    .foregroundColor(.green)
+                                Text("\(opp.losses)\(languageManager.periodLossSuffix)")
+                                    .font(.system(.caption, design: .rounded))
+                                    .foregroundColor(.red)
+                            }
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(Color.white.opacity(0.05))
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                        }
+                    }
+                }
             }
         }
+        .padding(16)
+        .background(Color.white.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    // MARK: - Weekly Trend Data
+
+    private var weeklyTrendData: [WeeklyTrend] {
+        let cal = Calendar.current
+        let today = Date()
+        let labelFmt = DateFormatter()
+        labelFmt.dateFormat = "M/d"
+
+        var trends: [WeeklyTrend] = []
+
+        // Build 8 weeks, from oldest (7 weeks ago) to most recent (this week)
+        for weeksAgo in stride(from: 7, through: 0, by: -1) {
+            let weekEnd = cal.date(byAdding: .day, value: -(weeksAgo * 7), to: today)!
+            let weekStart = cal.date(byAdding: .day, value: -6, to: weekEnd)!
+            let startOfWeekStart = cal.startOfDay(for: weekStart)
+            let endOfWeekEnd = cal.date(byAdding: .day, value: 1, to: cal.startOfDay(for: weekEnd))!
+
+            let weekRecords = store.records.filter {
+                $0.startTime >= startOfWeekStart && $0.startTime < endOfWeekEnd
+            }
+
+            let matchCount = weekRecords.count
+            let wins = weekRecords.filter { $0.teamAWon }.count
+            let winRate = matchCount > 0 ? Double(wins) / Double(matchCount) * 100.0 : 0
+
+            let label = labelFmt.string(from: weekStart)
+            trends.append(WeeklyTrend(weekLabel: label, winRate: winRate, matchCount: matchCount))
+        }
+
+        return trends
+    }
+
+    // MARK: - Trend Charts Section
+
+    private var trendChartsSection: some View {
+        let data = weeklyTrendData
+        // Only show charts when at least 2 weeks have match data
+        let weeksWithData = data.filter { $0.matchCount > 0 }.count
+
+        return Group {
+            if weeksWithData < 2 {
+                VStack(spacing: 8) {
+                    Image(systemName: "chart.line.uptrend.xyaxis")
+                        .font(.title2)
+                        .foregroundColor(.gray.opacity(0.4))
+                    Text(languageManager.trendNoData)
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundColor(.gray)
+                        .multilineTextAlignment(.center)
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
+                .background(Color.white.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            } else {
+                VStack(spacing: 16) {
+                    // Win Rate Trend (Line Chart)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(languageManager.trendWinRate)
+                            .font(.system(.subheadline, design: .rounded, weight: .medium))
+                            .foregroundColor(.white)
+
+                        Chart(data) { item in
+                            LineMark(
+                                x: .value("Week", item.weekLabel),
+                                y: .value("WinRate", item.winRate)
+                            )
+                            .foregroundStyle(Color.orange)
+                            .interpolationMethod(.catmullRom)
+
+                            PointMark(
+                                x: .value("Week", item.weekLabel),
+                                y: .value("WinRate", item.winRate)
+                            )
+                            .foregroundStyle(Color.orange)
+                            .symbol(Circle())
+                            .symbolSize(30)
+                        }
+                        .chartYScale(domain: 0...100)
+                        .chartYAxis {
+                            AxisMarks(values: [0, 25, 50, 75, 100]) { value in
+                                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4]))
+                                    .foregroundStyle(Color.white.opacity(0.1))
+                                AxisValueLabel {
+                                    if let v = value.as(Int.self) {
+                                        Text("\(v)%")
+                                            .font(.system(.caption2, design: .rounded))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                        }
+                        .chartXAxis {
+                            AxisMarks { value in
+                                AxisValueLabel {
+                                    if let label = value.as(String.self) {
+                                        Text(label)
+                                            .font(.system(.caption2, design: .rounded))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 180)
+                    }
+
+                    // Match Count (Bar Chart)
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text(languageManager.trendMatchCount)
+                            .font(.system(.subheadline, design: .rounded, weight: .medium))
+                            .foregroundColor(.white)
+
+                        Chart(data) { item in
+                            BarMark(
+                                x: .value("Week", item.weekLabel),
+                                y: .value("Count", item.matchCount)
+                            )
+                            .foregroundStyle(Color.orange.gradient)
+                            .cornerRadius(4)
+                        }
+                        .chartYAxis {
+                            AxisMarks { value in
+                                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.5, dash: [4]))
+                                    .foregroundStyle(Color.white.opacity(0.1))
+                                AxisValueLabel {
+                                    if let v = value.as(Int.self) {
+                                        Text("\(v)")
+                                            .font(.system(.caption2, design: .rounded))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                        }
+                        .chartXAxis {
+                            AxisMarks { value in
+                                AxisValueLabel {
+                                    if let label = value.as(String.self) {
+                                        Text(label)
+                                            .font(.system(.caption2, design: .rounded))
+                                            .foregroundColor(.gray)
+                                    }
+                                }
+                            }
+                        }
+                        .frame(height: 180)
+                    }
+                }
+                .padding(16)
+                .background(Color.white.opacity(0.08))
+                .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+        }
+    }
+
+    private func periodStatPill(value: String, label: String, color: Color) -> some View {
+        VStack(spacing: 4) {
+            Text(value)
+                .font(.system(.subheadline, design: .rounded, weight: .bold))
+                .foregroundColor(color)
+                .minimumScaleFactor(0.7)
+                .lineLimit(1)
+            Text(label)
+                .font(.system(.caption2, design: .rounded))
+                .foregroundColor(.gray)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 10)
+        .background(Color.white.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 
     // MARK: - Match List by Date
 
-    /// Filter recordsByDate to only the selected date, or show all
     private var filteredRecordsByDate: [(date: String, displayDate: String, records: [MatchRecord])] {
-        if let selected = selectedDate {
-            return store.recordsByDate.filter { $0.date == selected }
+        switch period {
+        case .day:
+            if let selected = selectedDate {
+                return store.recordsByDate.filter { $0.date == selected }
+            }
+            return store.recordsByDate
+        case .week, .month:
+            let range = currentDateRange
+            let startDay = calendar.startOfDay(for: range.start)
+            let endPlusOne = calendar.date(byAdding: .day, value: 1, to: calendar.startOfDay(for: range.end))!
+            return store.recordsByDate.filter { group in
+                guard let date = dateFmt.date(from: group.date) else { return false }
+                return date >= startDay && date < endPlusOne
+            }
         }
-        return store.recordsByDate
+    }
+
+    private var matchListTitle: String {
+        switch period {
+        case .day:
+            return selectedDate != nil ? languageManager.historyToday : languageManager.historyRecords
+        case .week:
+            return languageManager.periodWeekMatches
+        case .month:
+            return languageManager.periodMonthMatches
+        }
     }
 
     private var matchListByDate: some View {
@@ -124,17 +605,17 @@ struct MatchHistoryView: View {
                 emptyState
             } else {
                 HStack {
-                    Text(selectedDate != nil ? "当日记录" : "比赛记录")
+                    Text(matchListTitle)
                         .font(.system(.headline, design: .rounded))
                         .foregroundColor(.white)
 
                     Spacer()
 
-                    if selectedDate != nil && !isEditing {
+                    if period == .day && selectedDate != nil && !isEditing {
                         Button {
                             withAnimation { selectedDate = nil }
                         } label: {
-                            Text("查看全部")
+                            Text(languageManager.historySeeAll)
                                 .font(.system(.caption, design: .rounded))
                                 .foregroundColor(.orange)
                         }
@@ -146,24 +627,24 @@ struct MatchHistoryView: View {
                             if !isEditing { selectedRecordIds.removeAll() }
                         }
                     } label: {
-                        Text(isEditing ? "完成" : "编辑")
+                        Text(isEditing ? languageManager.historyDone : languageManager.historyEdit)
                             .font(.system(.caption, design: .rounded))
                             .foregroundColor(.orange)
                     }
                 }
 
-                if selectedDate == nil && !isEditing {
-                    Text("长按记录可编辑或删除")
+                if period == .day && selectedDate == nil && !isEditing {
+                    Text(languageManager.historyLongPressHint)
                         .font(.system(.caption2, design: .rounded))
                         .foregroundColor(.gray.opacity(0.6))
                 }
 
-                if filteredRecordsByDate.isEmpty && selectedDate != nil {
+                if filteredRecordsByDate.isEmpty && (selectedDate != nil || period != .day) {
                     VStack(spacing: 8) {
                         Image(systemName: "calendar.badge.exclamationmark")
                             .font(.title2)
                             .foregroundColor(.gray.opacity(0.4))
-                        Text("当天没有比赛记录")
+                        Text(languageManager.historyNoMatchesToday)
                             .font(.system(.subheadline, design: .rounded))
                             .foregroundColor(.gray)
                     }
@@ -173,17 +654,14 @@ struct MatchHistoryView: View {
 
                 ForEach(filteredRecordsByDate, id: \.date) { group in
                     VStack(alignment: .leading, spacing: 8) {
-                        // Date header
                         HStack {
                             Text(group.displayDate)
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                                 .foregroundColor(.orange)
-
                             Spacer()
-
                             let wins = group.records.filter { $0.teamAWon }.count
                             let total = group.records.count
-                            Text("\(wins)胜\(total - wins)负")
+                            Text(languageManager.formatWinLoss(wins: wins, losses: total - wins))
                                 .font(.system(.caption, design: .rounded))
                                 .foregroundColor(.gray)
                         }
@@ -194,7 +672,6 @@ struct MatchHistoryView: View {
                                     Image(systemName: selectedRecordIds.contains(record.id) ? "checkmark.circle.fill" : "circle")
                                         .font(.system(.title3))
                                         .foregroundColor(selectedRecordIds.contains(record.id) ? .orange : .gray)
-
                                     MatchRowView(record: record)
                                 }
                                 .contentShape(Rectangle())
@@ -208,20 +685,20 @@ struct MatchHistoryView: View {
                                     }
                                 }
                             } else {
-                                NavigationLink(destination: MatchDetailView(record: record)) {
+                                NavigationLink(destination: MatchDetailView(record: record, allRecords: store.records)) {
                                     MatchRowView(record: record)
                                 }
                                 .contextMenu {
                                     Button {
                                         recordToEdit = record
                                     } label: {
-                                        Label("编辑比分", systemImage: "pencil")
+                                        Label(languageManager.historyEditScore, systemImage: "pencil")
                                     }
                                     Button(role: .destructive) {
                                         recordToDelete = record
                                         showDeleteConfirmation = true
                                     } label: {
-                                        Label("删除记录", systemImage: "trash")
+                                        Label(languageManager.historyDeleteRecord, systemImage: "trash")
                                     }
                                 }
                             }
@@ -243,7 +720,7 @@ struct MatchHistoryView: View {
                             }
                         } label: {
                             let allIds = Set(filteredRecordsByDate.flatMap { $0.records.map { $0.id } })
-                            Text(selectedRecordIds.isSuperset(of: allIds) ? "取消全选" : "全选")
+                            Text(selectedRecordIds.isSuperset(of: allIds) ? languageManager.historyDeselectAll : languageManager.historySelectAll)
                                 .font(.system(.subheadline, design: .rounded))
                                 .foregroundColor(.orange)
                         }
@@ -253,7 +730,7 @@ struct MatchHistoryView: View {
                         Button {
                             showBatchDeleteConfirm = true
                         } label: {
-                            Text("删除(\(selectedRecordIds.count))")
+                            Text(languageManager.formatDeleteCount(selectedRecordIds.count))
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                                 .foregroundColor(selectedRecordIds.isEmpty ? .gray : .red)
                         }
@@ -271,11 +748,11 @@ struct MatchHistoryView: View {
             TeamAvatarView(isTeamA: true, size: 120)
                 .opacity(0.5)
 
-            Text("还没有比赛记录")
+            Text(languageManager.historyNoRecords)
                 .font(.system(.body, design: .rounded))
                 .foregroundColor(.gray)
 
-            Text("在 Apple Watch 上开始你的第一场比赛吧")
+            Text(languageManager.historyStartFirst)
                 .font(.system(.caption, design: .rounded))
                 .foregroundColor(.gray.opacity(0.7))
                 .multilineTextAlignment(.center)
@@ -283,21 +760,13 @@ struct MatchHistoryView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 40)
     }
-
-    private func formatMinutes(_ minutes: Int) -> String {
-        if minutes < 60 {
-            return "\(minutes)分"
-        }
-        let hours = minutes / 60
-        let mins = minutes % 60
-        return "\(hours)时\(mins)分"
-    }
 }
 
 // MARK: - Edit Score Sheet
 
 struct EditScoreSheet: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State var record: MatchRecord
     let store: MatchHistoryStore
 
@@ -331,7 +800,7 @@ struct EditScoreSheet: View {
                         // Editable game scores
                         ForEach(Array(editableGames.indices), id: \.self) { index in
                             VStack(spacing: 8) {
-                                Text("第 \(index + 1) 局")
+                                Text(languageManager.formatGameNumber(index + 1))
                                     .font(.system(.caption, design: .rounded))
                                     .foregroundColor(.gray)
 
@@ -413,13 +882,13 @@ struct EditScoreSheet: View {
                         // Result preview
                         let gamesA = editableGames.filter { $0.scoreA > $0.scoreB }.count
                         let gamesB = editableGames.filter { $0.scoreB > $0.scoreA }.count
-                        let winner = gamesA > gamesB ? record.teamAName : (gamesB > gamesA ? record.teamBName : "未分胜负")
+                        let winner = gamesA > gamesB ? record.teamAName : (gamesB > gamesA ? record.teamBName : (languageManager.language == "zh" ? "未分胜负" : "Draw"))
 
                         VStack(spacing: 4) {
-                            Text("局分 \(gamesA) : \(gamesB)")
+                            Text("\(languageManager.phoneGameScore) \(gamesA) : \(gamesB)")
                                 .font(.system(.subheadline, design: .rounded, weight: .medium))
                                 .foregroundColor(.white)
-                            Text("\(winner) 胜")
+                            Text("\(winner)\(languageManager.historyWinSuffix)")
                                 .font(.system(.caption, design: .rounded))
                                 .foregroundColor(.yellow)
                         }
@@ -428,16 +897,16 @@ struct EditScoreSheet: View {
                     .padding()
                 }
             }
-            .navigationTitle("编辑比分")
+            .navigationTitle(languageManager.historyEditScore)
             .navigationBarTitleDisplayMode(.inline)
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("取消") { dismiss() }
+                    Button(languageManager.historyCancel) { dismiss() }
                         .foregroundColor(.gray)
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
+                    Button(languageManager.historySave) {
                         saveChanges()
                         dismiss()
                     }
@@ -469,7 +938,7 @@ struct EditScoreSheet: View {
         } else if updatedRecord.gamesWonByB > updatedRecord.gamesWonByA {
             updatedRecord.winnerName = updatedRecord.teamBName
         } else {
-            updatedRecord.winnerName = "未分胜负"
+            updatedRecord.winnerName = languageManager.language == "zh" ? "未分胜负" : "Draw"
         }
 
         store.updateRecord(updatedRecord)
@@ -511,6 +980,43 @@ struct StatCard: View {
 
 struct MatchRowView: View {
     let record: MatchRecord
+    @ObservedObject private var languageManager = LanguageManager.shared
+
+    // MARK: - Quick stats helpers
+
+    /// 我方发球得分率（0~1），nil 表示无数据
+    private var serveWinRate: Double? {
+        var servePoints = 0
+        var totalServes = 0
+        for game in record.gameScores {
+            guard game.history.count >= 2 else { continue }
+            for i in 1..<game.history.count {
+                let prev = game.history[i - 1]
+                let curr = game.history[i]
+                if prev.servingTeamIsA {
+                    totalServes += 1
+                    if curr.scoreA > prev.scoreA { servePoints += 1 }
+                }
+            }
+        }
+        guard totalServes > 0 else { return nil }
+        return Double(servePoints) / Double(totalServes)
+    }
+
+    /// 我方最长连分
+    private var myLongestRun: Int {
+        record.longestRunA
+    }
+
+    /// 是否有发球数据
+    private var hasServingData: Bool {
+        record.gameScores.contains { $0.history.count >= 2 }
+    }
+
+    /// 每局比分的文字描述，例如 "21:18 / 15:21 / 21:19"
+    private var gameByGameText: String {
+        record.gameScores.map { "\($0.scoreA):\($0.scoreB)" }.joined(separator: " / ")
+    }
 
     var body: some View {
         HStack(spacing: 12) {
@@ -518,38 +1024,76 @@ struct MatchRowView: View {
             TeamAvatarView(isTeamA: record.teamAWon, size: 50)
 
             VStack(alignment: .leading, spacing: 4) {
-                HStack {
+                // Row 1: win/loss dot + names + match format (+ tag)
+                HStack(spacing: 6) {
+                    Circle()
+                        .fill(record.teamAWon ? Color.green : Color.red)
+                        .frame(width: 8, height: 8)
+
                     Text(record.teamAName)
                         .foregroundColor(record.teamAWon ? .orange : .white)
                     Text("vs")
                         .foregroundColor(.gray)
                     Text(record.teamBName)
                         .foregroundColor(record.teamAWon ? .white : .cyan)
+
+                    Spacer()
+
+                    // 赛制 + 标签
+                    HStack(spacing: 4) {
+                        Text(languageManager.formatMatchFormat(record.totalGames))
+                        if let tag = record.matchTag {
+                            Text("·")
+                            Text(tag.displayName)
+                        }
+                        if !record.isCompleted {
+                            Text("·")
+                            Text(languageManager.historyUnfinished)
+                                .foregroundColor(.red)
+                        }
+                    }
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundColor(.gray)
                 }
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
 
-                HStack(spacing: 8) {
-                    Text(record.startTime, format: .dateTime.hour().minute())
-                    Text("\(record.elapsedMinutes)分钟")
-                    if !record.isCompleted {
-                        Text("未完赛")
-                            .foregroundColor(.red)
+                // Row 2: main score
+                if record.totalGames == 1, let game = record.gameScores.first {
+                    // 单局：显示局内比分
+                    Text("\(game.scoreA) : \(game.scoreB)")
+                        .font(.system(.title3, design: .rounded, weight: .bold))
+                        .foregroundColor(.white)
+                } else {
+                    // 多局：显示局数比分
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("\(record.gamesWonByA) : \(record.gamesWonByB)")
+                            .font(.system(.title3, design: .rounded, weight: .bold))
+                            .foregroundColor(.white)
+                        // 每局比分明细
+                        Text(gameByGameText)
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundColor(.gray)
                     }
                 }
+
+                // Row 3: stats line
+                HStack(spacing: 0) {
+                    if let rate = serveWinRate {
+                        Text("\(languageManager.rowServeLabel) \(Int(rate * 100))%")
+                    }
+                    if myLongestRun > 0 {
+                        if serveWinRate != nil {
+                            Text(" · ")
+                        }
+                        Text("\(languageManager.rowRunLabel) \(myLongestRun)")
+                    }
+                    if serveWinRate != nil || myLongestRun > 0 {
+                        Text(" · ")
+                    }
+                    Text(languageManager.formatElapsedMinutes(record.elapsedMinutes))
+                }
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray)
-            }
-
-            Spacer()
-
-            // Score
-            VStack(spacing: 2) {
-                Text("\(record.gamesWonByA) : \(record.gamesWonByB)")
-                    .font(.system(.title3, design: .rounded, weight: .bold))
-                    .foregroundColor(.white)
-                Text("局")
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray)
+                .foregroundColor(.secondary)
             }
 
             Image(systemName: "chevron.right")
@@ -562,10 +1106,22 @@ struct MatchRowView: View {
     }
 }
 
+// MARK: - Score Chart Data Point
+
+/// Data point for the score progression chart (defined at file level for Swift Charts compatibility)
+private struct ScoreChartPoint: Identifiable {
+    let id = UUID()
+    let rally: Int
+    let score: Int
+    let team: String
+}
+
 // MARK: - Match Detail View
 
 struct MatchDetailView: View {
     let record: MatchRecord
+    var allRecords: [MatchRecord] = []
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var showShareSheet = false
 
     var body: some View {
@@ -577,12 +1133,13 @@ struct MatchDetailView: View {
                     winnerBanner
                     matchInfoChips
                     gameByGameSection
+                    scoreProgressionSection
                     analysisSection
                     dateSection
 
                     // Share button
                     Button(action: { showShareSheet = true }) {
-                        Label("分享战绩", systemImage: "square.and.arrow.up")
+                        Label(languageManager.historyShare, systemImage: "square.and.arrow.up")
                             .font(.system(.body, design: .rounded))
                             .frame(maxWidth: .infinity)
                     }
@@ -593,7 +1150,7 @@ struct MatchDetailView: View {
                 .padding()
             }
         }
-        .navigationTitle("比赛详情")
+        .navigationTitle(languageManager.historyMatchDetail)
         .navigationBarTitleDisplayMode(.inline)
         .toolbarColorScheme(.dark, for: .navigationBar)
         .sheet(isPresented: $showShareSheet) {
@@ -613,11 +1170,11 @@ struct MatchDetailView: View {
                 )
 
             if record.isCompleted {
-                Text(record.winnerName + " 胜")
+                Text(record.winnerName + languageManager.historyWinSuffix)
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundColor(.yellow)
             } else {
-                Text("未完赛")
+                Text(languageManager.historyUnfinished)
                     .font(.system(.title2, design: .rounded, weight: .bold))
                     .foregroundColor(.red)
             }
@@ -633,9 +1190,9 @@ struct MatchDetailView: View {
 
     private var matchInfoChips: some View {
         HStack(spacing: 20) {
-            infoChip(icon: "clock", text: "\(record.elapsedMinutes) 分钟")
+            infoChip(icon: "clock", text: languageManager.formatElapsedMinutes(record.elapsedMinutes))
             infoChip(icon: "sportscourt", text: record.matchType.rawValue)
-            infoChip(icon: "target", text: "\(record.winningScore) 分制")
+            infoChip(icon: "target", text: languageManager.formatPointSystem(record.winningScore))
         }
     }
 
@@ -643,14 +1200,14 @@ struct MatchDetailView: View {
 
     private var gameByGameSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("每局比分")
+            Text(languageManager.historyGameScores)
                 .font(.system(.headline, design: .rounded))
                 .foregroundColor(.white)
 
             ForEach(Array(record.gameScores.enumerated()), id: \.offset) { index, game in
                 VStack(spacing: 0) {
                     HStack {
-                        Text("第 \(index + 1) 局")
+                        Text(languageManager.formatGameNumber(index + 1))
                             .font(.system(.subheadline, design: .rounded))
                             .foregroundColor(.gray)
 
@@ -667,6 +1224,12 @@ struct MatchDetailView: View {
                         Text("\(game.scoreB)")
                             .font(.system(.title3, design: .rounded, weight: .bold))
                             .foregroundColor(game.scoreB > game.scoreA ? .cyan : .white)
+
+                        // 多局时显示赢/输标记
+                        if record.totalGames > 1 {
+                            Text(game.scoreA > game.scoreB ? "✅" : "❌")
+                                .font(.system(.caption, design: .rounded))
+                        }
                     }
                     .padding()
 
@@ -684,26 +1247,126 @@ struct MatchDetailView: View {
         }
     }
 
+    // MARK: - Score Progression Section (Charts)
+
+    private var scoreProgressionSection: some View {
+        let hasAnyHistory = record.gameScores.contains { !$0.history.isEmpty }
+
+        return VStack(alignment: .leading, spacing: 12) {
+            Text(languageManager.scoreProgression)
+                .font(.system(.headline, design: .rounded))
+                .foregroundColor(.white)
+
+            if hasAnyHistory {
+                ForEach(Array(record.gameScores.enumerated()), id: \.offset) { index, game in
+                    if !game.history.isEmpty {
+                        VStack(alignment: .leading, spacing: 8) {
+                            if record.totalGames > 1 {
+                                Text(languageManager.formatGameNumber(index + 1))
+                                    .font(.system(.subheadline, design: .rounded))
+                                    .foregroundColor(.gray)
+                            }
+
+                            chartForGame(game)
+                                .frame(height: 160)
+
+                            // Legend
+                            HStack(spacing: 16) {
+                                HStack(spacing: 4) {
+                                    Circle().fill(Color.orange).frame(width: 8, height: 8)
+                                    Text(record.teamAName)
+                                        .font(.system(.caption, design: .rounded))
+                                        .foregroundColor(.orange)
+                                }
+                                HStack(spacing: 4) {
+                                    Circle().fill(Color.cyan).frame(width: 8, height: 8)
+                                    Text(record.teamBName)
+                                        .font(.system(.caption, design: .rounded))
+                                        .foregroundColor(.cyan)
+                                }
+                            }
+                        }
+                        .padding()
+                        .background(Color.white.opacity(0.08))
+                        .clipShape(RoundedRectangle(cornerRadius: 16))
+                    }
+                }
+            } else {
+                Text(languageManager.noDetailData)
+                    .font(.system(.subheadline, design: .rounded))
+                    .foregroundColor(.gray)
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 20)
+                    .background(Color.white.opacity(0.08))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+            }
+        }
+    }
+
+    /// Build a SwiftUI Chart for one game's score history
+    private func chartForGame(_ game: GameScore) -> some View {
+        var points: [ScoreChartPoint] = []
+        for (i, snap) in game.history.enumerated() {
+            points.append(ScoreChartPoint(rally: i, score: snap.scoreA, team: record.teamAName))
+            points.append(ScoreChartPoint(rally: i, score: snap.scoreB, team: record.teamBName))
+        }
+
+        return Chart(points) { point in
+            LineMark(
+                x: .value("Rally", point.rally),
+                y: .value("Score", point.score)
+            )
+            .foregroundStyle(point.team == record.teamAName ? Color.orange : Color.cyan)
+            .interpolationMethod(.linear)
+        }
+        .chartXAxis {
+            AxisMarks(values: .automatic(desiredCount: 5)) { _ in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.3))
+                    .foregroundStyle(Color.white.opacity(0.2))
+                AxisValueLabel()
+                    .foregroundStyle(Color.gray)
+            }
+        }
+        .chartYAxis {
+            AxisMarks(values: .automatic(desiredCount: 4)) { _ in
+                AxisGridLine(stroke: StrokeStyle(lineWidth: 0.3))
+                    .foregroundStyle(Color.white.opacity(0.2))
+                AxisValueLabel()
+                    .foregroundStyle(Color.gray)
+            }
+        }
+        .chartLegend(.hidden)
+    }
+
     // MARK: - Analysis Section
 
     private var analysisSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("数据分析")
+            Text(languageManager.historyAnalytics)
                 .font(.system(.headline, design: .rounded))
                 .foregroundColor(.white)
 
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
-                analysisCard(title: "我方最长连分", value: "\(record.longestRunA)", color: .orange)
-                analysisCard(title: "对方最长连分", value: "\(record.longestRunB)", color: .cyan)
-                analysisCard(title: "Deuce 次数", value: "\(record.totalDeuces)", color: .yellow)
-                analysisCard(title: "逆转局数", value: "\(record.comebackGames)", color: .green)
+            if record.totalGames == 1 {
+                // 单局：只显示最长连分，隐藏 Deuce 和逆转
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    analysisCard(title: languageManager.historyMyBestRun, value: "\(record.longestRunA)", color: .orange)
+                    analysisCard(title: languageManager.historyOppBestRun, value: "\(record.longestRunB)", color: .cyan)
+                }
+            } else {
+                // 多局：显示完整分析，含 Deuce 和逆转
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 12) {
+                    analysisCard(title: languageManager.historyMyBestRun, value: "\(record.longestRunA)", color: .orange)
+                    analysisCard(title: languageManager.historyOppBestRun, value: "\(record.longestRunB)", color: .cyan)
+                    analysisCard(title: languageManager.historyDeuceCount, value: "\(record.totalDeuces)", color: .yellow)
+                    analysisCard(title: languageManager.historyComebackGames, value: "\(record.comebackGames)", color: .green)
+                }
             }
 
             // Serving stats if available
             if hasServingData {
                 let (servePointsA, servePointsB, totalServeA, totalServeB) = servingStats
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("发球得分")
+                    Text(languageManager.historyServePoints)
                         .font(.system(.subheadline, design: .rounded))
                         .foregroundColor(.gray)
 
@@ -716,9 +1379,23 @@ struct MatchDetailView: View {
                                 .font(.system(.subheadline, design: .rounded, weight: .bold))
                                 .foregroundColor(.white)
                             if totalServeA > 0 {
-                                Text("\(Int(Double(servePointsA) / Double(totalServeA) * 100))%")
-                                    .font(.system(.caption2, design: .rounded))
-                                    .foregroundColor(.gray)
+                                let rateA = Double(servePointsA) / Double(totalServeA)
+                                HStack(spacing: 2) {
+                                    Text("\(Int(rateA * 100))%")
+                                        .font(.system(.caption2, design: .rounded))
+                                        .foregroundColor(.gray)
+                                    if let avg = avgServeWinRate {
+                                        if rateA > avg {
+                                            Text("↑")
+                                                .font(.system(.caption2, design: .rounded))
+                                                .foregroundColor(.green)
+                                        } else if rateA < avg {
+                                            Text("↓")
+                                                .font(.system(.caption2, design: .rounded))
+                                                .foregroundColor(.red)
+                                        }
+                                    }
+                                }
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -750,7 +1427,7 @@ struct MatchDetailView: View {
 
     private var dateSection: some View {
         VStack(spacing: 4) {
-            Text("比赛时间")
+            Text(languageManager.historyMatchTime)
                 .font(.system(.caption, design: .rounded))
                 .foregroundColor(.gray)
             Text(record.startTime, format: .dateTime.year().month().day().hour().minute())
@@ -835,6 +1512,37 @@ struct MatchDetailView: View {
                 }
             )
         }
+    }
+
+    // MARK: - Average serve win rate across all records
+
+    /// 所有历史记录的我方平均发球得分率（仅含有发球数据的场次）
+    private var avgServeWinRate: Double? {
+        var rates: [Double] = []
+        for rec in allRecords {
+            var sp = 0; var ts = 0
+            for game in rec.gameScores {
+                guard game.history.count >= 2 else { continue }
+                for i in 1..<game.history.count {
+                    let prev = game.history[i - 1]
+                    let curr = game.history[i]
+                    if prev.servingTeamIsA {
+                        ts += 1
+                        if curr.scoreA > prev.scoreA { sp += 1 }
+                    }
+                }
+            }
+            if ts > 0 { rates.append(Double(sp) / Double(ts)) }
+        }
+        guard !rates.isEmpty else { return nil }
+        return rates.reduce(0, +) / Double(rates.count)
+    }
+
+    /// 本场我方发球得分率
+    private var thisMatchServeWinRate: Double? {
+        let (sp, _, ts, _) = servingStats
+        guard ts > 0 else { return nil }
+        return Double(sp) / Double(ts)
     }
 
     // MARK: - Serving Stats

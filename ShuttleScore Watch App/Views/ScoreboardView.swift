@@ -6,6 +6,7 @@ struct ScoreboardView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var match: MatchState
     @ObservedObject var workoutManager = WorkoutManager.shared
+    @ObservedObject private var langMgr = WatchLanguageManager.shared
     @State private var showExitAlert = false
     @State private var showGameOver = false
     @State private var showMatchOver = false
@@ -59,19 +60,16 @@ struct ScoreboardView: View {
                 // Score row
                 GeometryReader { _ in
                     HStack(spacing: 0) {
-                        // Team A: tap = add, swipe up = add, swipe down = undo A
                         scoreHalf(
                             score: match.currentGame.scoreA,
                             isServing: match.currentGame.servingTeamIsA,
                             teamA: true
                         )
 
-                        // Divider
                         Rectangle()
                             .fill(Color.gray.opacity(0.3))
                             .frame(width: 1)
 
-                        // Team B: tap = add, swipe up = add, swipe down = undo B
                         scoreHalf(
                             score: match.currentGame.scoreB,
                             isServing: !match.currentGame.servingTeamIsA,
@@ -83,13 +81,12 @@ struct ScoreboardView: View {
 
                 // Footer: game info + serve court + workout stats
                 HStack {
-                    Text("\(match.matchType.rawValue) · 第\(match.currentGameIndex + 1)局")
+                    Text(langMgr.scoreMatchInfo(match.matchType.displayName, match.currentGameIndex + 1))
                         .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(.gray)
 
                     Spacer()
 
-                    // Heart rate & calories
                     if workoutManager.isWorkoutActive {
                         HStack(spacing: 3) {
                             if workoutManager.heartRate > 0 {
@@ -150,12 +147,6 @@ struct ScoreboardView: View {
         }
         .onAppear { workoutManager.startOrResumeSession() }
         .onDisappear {
-            // Always save to history if match is over, no matter how user exits
-            if match.isMatchOver {
-                match.endTime = match.endTime ?? Date()
-                MatchStore.shared.saveToHistory(match)
-                WatchSessionManager.shared.sendMatchHistory(match: match)
-            }
             workoutManager.pauseSession()
         }
         .navigationBarBackButtonHidden(true)
@@ -179,14 +170,6 @@ struct ScoreboardView: View {
             })
         }
         .fullScreenCover(isPresented: $showMatchOver, onDismiss: {
-            // 用户按数码表冠关闭了 MatchSummaryView，确保记录已保存
-            if match.isMatchOver {
-                match.endTime = match.endTime ?? Date()
-                MatchStore.shared.saveToHistory(match)
-                WatchSessionManager.shared.sendMatchHistory(match: match)
-                OpponentStore.shared.add(match.teamAName)
-                OpponentStore.shared.add(match.teamBName)
-            }
         }) {
             MatchSummaryView(match: match)
         }
@@ -199,10 +182,10 @@ struct ScoreboardView: View {
             VStack(spacing: 12) {
                 Text("⇄")
                     .font(.system(size: 40))
-                Text("请换边！继续加油")
+                Text(langMgr.sideChangeMessage)
                     .font(.system(.body, design: .rounded))
                     .multilineTextAlignment(.center)
-                Button("确认") {
+                Button(langMgr.sideChangeConfirm) {
                     showSideChangeAlert = false
                 }
                 .buttonStyle(.borderedProminent)
@@ -217,6 +200,21 @@ struct ScoreboardView: View {
                 showSideChangeAlert = true
             }
         }
+        .overlay(alignment: .topTrailing) {
+            if match.currentGame.opponentStreak >= 3 {
+                Text("🔥\(match.currentGame.opponentStreak)")
+                    .font(.system(size: 11, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 7)
+                    .padding(.vertical, 4)
+                    .background(Capsule().fill(Color.red.opacity(0.8)))
+                    .padding(.top, 4)
+                    .padding(.trailing, 6)
+                    .transition(.scale.combined(with: .opacity))
+                    .allowsHitTesting(false)
+            }
+        }
+        .animation(.spring(duration: 0.3), value: match.currentGame.opponentStreak)
         .overlay {
             if let message = transferMessage {
                 Text(message)
@@ -230,10 +228,9 @@ struct ScoreboardView: View {
             }
         }
         .animation(.easeInOut(duration: 0.3), value: transferMessage)
-        .confirmationDialog("退出比赛", isPresented: $showExitAlert) {
-            Button("继续比赛", role: .cancel) { }
-            Button("保存并退出") {
-                // Save to history (even if match not fully over)
+        .confirmationDialog(langMgr.scoreExitTitle, isPresented: $showExitAlert) {
+            Button(langMgr.scoreContinue, role: .cancel) { }
+            Button(langMgr.scoreSaveExit) {
                 let hasScores = match.games.contains { $0.scoreA > 0 || $0.scoreB > 0 }
                 if hasScores {
                     match.endTime = match.endTime ?? Date()
@@ -246,7 +243,7 @@ struct ScoreboardView: View {
                 MatchStore.shared.clear()
                 dismiss()
             }
-            Button("放弃本场", role: .destructive) {
+            Button(langMgr.scoreAbandon, role: .destructive) {
                 workoutManager.pauseSession()
                 WatchSessionManager.shared.sendMatchTerminated(match: match)
                 MatchStore.shared.clear()
@@ -261,7 +258,6 @@ struct ScoreboardView: View {
     private func scoreHalf(score: Int, isServing: Bool, teamA: Bool) -> some View {
         ZStack {
             VStack(spacing: 2) {
-                // Cat mascot above score
                 Image(teamA ? "cat_orange" : "cat_robe")
                     .resizable()
                     .scaledToFit()
@@ -284,10 +280,8 @@ struct ScoreboardView: View {
                 .onEnded { value in
                     let dy = value.translation.height
                     if dy < -25 {
-                        // Swipe up = add point
                         scorePoint(teamA: teamA)
                     } else if dy > 25 {
-                        // Swipe down = undo this team's last point
                         undoPointForTeam(teamA: teamA)
                     }
                 }
@@ -298,20 +292,27 @@ struct ScoreboardView: View {
 
     private func scorePoint(teamA: Bool) {
         guard !match.currentGame.isOver else { return }
-        ScoringEngine.addPoint(to: match, teamAScores: teamA)
+        let serviceChanged = ScoringEngine.addPoint(to: match, teamAScores: teamA)
 
-        // Throttle saves: only persist every 5 points or when game/match is over
+        // Voice announcement (non-blocking, runs on speech synthesizer's own queue)
+        if match.voiceAnnouncement && !match.currentGame.isOver {
+            ScoreAnnouncer.shared.announce(
+                scoreA: match.currentGame.scoreA,
+                scoreB: match.currentGame.scoreB,
+                servingTeamIsA: match.currentGame.servingTeamIsA,
+                serviceChanged: serviceChanged
+            )
+        }
+
         let totalScore = match.currentGame.scoreA + match.currentGame.scoreB
         if totalScore % 5 == 0 || match.currentGame.isOver {
             MatchStore.shared.save(match)
         }
 
-        // Send live score to iPhone
         WatchSessionManager.shared.sendMatchState(match: match)
     }
 
     private func savePartialMatchAndExit() {
-        // 暂停比赛，保留到 current_match 供"继续上场"，不写入历史
         MatchStore.shared.save(match)
         workoutManager.pauseSession()
         WatchSessionManager.shared.sendMatchTerminated(match: match)
@@ -334,10 +335,10 @@ struct ScoreboardView: View {
             MatchStore.shared.save(match)
             WatchSessionManager.shared.sendMatchState(match: match)
             WKInterfaceDevice.current().play(.notification)
-            showMessage("撤销 \(teamA ? match.teamAName : match.teamBName) 得分")
+            showMessage(langMgr.scoreUndoMessage(teamA ? match.teamAName : match.teamBName))
         } else {
             WKInterfaceDevice.current().play(.failure)
-            showMessage("最后一分不是\(teamA ? match.teamAName : match.teamBName)得的")
+            showMessage(langMgr.scoreNotLastPoint(teamA ? match.teamAName : match.teamBName))
         }
     }
 

@@ -132,15 +132,34 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
             ])
         }
 
+        // Stable matchId: same match always produces the same ID, preventing duplicates on iPhone
+        let stableIdSource = "\(match.startTime.timeIntervalSinceReferenceDate)-\(match.teamAName)-\(match.teamBName)"
+        let idString = UUID(uuid: {
+            // Simple hash → UUID: use the string's UTF-8 bytes to fill a uuid_t
+            var uuid = uuid_t(0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+            let bytes = Array(stableIdSource.utf8)
+            withUnsafeMutableBytes(of: &uuid) { dest in
+                for i in 0..<min(bytes.count, 16) {
+                    dest[i] = bytes[i]
+                }
+                // Mix in remaining bytes via XOR for longer strings
+                for i in 16..<bytes.count {
+                    dest[i % 16] ^= bytes[i]
+                }
+            }
+            return uuid
+        }()).uuidString
+
         let endTime = match.endTime ?? Date()
         let payload: [String: Any] = [
             "type": "matchHistory",
-            "matchId": UUID().uuidString,
+            "matchId": idString,
             "teamAName": match.teamAName,
             "teamBName": match.teamBName,
             "matchType": match.matchType.rawValue,
             "totalGames": match.totalGames,
             "winningScore": match.winningScore,
+            "matchTag": match.matchTag.rawValue,
             "startTime": formatter.string(from: match.startTime),
             "endTime": formatter.string(from: endTime),
             "games": gamesPayload,
@@ -168,6 +187,29 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
                     for name in opponents {
                         OpponentStore.shared.add(name)
                     }
+                }
+            }
+        case "languageSetting":
+            if let lang = userInfo["language"] as? String {
+                DispatchQueue.main.async {
+                    WatchLanguageManager.shared.currentLanguage = lang
+                }
+            }
+        default:
+            break
+        }
+    }
+
+    // MARK: - Receive Message (real-time from iPhone)
+
+    func session(_ session: WCSession, didReceiveMessage message: [String: Any]) {
+        guard let type = message["type"] as? String else { return }
+
+        switch type {
+        case "languageSetting":
+            if let lang = message["language"] as? String {
+                DispatchQueue.main.async {
+                    WatchLanguageManager.shared.currentLanguage = lang
                 }
             }
         default:
@@ -214,7 +256,7 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
         } else if gamesWonByB > gamesWonByA {
             winnerName = teamBName
         } else {
-            winnerName = "未分胜负"
+            winnerName = WatchLanguageManager.shared.drawText
         }
 
         // Deduplicate against existing history
@@ -240,9 +282,6 @@ final class WatchSessionManager: NSObject, WCSessionDelegate {
 
         history.insert(record, at: 0)
         history.sort { $0.startTime > $1.startTime }
-        // Keep 30 days
-        let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
-        history = history.filter { $0.startTime > cutoff }
 
         do {
             let data = try JSONEncoder().encode(history)

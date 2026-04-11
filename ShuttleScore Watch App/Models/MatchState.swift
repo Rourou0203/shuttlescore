@@ -1,5 +1,18 @@
 import Foundation
 
+// MARK: - MatchTag
+
+enum MatchTag: String, Codable, CaseIterable {
+    case training, friendly, serious
+    func displayName(lang: String) -> String {
+        switch self {
+        case .training: return lang == "zh" ? "训练" : "Training"
+        case .friendly: return lang == "zh" ? "友谊" : "Friendly"
+        case .serious:  return lang == "zh" ? "认真" : "Serious"
+        }
+    }
+}
+
 // MARK: - Enums
 
 enum MatchType: String, CaseIterable, Codable {
@@ -18,9 +31,18 @@ enum MatchType: String, CaseIterable, Codable {
     }
 }
 
+extension MatchType {
+    var displayName: String {
+        WatchLanguageManager.shared.matchTypeDisplayName(self)
+    }
+}
+
 enum ServiceCourt {
     case right, left
-    var label: String { self == .right ? "右区" : "左区" }
+    var label: String {
+        let lang = WatchLanguageManager.shared
+        return self == .right ? lang.courtRight : lang.courtLeft
+    }
 }
 
 // MARK: - Game State
@@ -30,6 +52,7 @@ struct GameState: Codable {
     var scoreB: Int = 0
     var servingTeamIsA: Bool
     var winningScore: Int = 21
+    var opponentStreak: Int = 0   // 对方连续得分计数
     // History for undo: store snapshots
     var history: [GameSnapshot] = []
 
@@ -37,6 +60,7 @@ struct GameState: Codable {
         var scoreA: Int
         var scoreB: Int
         var servingTeamIsA: Bool
+        var opponentStreak: Int = 0
     }
 
     // Which court the server stands in (based on serving team's current score)
@@ -76,23 +100,29 @@ class MatchState: ObservableObject, Codable {
     @Published var endTime: Date?
 
     @Published var sideChangeEnabled: Bool
+    @Published var voiceAnnouncement: Bool
     @Published var winningScore: Int
+    @Published var matchTag: MatchTag
 
     init(
         matchType: MatchType = .singles,
-        teamAName: String = "我方",
-        teamBName: String = "对手",
+        teamAName: String = WatchLanguageManager.shared.defaultTeamA,
+        teamBName: String = WatchLanguageManager.shared.defaultTeamB,
         totalGames: Int = 3,
         firstServeIsA: Bool = true,
         sideChangeEnabled: Bool = false,
-        winningScore: Int = 21
+        voiceAnnouncement: Bool = false,
+        winningScore: Int = 21,
+        matchTag: MatchTag = .training
     ) {
         self.matchType = matchType
         self.teamAName = teamAName
         self.teamBName = teamBName
         self.totalGames = totalGames
         self.sideChangeEnabled = sideChangeEnabled
+        self.voiceAnnouncement = voiceAnnouncement
         self.winningScore = winningScore
+        self.matchTag = matchTag
         self.games = [GameState(servingTeamIsA: firstServeIsA, winningScore: winningScore)]
         self.currentGameIndex = 0
         self.startTime = Date()
@@ -126,7 +156,7 @@ class MatchState: ObservableObject, Codable {
 
     // MARK: Codable
     enum CodingKeys: String, CodingKey {
-        case matchType, teamAName, teamBName, totalGames, sideChangeEnabled, winningScore, games, currentGameIndex, startTime, endTime
+        case matchType, teamAName, teamBName, totalGames, sideChangeEnabled, voiceAnnouncement, winningScore, matchTag, games, currentGameIndex, startTime, endTime
     }
 
     required init(from decoder: Decoder) throws {
@@ -136,7 +166,9 @@ class MatchState: ObservableObject, Codable {
         teamBName = try c.decode(String.self, forKey: .teamBName)
         totalGames = try c.decode(Int.self, forKey: .totalGames)
         sideChangeEnabled = try c.decodeIfPresent(Bool.self, forKey: .sideChangeEnabled) ?? false
+        voiceAnnouncement = try c.decodeIfPresent(Bool.self, forKey: .voiceAnnouncement) ?? false
         winningScore = try c.decodeIfPresent(Int.self, forKey: .winningScore) ?? 21
+        matchTag = try c.decodeIfPresent(MatchTag.self, forKey: .matchTag) ?? .training
         games = try c.decode([GameState].self, forKey: .games)
         currentGameIndex = try c.decode(Int.self, forKey: .currentGameIndex)
         startTime = try c.decode(Date.self, forKey: .startTime)
@@ -150,7 +182,9 @@ class MatchState: ObservableObject, Codable {
         try c.encode(teamBName, forKey: .teamBName)
         try c.encode(totalGames, forKey: .totalGames)
         try c.encode(sideChangeEnabled, forKey: .sideChangeEnabled)
+        try c.encode(voiceAnnouncement, forKey: .voiceAnnouncement)
         try c.encode(winningScore, forKey: .winningScore)
+        try c.encode(matchTag, forKey: .matchTag)
         try c.encode(games, forKey: .games)
         try c.encode(currentGameIndex, forKey: .currentGameIndex)
         try c.encode(startTime, forKey: .startTime)

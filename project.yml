@@ -19,6 +19,16 @@ schemes:
       config: Release
     analyze:
       config: Debug
+  ShuttleScore Watch App:
+    build:
+      targets:
+        ShuttleScore Watch App: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+    analyze:
+      config: Debug
 targets:
   ShuttleScoreConnector:
     type: application
@@ -46,11 +56,33 @@ targets:
         CODE_SIGN_STYLE: Automatic
         DEVELOPMENT_TEAM: RWHXW7J963
 
+  ShuttleScoreComplicationExtension:
+    type: app-extension
+    platform: watchOS
+    deploymentTarget: "10.0"
+    sources:
+      - ShuttleScoreComplication
+    info:
+      path: ShuttleScoreComplication/Info.plist
+      properties:
+        NSExtension:
+          NSExtensionPointIdentifier: com.apple.widgetkit-extension
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.clawd.shuttlescore.watchkitapp.complication1
+        SWIFT_VERSION: "5.0"
+        WATCHOS_DEPLOYMENT_TARGET: "10.0"
+        CODE_SIGN_STYLE: Automatic
+        DEVELOPMENT_TEAM: RWHXW7J963
+
   ShuttleScore Watch App:
     type: application
     platform: watchOS
     sources:
       - ShuttleScore Watch App
+    dependencies:
+      - target: ShuttleScoreComplicationExtension
+        embed: true
     info:
       path: ShuttleScore Watch App/Info.plist
       properties:
@@ -59,6 +91,10 @@ targets:
         WKCompanionAppBundleIdentifier: com.clawd.shuttlescore
         NSHealthShareUsageDescription: "ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里"
         NSHealthUpdateUsageDescription: "ShuttleScore 需要写入运动数据以记录您的羽毛球比赛"
+        CFBundleURLTypes:
+          - CFBundleURLName: com.clawd.shuttlescore.watchkitapp
+            CFBundleURLSchemes:
+              - shuttlescore
     entitlements:
       path: ShuttleScore Watch App/ShuttleScore.entitlements
       properties:

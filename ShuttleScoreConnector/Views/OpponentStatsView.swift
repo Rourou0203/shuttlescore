@@ -14,23 +14,33 @@ struct OpponentStat: Identifiable {
     var matchRecords: [MatchRecord]
 }
 
+// MARK: - Sort Option
+
+enum OpponentSortOption: String, CaseIterable {
+    case matches
+    case winRate
+    case recent
+}
+
 // MARK: - Opponent Stats View
 
 struct OpponentStatsView: View {
     @StateObject private var store = MatchHistoryStore.shared
     @StateObject private var opponentStore = PhoneOpponentStore.shared
+    @StateObject private var eloManager = ELOManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var expandedOpponent: String?
     @State private var newOpponentName: String = ""
+    @State private var sortOption: OpponentSortOption = .matches
 
     private var opponentStats: [OpponentStat] {
         let grouped = Dictionary(grouping: store.records) { $0.teamBName }
 
-        return grouped.map { name, records in
+        let stats = grouped.map { name, records in
             let wins = records.filter { $0.teamAWon }.count
             let losses = records.count - wins
             let winRate = records.isEmpty ? 0 : Double(wins) / Double(records.count)
 
-            // Sort by time descending for recent results
             let sorted = records.sorted { $0.startTime > $1.startTime }
             let recent = Array(sorted.prefix(5).map { $0.teamAWon })
 
@@ -45,7 +55,16 @@ struct OpponentStatsView: View {
                 matchRecords: sorted
             )
         }
-        .sorted { $0.totalMatches > $1.totalMatches }
+
+        // Apply sorting
+        switch sortOption {
+        case .matches:
+            return stats.sorted { $0.totalMatches > $1.totalMatches }
+        case .winRate:
+            return stats.sorted { $0.winRate > $1.winRate }
+        case .recent:
+            return stats.sorted { $0.lastPlayedDate > $1.lastPlayedDate }
+        }
     }
 
     var body: some View {
@@ -55,7 +74,7 @@ struct OpponentStatsView: View {
 
                 ScrollView {
                     VStack(spacing: 16) {
-                        Text("对手战绩")
+                        Text(languageManager.opponentsTitle)
                             .font(.system(.title2, design: .rounded))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -64,7 +83,7 @@ struct OpponentStatsView: View {
                         // MARK: - Add opponent
                         VStack(spacing: 10) {
                             HStack(spacing: 10) {
-                                TextField("输入对手名称", text: $newOpponentName)
+                                TextField(languageManager.opponentsEnterName, text: $newOpponentName)
                                     .textFieldStyle(.plain)
                                     .font(.system(.body, design: .rounded))
                                     .padding(10)
@@ -72,11 +91,21 @@ struct OpponentStatsView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 10))
                                     .foregroundColor(.white)
 
+                                // Random buddy button
+                                Button(action: generateRandomBuddy) {
+                                    Image(systemName: "dice.fill")
+                                        .font(.system(.body))
+                                        .foregroundColor(.black)
+                                        .padding(10)
+                                        .background(Color.orange)
+                                        .clipShape(Circle())
+                                }
+
                                 Button(action: {
                                     opponentStore.add(newOpponentName)
                                     newOpponentName = ""
                                 }) {
-                                    Text("添加")
+                                    Text(languageManager.opponentsAdd)
                                         .font(.system(.subheadline, design: .rounded))
                                         .fontWeight(.medium)
                                         .foregroundColor(.black)
@@ -89,10 +118,10 @@ struct OpponentStatsView: View {
                                 .opacity(newOpponentName.trimmingCharacters(in: .whitespaces).isEmpty ? 0.5 : 1)
                             }
 
-                            // Saved opponents list (manageable)
+                            // Saved opponents list
                             if !opponentStore.opponents.isEmpty {
                                 VStack(alignment: .leading, spacing: 0) {
-                                    Text("已保存对手")
+                                    Text(languageManager.opponentsSaved)
                                         .font(.system(.caption, design: .rounded))
                                         .foregroundColor(.gray)
                                         .padding(.bottom, 6)
@@ -133,18 +162,26 @@ struct OpponentStatsView: View {
                             // Summary
                             HStack(spacing: 12) {
                                 StatCard(
-                                    title: "对手数",
+                                    title: languageManager.opponentsCount,
                                     value: "\(opponentStats.count)",
                                     icon: "person.2",
                                     color: .cyan
                                 )
                                 StatCard(
-                                    title: "最常对战",
+                                    title: languageManager.opponentsTopRival,
                                     value: opponentStats.first?.opponentName ?? "-",
                                     icon: "flame",
                                     color: .orange
                                 )
                             }
+
+                            // MARK: - Sort Picker
+                            Picker("", selection: $sortOption) {
+                                Text(languageManager.opponentSortByMatches).tag(OpponentSortOption.matches)
+                                Text(languageManager.opponentSortByWinRate).tag(OpponentSortOption.winRate)
+                                Text(languageManager.opponentSortByRecent).tag(OpponentSortOption.recent)
+                            }
+                            .pickerStyle(.segmented)
 
                             // Opponent list
                             ForEach(opponentStats) { stat in
@@ -176,7 +213,27 @@ struct OpponentStatsView: View {
             }
             .toolbar(.hidden, for: .navigationBar)
         }
-        .onAppear { store.refresh() }
+        .onAppear {
+            store.refresh()
+            eloManager.recalculateAll(from: store.records)
+        }
+    }
+
+    // MARK: - Random Buddy Generator
+
+    private func generateRandomBuddy() {
+        let prefix = languageManager.randomBuddy
+        let hashPrefix = "\(prefix) #"
+
+        // Count today's random buddies from match records
+        let todayRecords = store.records.filter { Calendar.current.isDateInToday($0.startTime) }
+        let todayBuddyCount = todayRecords.filter { $0.teamBName.hasPrefix(hashPrefix) }.count
+
+        // Also check saved opponents for today-pattern names
+        let savedBuddyCount = opponentStore.opponents.filter { $0.hasPrefix(hashPrefix) }.count
+
+        let nextNumber = max(todayBuddyCount, savedBuddyCount) + 1
+        newOpponentName = "\(hashPrefix)\(nextNumber)"
     }
 
     // MARK: - Opponent Row
@@ -189,9 +246,18 @@ struct OpponentStatsView: View {
                         .font(.system(.headline, design: .rounded))
                         .foregroundColor(.white)
 
-                    Text("\(stat.totalMatches)场")
-                        .font(.system(.caption, design: .rounded))
-                        .foregroundColor(.gray)
+                    HStack(spacing: 6) {
+                        Text(languageManager.formatMatchCount(stat.totalMatches))
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundColor(.gray)
+
+                        // ELO badge
+                        if let eloScore = eloManager.opponentRatings[stat.opponentName] {
+                            Text("\(eloScore)")
+                                .font(.system(.caption2, design: .rounded, weight: .medium))
+                                .foregroundColor(eloManager.tierColor(for: eloScore))
+                        }
+                    }
                 }
 
                 Spacer()
@@ -218,12 +284,10 @@ struct OpponentStatsView: View {
             // Win rate progress bar
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    // Background (loss portion)
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.red.opacity(0.3))
                         .frame(height: 6)
 
-                    // Win portion
                     RoundedRectangle(cornerRadius: 4)
                         .fill(Color.green)
                         .frame(width: geo.size.width * stat.winRate, height: 6)
@@ -246,9 +310,32 @@ struct OpponentStatsView: View {
                 .foregroundColor(.yellow)
                 .padding(.horizontal, 16)
 
+            // ELO detail
+            if let eloScore = eloManager.opponentRatings[stat.opponentName] {
+                HStack(spacing: 8) {
+                    Image(systemName: eloManager.tierIcon(for: eloScore))
+                        .foregroundColor(eloManager.tierColor(for: eloScore))
+                    Text("\(languageManager.eloRating): \(eloScore)")
+                        .font(.system(.subheadline, design: .rounded, weight: .medium))
+                        .foregroundColor(.white)
+                    Text(eloManager.ratingTier(for: eloScore))
+                        .font(.system(.caption, design: .rounded))
+                        .foregroundColor(eloManager.tierColor(for: eloScore))
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
+                        .background(eloManager.tierColor(for: eloScore).opacity(0.15))
+                        .clipShape(Capsule())
+                }
+                .padding(.horizontal, 16)
+            }
+
+            // Radar chart
+            RadarChartView(stat: stat, records: store.records)
+                .padding(.horizontal, 16)
+
             // Recent 5 results
             HStack(spacing: 6) {
-                Text("近期")
+                Text(languageManager.opponentsRecent)
                     .font(.system(.caption, design: .rounded))
                     .foregroundColor(.gray)
 
@@ -260,7 +347,7 @@ struct OpponentStatsView: View {
 
                 Spacer()
 
-                Text("胜率 \(Int(stat.winRate * 100))%")
+                Text(languageManager.formatOpponentWinRate(stat.winRate))
                     .font(.system(.caption, design: .rounded, weight: .medium))
                     .foregroundColor(stat.winRate >= 0.5 ? .green : .red)
             }
@@ -284,7 +371,7 @@ struct OpponentStatsView: View {
                             .font(.system(.subheadline, design: .rounded, weight: .medium))
                             .foregroundColor(.white)
 
-                        Text(record.teamAWon ? "胜" : "负")
+                        Text(record.teamAWon ? languageManager.opponentsW : languageManager.opponentsL)
                             .font(.system(.caption, design: .rounded, weight: .medium))
                             .foregroundColor(record.teamAWon ? .green : .red)
 
@@ -298,7 +385,7 @@ struct OpponentStatsView: View {
             }
 
             if stat.matchRecords.count > 5 {
-                Text("共 \(stat.matchRecords.count) 场比赛")
+                Text(languageManager.formatTotalMatches(stat.matchRecords.count))
                     .font(.system(.caption2, design: .rounded))
                     .foregroundColor(.gray.opacity(0.6))
                     .padding(.horizontal, 16)
@@ -313,16 +400,30 @@ struct OpponentStatsView: View {
         let name = stat.opponentName
         let rate = stat.winRate
 
-        if rate >= 0.8 {
-            return "你是\(name)的克星！\u{1F3F8}"
-        } else if rate >= 0.6 {
-            return "对\(name)保持优势 \u{1F4AA}"
-        } else if rate == 0.5 {
-            return "势均力敌的对手 \u{2694}\u{FE0F}"
-        } else if rate >= 0.3 {
-            return "\(name)实力不俗 \u{1F525}"
+        if languageManager.language == "zh" {
+            if rate >= 0.8 {
+                return "你是\(name)的克星！\u{1F3F8}"
+            } else if rate >= 0.6 {
+                return "对\(name)保持优势 \u{1F4AA}"
+            } else if rate == 0.5 {
+                return "势均力敌的对手 \u{2694}\u{FE0F}"
+            } else if rate >= 0.3 {
+                return "\(name)实力不俗 \u{1F525}"
+            } else {
+                return "总有一天会赢ta！加油 \u{1F431}"
+            }
         } else {
-            return "总有一天会赢ta！加油 \u{1F431}"
+            if rate >= 0.8 {
+                return "You dominate \(name)! \u{1F3F8}"
+            } else if rate >= 0.6 {
+                return "Ahead vs \(name) \u{1F4AA}"
+            } else if rate == 0.5 {
+                return "Evenly matched \u{2694}\u{FE0F}"
+            } else if rate >= 0.3 {
+                return "\(name) is tough \u{1F525}"
+            } else {
+                return "You'll get them! \u{1F431}"
+            }
         }
     }
 
@@ -334,17 +435,170 @@ struct OpponentStatsView: View {
                 .font(.system(size: 48))
                 .foregroundColor(.gray.opacity(0.4))
 
-            Text("还没有对手记录")
+            Text(languageManager.opponentsNoRecords)
                 .font(.system(.body, design: .rounded))
                 .foregroundColor(.gray)
 
-            Text("完成比赛后这里会显示对手战绩")
+            Text(languageManager.opponentsPlayToSee)
                 .font(.system(.caption, design: .rounded))
                 .foregroundColor(.gray.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 60)
+    }
+}
+
+// MARK: - Radar Chart View
+
+struct RadarChartView: View {
+    let stat: OpponentStat
+    let records: [MatchRecord]
+    @ObservedObject private var languageManager = LanguageManager.shared
+
+    private var radarData: [Double] {
+        let opponentRecords = records.filter { $0.teamBName == stat.opponentName }
+        guard !opponentRecords.isEmpty else { return [0, 0, 0, 0, 0] }
+
+        // 1. Win rate (0-1)
+        let winRate = stat.winRate
+
+        // 2. Average duration normalized (30 min = 1.0)
+        let avgMinutes = Double(opponentRecords.reduce(0) { $0 + $1.elapsedMinutes }) / Double(opponentRecords.count)
+        let durationNorm = min(avgMinutes / 30.0, 1.0)
+
+        // 3. Comeback count normalized (5 = 1.0)
+        let totalComebacks = opponentRecords.reduce(0) { $0 + $1.comebackGames }
+        let comebackNorm = min(Double(totalComebacks) / 5.0, 1.0)
+
+        // 4. Deuce count normalized (10 = 1.0)
+        let totalDeuces = opponentRecords.reduce(0) { $0 + $1.totalDeuces }
+        let deuceNorm = min(Double(totalDeuces) / 10.0, 1.0)
+
+        // 5. Best scoring run normalized (10 = 1.0)
+        let bestRun = opponentRecords.reduce(0) { max($0, $1.longestRunA) }
+        let runNorm = min(Double(bestRun) / 10.0, 1.0)
+
+        return [winRate, durationNorm, comebackNorm, deuceNorm, runNorm]
+    }
+
+    private var labels: [String] {
+        [
+            languageManager.radarWinRate,
+            languageManager.radarDuration,
+            languageManager.radarComeback,
+            languageManager.radarDeuce,
+            languageManager.radarBestRun
+        ]
+    }
+
+    var body: some View {
+        VStack {
+            GeometryReader { geo in
+                let center = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
+                let radius: CGFloat = min(geo.size.width, geo.size.height) / 2 - 30
+                let data = radarData
+                let count = 5
+                let angleStep = 2 * Double.pi / Double(count)
+
+                ZStack {
+                    // Grid lines (3 levels)
+                    ForEach([0.33, 0.66, 1.0], id: \.self) { level in
+                        Path { path in
+                            for i in 0...count {
+                                let angle = Double(i % count) * angleStep - Double.pi / 2
+                                let x = center.x + CGFloat(cos(angle)) * radius * CGFloat(level)
+                                let y = center.y + CGFloat(sin(angle)) * radius * CGFloat(level)
+                                if i == 0 {
+                                    path.move(to: CGPoint(x: x, y: y))
+                                } else {
+                                    path.addLine(to: CGPoint(x: x, y: y))
+                                }
+                            }
+                        }
+                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                    }
+
+                    // Axis lines
+                    ForEach(0..<count, id: \.self) { i in
+                        Path { path in
+                            let angle = Double(i) * angleStep - Double.pi / 2
+                            path.move(to: center)
+                            path.addLine(to: CGPoint(
+                                x: center.x + CGFloat(cos(angle)) * radius,
+                                y: center.y + CGFloat(sin(angle)) * radius
+                            ))
+                        }
+                        .stroke(Color.gray.opacity(0.2), lineWidth: 1)
+                    }
+
+                    // Data polygon (filled)
+                    Path { path in
+                        for i in 0...count {
+                            let idx = i % count
+                            let angle = Double(idx) * angleStep - Double.pi / 2
+                            let value = CGFloat(data[idx])
+                            let x = center.x + CGFloat(cos(angle)) * radius * value
+                            let y = center.y + CGFloat(sin(angle)) * radius * value
+                            if i == 0 {
+                                path.move(to: CGPoint(x: x, y: y))
+                            } else {
+                                path.addLine(to: CGPoint(x: x, y: y))
+                            }
+                        }
+                    }
+                    .fill(Color.orange.opacity(0.25))
+
+                    // Data polygon (stroke)
+                    Path { path in
+                        for i in 0...count {
+                            let idx = i % count
+                            let angle = Double(idx) * angleStep - Double.pi / 2
+                            let value = CGFloat(data[idx])
+                            let x = center.x + CGFloat(cos(angle)) * radius * value
+                            let y = center.y + CGFloat(sin(angle)) * radius * value
+                            if i == 0 {
+                                path.move(to: CGPoint(x: x, y: y))
+                            } else {
+                                path.addLine(to: CGPoint(x: x, y: y))
+                            }
+                        }
+                    }
+                    .stroke(Color.orange, lineWidth: 2)
+
+                    // Data points
+                    ForEach(0..<count, id: \.self) { i in
+                        let angle = Double(i) * angleStep - Double.pi / 2
+                        let value = CGFloat(data[i])
+                        Circle()
+                            .fill(Color.orange)
+                            .frame(width: 6, height: 6)
+                            .position(
+                                x: center.x + CGFloat(cos(angle)) * radius * value,
+                                y: center.y + CGFloat(sin(angle)) * radius * value
+                            )
+                    }
+
+                    // Labels
+                    ForEach(0..<count, id: \.self) { i in
+                        let angle = Double(i) * angleStep - Double.pi / 2
+                        let labelRadius = radius + 20
+                        Text(labels[i])
+                            .font(.system(.caption2, design: .rounded))
+                            .foregroundColor(.gray)
+                            .position(
+                                x: center.x + CGFloat(cos(angle)) * labelRadius,
+                                y: center.y + CGFloat(sin(angle)) * labelRadius
+                            )
+                    }
+                }
+            }
+            .frame(width: 200, height: 200)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 8)
+        .background(Color.white.opacity(0.08))
+        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 

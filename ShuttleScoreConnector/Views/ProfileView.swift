@@ -4,10 +4,13 @@ import PhotosUI
 struct ProfileView: View {
     @StateObject private var profile = ProfileStore.shared
     @StateObject private var store = MatchHistoryStore.shared
+    @StateObject private var eloManager = ELOManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var isEditingName = false
     @State private var editedName = ""
+    @State private var showSettings = false
 
     var body: some View {
         ZStack {
@@ -15,11 +18,18 @@ struct ProfileView: View {
 
             ScrollView {
                 VStack(spacing: 16) {
-                    Text("我的")
-                        .font(.system(.title2, design: .rounded))
-                        .fontWeight(.bold)
-                        .foregroundColor(.white)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    HStack {
+                        Text(languageManager.profileTitle)
+                            .font(.system(.title2, design: .rounded))
+                            .fontWeight(.bold)
+                            .foregroundColor(.white)
+                        Spacer()
+                        Button(action: { showSettings = true }) {
+                            Image(systemName: "gearshape.circle.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.orange)
+                        }
+                    }
 
                     // Avatar + name
                     VStack(spacing: 8) {
@@ -69,7 +79,7 @@ struct ProfileView: View {
                             Button {
                                 profile.customAvatarData = nil
                             } label: {
-                                Label("恢复本命猫头像", systemImage: "arrow.uturn.backward")
+                                Label(languageManager.profileResetAvatar, systemImage: "arrow.uturn.backward")
                                     .font(.system(.caption2, design: .rounded))
                                     .foregroundColor(.gray)
                             }
@@ -90,26 +100,26 @@ struct ProfileView: View {
                             }
                         }
                     }
-                    .alert("修改昵称", isPresented: $isEditingName) {
+                    .alert(languageManager.profileAlertTitle, isPresented: $isEditingName) {
                         TextField("输入昵称", text: $editedName)
-                        Button("取消", role: .cancel) {}
-                        Button("确定") {
+                        Button(languageManager.profileCancel, role: .cancel) {}
+                        Button(languageManager.profileConfirm) {
                             let trimmed = editedName.trimmingCharacters(in: .whitespacesAndNewlines)
                             if !trimmed.isEmpty {
                                 profile.username = trimmed
                             }
                         }
                     } message: {
-                        Text("给自己取个响亮的名字吧")
+                        Text(languageManager.profileAlertMessage)
                     }
 
                     // Stats row
                     HStack(spacing: 16) {
-                        profileStat(title: "胜率", value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-")
+                        profileStat(title: languageManager.profileStatWinRate, value: store.totalMatches > 0 ? "\(Int(store.winRate * 100))%" : "-")
                         divider
-                        profileStat(title: "比赛数", value: "\(store.totalMatches)")
+                        profileStat(title: languageManager.profileStatMatches, value: "\(store.totalMatches)")
                         divider
-                        profileStat(title: "总时长", value: formatMinutes(store.totalMinutes))
+                        profileStat(title: languageManager.profileStatDuration, value: formatMinutes(store.totalMinutes))
                     }
                     .padding(.vertical, 12)
                     .padding(.horizontal)
@@ -117,9 +127,39 @@ struct ProfileView: View {
                     .background(Color.white.opacity(0.06))
                     .clipShape(RoundedRectangle(cornerRadius: 16))
 
+                    // ELO Rating card
+                    HStack(spacing: 12) {
+                        Image(systemName: eloManager.tierIcon(for: eloManager.myRating))
+                            .font(.system(size: 28))
+                            .foregroundColor(eloManager.tierColor(for: eloManager.myRating))
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(languageManager.eloRating)
+                                .font(.system(.caption, design: .rounded))
+                                .foregroundColor(.gray)
+                            Text("\(eloManager.myRating)")
+                                .font(.system(.title2, design: .rounded, weight: .bold))
+                                .foregroundColor(.white)
+                        }
+
+                        Spacer()
+
+                        Text(eloManager.ratingTier(for: eloManager.myRating))
+                            .font(.system(.subheadline, design: .rounded, weight: .semibold))
+                            .foregroundColor(eloManager.tierColor(for: eloManager.myRating))
+                            .padding(.horizontal, 12)
+                            .padding(.vertical, 6)
+                            .background(eloManager.tierColor(for: eloManager.myRating).opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                    .padding(12)
+                    .frame(maxWidth: .infinity)
+                    .background(Color.white.opacity(0.06))
+                    .clipShape(RoundedRectangle(cornerRadius: 16))
+
                     // Favorite cat selection
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("本命猫")
+                        Text(languageManager.profileFavoriteCat)
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.white)
 
@@ -137,13 +177,13 @@ struct ProfileView: View {
 
                     // Additional stats
                     VStack(alignment: .leading, spacing: 14) {
-                        Text("更多数据")
+                        Text(languageManager.profileMoreData)
                             .font(.system(.headline, design: .rounded))
                             .foregroundColor(.white)
 
-                        detailRow(icon: "flame", title: "最长连胜", value: "\(store.longestWinStreak) 场")
-                        detailRow(icon: "trophy", title: "总胜场", value: "\(store.totalWins) 场")
-                        detailRow(icon: "sportscourt", title: "总比赛", value: "\(store.totalMatches) 场")
+                        detailRow(icon: "flame", title: languageManager.profileLongestWinStreak, value: "\(store.longestWinStreak) 场")
+                        detailRow(icon: "trophy", title: languageManager.profileTotalWins, value: "\(store.totalWins) 场")
+                        detailRow(icon: "sportscourt", title: languageManager.profileTotalMatches, value: "\(store.totalMatches) 场")
                     }
                     .padding(12)
                     .frame(maxWidth: .infinity)
@@ -158,7 +198,13 @@ struct ProfileView: View {
                 .padding(.horizontal, 16)
             }
         }
-        .onAppear { store.refresh() }
+        .onAppear {
+            store.refresh()
+            eloManager.recalculateAll(from: store.records)
+        }
+        .sheet(isPresented: $showSettings) {
+            SettingsView()
+        }
     }
 
     private func catSelector(cat: String, name: String) -> some View {

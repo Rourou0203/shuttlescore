@@ -3,17 +3,24 @@ import SwiftUI
 struct PhoneSetupView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var opponentStore = PhoneOpponentStore.shared
+    @StateObject private var store = MatchHistoryStore.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     var onStart: (PhoneMatchState) -> Void
 
     @State private var matchType: MatchType = .singles
-    @State private var teamAName: String = "我方"
-    @State private var teamBName: String = "对手"
+    @State private var teamAName: String = ""
+    @State private var teamBName: String = ""
     @State private var totalGames: Int = 3
     @State private var winningScore: Int = 21
     @State private var firstServeIsA: Bool = true
 
     private let gameOptions = [1, 3, 5]
     private let scoreOptions = [11, 15, 21]
+
+    init(onStart: @escaping (PhoneMatchState) -> Void) {
+        self.onStart = onStart
+        // Default names set in onAppear based on language
+    }
 
     var body: some View {
         ZStack {
@@ -26,7 +33,7 @@ struct PhoneSetupView: View {
                         TeamAvatarView(isTeamA: true, size: 80)
                             .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
 
-                        Text("赛前设置")
+                        Text(languageManager.setupTitle)
                             .font(.system(.title, design: .rounded))
                             .fontWeight(.bold)
                             .foregroundColor(.white)
@@ -34,7 +41,7 @@ struct PhoneSetupView: View {
                     .padding(.top, 20)
 
                     // Match type
-                    settingSection(title: "比赛类型") {
+                    settingSection(title: languageManager.setupMatchType) {
                         HStack(spacing: 10) {
                             ForEach(MatchType.allCases, id: \.self) { type in
                                 Button(action: { matchType = type }) {
@@ -52,11 +59,11 @@ struct PhoneSetupView: View {
                     }
 
                     // Team names
-                    settingSection(title: "队伍名称") {
+                    settingSection(title: languageManager.setupTeamNames) {
                         HStack(spacing: 16) {
                             VStack(spacing: 6) {
                                 TeamAvatarView(isTeamA: true, size: 40)
-                                TextField("A队", text: $teamAName)
+                                TextField("A", text: $teamAName)
                                     .textFieldStyle(.plain)
                                     .font(.system(.body, design: .rounded))
                                     .multilineTextAlignment(.center)
@@ -72,8 +79,18 @@ struct PhoneSetupView: View {
                                 .foregroundColor(.gray)
 
                             VStack(spacing: 6) {
-                                TeamAvatarView(isTeamA: false, size: 40)
-                                TextField("B队", text: $teamBName)
+                                HStack(spacing: 4) {
+                                    TeamAvatarView(isTeamA: false, size: 40)
+                                    Button(action: generateRandomBuddy) {
+                                        Image(systemName: "dice.fill")
+                                            .font(.system(.caption))
+                                            .foregroundColor(.black)
+                                            .padding(6)
+                                            .background(Color.orange)
+                                            .clipShape(Circle())
+                                    }
+                                }
+                                TextField("B", text: $teamBName)
                                     .textFieldStyle(.plain)
                                     .font(.system(.body, design: .rounded))
                                     .multilineTextAlignment(.center)
@@ -88,7 +105,7 @@ struct PhoneSetupView: View {
 
                     // Quick opponent select
                     if !opponentStore.opponents.isEmpty {
-                        settingSection(title: "快速选择对手") {
+                        settingSection(title: languageManager.setupQuickSelect) {
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
                                     ForEach(opponentStore.opponents, id: \.self) { name in
@@ -109,11 +126,11 @@ struct PhoneSetupView: View {
                     }
 
                     // Total games
-                    settingSection(title: "局数") {
+                    settingSection(title: languageManager.setupGames) {
                         HStack(spacing: 12) {
                             ForEach(gameOptions, id: \.self) { n in
                                 Button(action: { totalGames = n }) {
-                                    Text("\(n)局\(n > 1 ? "\(n/2+1)胜" : "")")
+                                    Text(languageManager.formatGameOption(n))
                                         .font(.system(.subheadline, design: .rounded))
                                         .fontWeight(.medium)
                                         .padding(.horizontal, 16)
@@ -127,11 +144,11 @@ struct PhoneSetupView: View {
                     }
 
                     // Winning score
-                    settingSection(title: "胜利分数") {
+                    settingSection(title: languageManager.setupWinScore) {
                         HStack(spacing: 12) {
                             ForEach(scoreOptions, id: \.self) { s in
                                 Button(action: { winningScore = s }) {
-                                    Text("\(s)分")
+                                    Text(languageManager.formatScoreOption(s))
                                         .font(.system(.subheadline, design: .rounded))
                                         .fontWeight(.medium)
                                         .padding(.horizontal, 16)
@@ -145,7 +162,7 @@ struct PhoneSetupView: View {
                     }
 
                     // First serve
-                    settingSection(title: "先发球方") {
+                    settingSection(title: languageManager.setupFirstServe) {
                         HStack(spacing: 12) {
                             Button(action: { firstServeIsA = true }) {
                                 Text(teamAName)
@@ -184,7 +201,7 @@ struct PhoneSetupView: View {
                     }) {
                         HStack {
                             Image(systemName: "play.fill")
-                            Text("开始比赛")
+                            Text(languageManager.setupStartMatch)
                         }
                         .font(.system(.title3, design: .rounded))
                         .fontWeight(.bold)
@@ -197,7 +214,7 @@ struct PhoneSetupView: View {
                     .padding(.horizontal, 4)
 
                     // Cancel
-                    Button("取消") { dismiss() }
+                    Button(languageManager.setupCancel) { dismiss() }
                         .font(.system(.body, design: .rounded))
                         .foregroundColor(.gray)
                         .padding(.bottom, 20)
@@ -205,6 +222,27 @@ struct PhoneSetupView: View {
                 .padding(.horizontal, 24)
             }
         }
+        .onAppear {
+            // Set default names based on language
+            if teamAName.isEmpty {
+                teamAName = languageManager.language == "zh" ? "我方" : "My Team"
+            }
+            if teamBName.isEmpty {
+                teamBName = languageManager.language == "zh" ? "对手" : "Opponent"
+            }
+        }
+    }
+
+    private func generateRandomBuddy() {
+        let prefix = languageManager.randomBuddy
+        let hashPrefix = "\(prefix) #"
+
+        let todayRecords = store.records.filter { Calendar.current.isDateInToday($0.startTime) }
+        let todayBuddyCount = todayRecords.filter { $0.teamBName.hasPrefix(hashPrefix) }.count
+        let savedBuddyCount = opponentStore.opponents.filter { $0.hasPrefix(hashPrefix) }.count
+
+        let nextNumber = max(todayBuddyCount, savedBuddyCount) + 1
+        teamBName = "\(hashPrefix)\(nextNumber)"
     }
 
     private func settingSection<Content: View>(title: String, @ViewBuilder content: () -> Content) -> some View {

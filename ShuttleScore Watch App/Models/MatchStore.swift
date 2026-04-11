@@ -55,8 +55,6 @@ class MatchStore: ObservableObject {
         if history.contains(where: { $0.startTime == record.startTime }) { return }
 
         history.insert(record, at: 0)
-        let cutoff = Calendar.current.date(byAdding: .day, value: -30, to: Date())!
-        history = history.filter { $0.startTime > cutoff }
         if let data = try? JSONEncoder().encode(history) {
             UserDefaults.standard.set(data, forKey: historyKey)
         }
@@ -76,6 +74,16 @@ class MatchStore: ObservableObject {
         loadHistory().filter { $0.isToday }
     }
 
+    /// 查询与指定对手的历史战绩（wins=我方胜场，losses=我方败场）
+    func recordsAgainst(opponent: String) -> (wins: Int, losses: Int) {
+        guard !opponent.isEmpty else { return (0, 0) }
+        let history = loadHistory()
+        let relevant = history.filter { $0.teamAName == opponent || $0.teamBName == opponent }
+        let wins = relevant.filter { $0.winnerName != opponent }.count
+        let losses = relevant.filter { $0.winnerName == opponent }.count
+        return (wins, losses)
+    }
+
     // MARK: - Last Match Settings (Quick Start)
 
     private let lastSettingsKey = "last_match_settings"
@@ -86,6 +94,7 @@ class MatchStore: ObservableObject {
         var winningScore: Int
         var teamAName: String
         var teamBName: String
+        var voiceAnnouncement: Bool = false
     }
 
     func saveLastSettings(_ settings: MatchSettings) {
