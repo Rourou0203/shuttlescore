@@ -21,6 +21,7 @@ struct MatchRecord: Codable, Identifiable {
     var winnerName: String
     var startTime: Date
     var endTime: Date
+    var matchTag: MatchTag? = nil
 
     var elapsedMinutes: Int {
         Int(endTime.timeIntervalSince(startTime) / 60)
@@ -40,7 +41,7 @@ struct MatchRecord: Codable, Identifiable {
         } else if match.gamesWonByB > match.gamesWonByA {
             winnerName = match.teamBName
         } else {
-            winnerName = "未分胜负"
+            winnerName = WatchLanguageManager.shared.drawText
         }
 
         // 包含所有有得分的局（含未打完的当前局）
@@ -58,7 +59,8 @@ struct MatchRecord: Codable, Identifiable {
             gamesWonByB: match.gamesWonByB,
             winnerName: winnerName,
             startTime: match.startTime,
-            endTime: endTime
+            endTime: endTime,
+            matchTag: match.matchTag
         )
     }
 }

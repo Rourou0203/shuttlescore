@@ -1,0 +1,677 @@
+{
+  "sourceLanguage" : "zh-Hans",
+  "strings" : {
+    "· %@场" : {
+
+    },
+    "%@" : {
+
+    },
+    "%@ : %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ : %2$@"
+          }
+        }
+      }
+    },
+    "%@ · %@场" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · %2$@场"
+          }
+        }
+      }
+    },
+    "%@ · 第%@局" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ · 第%2$@局"
+          }
+        }
+      }
+    },
+    "%@ %@:%@ %@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@:%3$@ %4$@"
+          }
+        }
+      }
+    },
+    "%@ bpm" : {
+
+    },
+    "%@ kcal" : {
+
+    },
+    "%@-%@" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@-%2$@"
+          }
+        }
+      }
+    },
+    "%@分钟" : {
+
+    },
+    "%@赢得第%@局" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@赢得第%2$@局"
+          }
+        }
+      }
+    },
+    "⇄" : {
+
+    },
+    "⇄ 请换边！" : {
+
+    },
+    "❤️" : {
+
+    },
+    "❤️%@" : {
+
+    },
+    "🏆" : {
+
+    },
+    "🐾" : {
+
+    },
+    "👑" : {
+
+    },
+    "🔥" : {
+
+    },
+    "🔥%@" : {
+
+    },
+    "11分" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "11 pts"
+          }
+        }
+      }
+    },
+    "15分" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "15 pts"
+          }
+        }
+      }
+    },
+    "21分" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "21 pts"
+          }
+        }
+      }
+    },
+    "A队名称" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team A"
+          }
+        }
+      }
+    },
+    "B队名称" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team B"
+          }
+        }
+      }
+    },
+    "一局定胜负" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best of 1"
+          }
+        }
+      }
+    },
+    "三局两胜" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best of 3"
+          }
+        }
+      }
+    },
+    "下一场" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next Match"
+          }
+        }
+      }
+    },
+    "五局三胜" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best of 5"
+          }
+        }
+      }
+    },
+    "今天还没有比赛记录" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No matches today"
+          }
+        }
+      }
+    },
+    "今日记录" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today"
+          }
+        }
+      }
+    },
+    "保存并退出" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save & Exit"
+          }
+        }
+      }
+    },
+    "先发球" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Serve"
+          }
+        }
+      }
+    },
+    "先发球方" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "First Serve"
+          }
+        }
+      }
+    },
+    "共%@场 · %@分钟" : {
+      "localizations" : {
+        "zh-Hans" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "共%1$@场 · %2$@分钟"
+          }
+        }
+      }
+    },
+    "决胜局换边提醒" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Side Change Alert"
+          }
+        }
+      }
+    },
+    "分数" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score"
+          }
+        }
+      }
+    },
+    "单打" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Singles"
+          }
+        }
+      }
+    },
+    "历史对手" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saved Opponents"
+          }
+        }
+      }
+    },
+    "历史记录" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        }
+      }
+    },
+    "右区" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Right"
+          }
+        }
+      }
+    },
+    "女双" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Women's Doubles"
+          }
+        }
+      }
+    },
+    "对手" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Opponent"
+          }
+        }
+      }
+    },
+    "局数" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Games"
+          }
+        }
+      }
+    },
+    "左区" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Left"
+          }
+        }
+      }
+    },
+    "开始比赛" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Match"
+          }
+        }
+      }
+    },
+    "开始第%@局" : {
+
+    },
+    "快速开始" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick Start"
+          }
+        }
+      }
+    },
+    "我方" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My Team"
+          }
+        }
+      }
+    },
+    "放弃本场" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abandon"
+          }
+        }
+      }
+    },
+    "新对手" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Opponent"
+          }
+        }
+      }
+    },
+    "新建比赛" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Match"
+          }
+        }
+      }
+    },
+    "未分胜负" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw"
+          }
+        }
+      }
+    },
+    "本月暂无记录" : {
+
+    },
+    "混双" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mixed Doubles"
+          }
+        }
+      }
+    },
+    "用时 %@ 分钟" : {
+
+    },
+    "男双" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Men's Doubles"
+          }
+        }
+      }
+    },
+    "确认" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
+    "第%@局" : {
+
+    },
+    "类型" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "练球暂停中" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session Paused"
+          }
+        }
+      }
+    },
+    "练球进行中" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Session Active"
+          }
+        }
+      }
+    },
+    "结束今日练球" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Session"
+          }
+        }
+      }
+    },
+    "结束比赛" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Match"
+          }
+        }
+      }
+    },
+    "继续上场" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
+          }
+        }
+      }
+    },
+    "继续比赛" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Continue"
+          }
+        }
+      }
+    },
+    "胜利分数" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winning Score"
+          }
+        }
+      }
+    },
+    "自定义" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Custom"
+          }
+        }
+      }
+    },
+    "请换边！" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch sides!"
+          }
+        }
+      }
+    },
+    "请换边！继续加油" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Switch sides! Keep going!"
+          }
+        }
+      }
+    },
+    "赛前设置" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Match Setup"
+          }
+        }
+      }
+    },
+    "输入名字" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter name"
+          }
+        }
+      }
+    },
+    "还没有对手记录，打完比赛后自动保存" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No opponents yet. They'll be saved after matches."
+          }
+        }
+      }
+    },
+    "退出比赛" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exit Match"
+          }
+        }
+      }
+    },
+    "选择对手" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select Opponent"
+          }
+        }
+      }
+    },
+    "队伍名称" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team Names"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

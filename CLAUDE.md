@@ -10,6 +10,9 @@ Apple Watch 原生羽毛球计分 App，SwiftUI，watchOS 11.0+。
   ShuttleScore.xcodeproj        # Xcode 项目（xcodegen 生成）
   project.yml                   # xcodegen 配置
   mockup.html                   # UI 原型图
+  ShuttleScoreComplication/
+    ShuttleScoreComplication.swift  # Watch Complication (WidgetKit)
+    Info.plist                      # xcodegen 生成，含 NSExtensionPointIdentifier
   ShuttleScore Watch App/
     ShuttleScoreApp.swift
     Info.plist                  # 注意：必须有 WKWatchOnly=true，否则 simctl 安装失败
@@ -74,7 +77,7 @@ open -a Simulator
 
 ## 已知限制
 - 无 iPhone 配套 App
-- 无 Apple Watch Complication
+- Apple Watch Complication 已完成（WidgetKit，3种样式，点击快速开始）
 - 无 iCloud 同步
 
 ## 断点恢复规则

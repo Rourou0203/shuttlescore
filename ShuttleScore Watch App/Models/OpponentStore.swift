@@ -11,7 +11,10 @@ class OpponentStore: ObservableObject {
     func add(_ name: String) {
         let trimmed = name.trimmingCharacters(in: .whitespaces)
         guard !trimmed.isEmpty,
+              trimmed != WatchLanguageManager.shared.defaultTeamA,
+              trimmed != WatchLanguageManager.shared.defaultTeamB,
               trimmed != "我方", trimmed != "对手",
+              trimmed != "My Team", trimmed != "Opponent",
               !opponents.contains(trimmed) else { return }
         opponents.insert(trimmed, at: 0)
         if opponents.count > 30 { opponents = Array(opponents.prefix(30)) }

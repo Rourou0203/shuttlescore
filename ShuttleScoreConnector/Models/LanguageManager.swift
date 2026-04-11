@@ -96,7 +96,12 @@ class LanguageManager: ObservableObject {
     var historyNoMatchesToday: String { language == "zh" ? "当天没有比赛记录" : "No matches today" }
     var historyNoRecords: String { language == "zh" ? "还没有比赛记录" : "No records yet" }
     var historyStartFirst: String { language == "zh" ? "在 Apple Watch 上开始你的第一场比赛吧" : "Start your first match on Apple Watch" }
-    var historyEditScore: String { language == "zh" ? "编辑比分" : "Edit Score" }
+    var historyEditScore: String { language == "zh" ? "编辑比赛" : "Edit Match" }
+    var editMyTeam: String { language == "zh" ? "我方" : "My Team" }
+    var editOpponent: String { language == "zh" ? "对手" : "Opponent" }
+    var editMatchType: String { language == "zh" ? "类型" : "Type" }
+    var editMatchTag: String { language == "zh" ? "标签" : "Tag" }
+    var editTagNone: String { language == "zh" ? "无" : "None" }
     var historyDeleteRecord: String { language == "zh" ? "删除记录" : "Delete" }
     var historyDeselectAll: String { language == "zh" ? "取消全选" : "Deselect All" }
     var historySelectAll: String { language == "zh" ? "全选" : "Select All" }

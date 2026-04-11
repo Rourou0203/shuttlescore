@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct CalendarView: View {
+    @ObservedObject private var langMgr = WatchLanguageManager.shared
     @State private var selectedMonth: Date = Calendar.current.startOfMonth(for: Date())
     @State private var allRecords: [MatchRecord] = []
 
@@ -28,7 +29,7 @@ struct CalendarView: View {
         let year = cal.component(.year, from: selectedMonth)
         let month = cal.component(.month, from: selectedMonth)
         let currentYear = cal.component(.year, from: Date())
-        return year == currentYear ? "\(month)月" : "\(year)年\(month)月"
+        return langMgr.calendarMonthLabel(year: year, month: month, currentYear: currentYear)
     }
 
     private var canGoForward: Bool {
@@ -74,7 +75,7 @@ struct CalendarView: View {
             // 记录列表
             if groupedRecords.isEmpty {
                 VStack(spacing: 6) {
-                    Text("本月暂无记录")
+                    Text(langMgr.calendarNoRecords)
                         .font(.system(.footnote, design: .rounded))
                         .foregroundStyle(.gray)
                 }
@@ -93,7 +94,7 @@ struct CalendarView: View {
                 }
             }
         }
-        .navigationTitle("历史记录")
+        .navigationTitle(langMgr.calendarTitle)
         .onAppear {
             allRecords = MatchStore.shared.loadHistory()
         }
@@ -102,7 +103,7 @@ struct CalendarView: View {
     // MARK: - Section Header
 
     private func sectionHeader(date: Date, count: Int) -> some View {
-        Text("\(dateLabel(date)) · \(count)场")
+        Text(langMgr.calendarSectionHeader(dateLabel: dateLabel(date), count: count))
             .font(.system(.caption2, design: .rounded))
             .foregroundStyle(.secondary)
     }
@@ -111,8 +112,7 @@ struct CalendarView: View {
         let cal = Self.calendar
         let day = cal.component(.day, from: date)
         let weekday = cal.component(.weekday, from: date)
-        let weekdayNames = ["", "周日", "周一", "周二", "周三", "周四", "周五", "周六"]
-        return "\(day)日 \(weekdayNames[weekday])"
+        return langMgr.calendarDateLabel(day: day, weekday: weekday)
     }
 
     // MARK: - Record Row
@@ -132,7 +132,7 @@ struct CalendarView: View {
                         .font(.system(.caption2, design: .monospaced))
                         .foregroundStyle(.secondary)
                     Spacer()
-                    Text("\(record.elapsedMinutes)分钟")
+                    Text(langMgr.detailMinutes(record.elapsedMinutes))
                         .font(.system(.caption2, design: .rounded))
                         .foregroundStyle(.secondary)
                 }

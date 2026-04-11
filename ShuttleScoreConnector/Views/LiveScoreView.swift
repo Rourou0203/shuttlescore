@@ -2,6 +2,7 @@ import SwiftUI
 
 struct LiveScoreView: View {
     @ObservedObject private var session = PhoneSessionManager.shared
+    @ObservedObject private var languageManager = LanguageManager.shared
     @State private var showPhoneSetup = false
     @State private var phoneMatch: PhoneMatchState?
 
@@ -35,7 +36,7 @@ struct LiveScoreView: View {
                 .clipShape(Circle())
                 .overlay(Circle().stroke(Color.orange.opacity(0.5), lineWidth: 2))
 
-            Text("等待手表连接...")
+            Text(languageManager.liveWaitingForWatch)
                 .font(.system(.title3, design: .rounded))
                 .foregroundColor(.gray)
 
@@ -43,7 +44,7 @@ struct LiveScoreView: View {
                 .tint(.orange)
                 .scaleEffect(1.2)
 
-            Text("请在 Apple Watch 上开始比赛")
+            Text(languageManager.livePleaseStartOnWatch)
                 .font(.system(.caption, design: .rounded))
                 .foregroundColor(.gray.opacity(0.7))
 
@@ -53,12 +54,12 @@ struct LiveScoreView: View {
                     .background(Color.gray.opacity(0.3))
                     .padding(.horizontal, 60)
 
-                Text("没有 Apple Watch?")
+                Text(languageManager.liveNoWatch)
                     .font(.system(.caption, design: .rounded))
                     .foregroundColor(.gray.opacity(0.6))
 
                 Button(action: { showPhoneSetup = true }) {
-                    Label("手机计分", systemImage: "iphone")
+                    Label(languageManager.livePhoneScore, systemImage: "iphone")
                         .font(.system(.body, design: .rounded))
                         .fontWeight(.semibold)
                 }
@@ -77,19 +78,19 @@ struct LiveScoreView: View {
             VStack(spacing: 0) {
                 // Match status overlay
                 if session.matchStatus == "terminated" {
-                    statusBanner(icon: "exclamationmark.triangle.fill", text: "比赛已中止",
+                    statusBanner(icon: "exclamationmark.triangle.fill", text: languageManager.liveMatchTerminated,
                         subtitle: "\(session.teamAName) \(session.scoreA) - \(session.scoreB) \(session.teamBName)", color: .red)
                 } else if session.matchStatus == "ended" {
-                    statusBanner(icon: "flag.checkered", text: "比赛已结束",
-                        subtitle: "局分 \(session.gameA) : \(session.gameB)", color: .green)
+                    statusBanner(icon: "flag.checkered", text: languageManager.liveMatchOver,
+                        subtitle: "\(languageManager.liveGameScore) \(session.gameA) : \(session.gameB)", color: .green)
                 } else if session.matchStatus == "idle" {
-                    statusBanner(icon: "clock.fill", text: "等待开始比赛",
-                        subtitle: "请在手表上开始新比赛", color: .orange)
+                    statusBanner(icon: "clock.fill", text: languageManager.liveWaitingStart,
+                        subtitle: languageManager.livePleaseStartOnWatch, color: .orange)
                 }
 
                 // Game score header
                 HStack(spacing: 8) {
-                    Text("局分")
+                    Text(languageManager.liveGameScore)
                         .font(.system(.title3, design: .rounded))
                         .foregroundColor(.gray)
                     Text("\(session.gameA) : \(session.gameB)")
@@ -106,12 +107,12 @@ struct LiveScoreView: View {
                         .foregroundColor(.gray)
                     Spacer()
                     if session.isMatchOver {
-                        Text("比赛结束")
+                        Text(languageManager.liveMatchEnded)
                             .font(.system(.subheadline, design: .rounded))
                             .fontWeight(.medium)
                             .foregroundColor(.orange)
                     } else if session.isGameOver {
-                        Text("本局结束")
+                        Text(languageManager.liveGameEnded)
                             .font(.system(.subheadline, design: .rounded))
                             .fontWeight(.medium)
                             .foregroundColor(.yellow)
@@ -157,8 +158,20 @@ struct LiveScoreView: View {
 
                 Spacer()
 
-                // Serving indicator
-                if session.matchStatus == "playing" || session.matchStatus == "idle" {
+                // Action buttons for match end/terminate
+                if session.matchStatus == "terminated" || session.matchStatus == "ended" {
+                    Button(action: resetMatch) {
+                        Label(languageManager.liveNewMatch, systemImage: "plus.circle.fill")
+                            .font(.system(.body, design: .rounded))
+                            .fontWeight(.semibold)
+                            .frame(maxWidth: .infinity)
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .tint(.orange)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 20)
+                } else if session.matchStatus == "playing" || session.matchStatus == "idle" {
+                    // Serving indicator
                     HStack(spacing: 6) {
                         Circle()
                             .fill(Color.yellow)
@@ -174,6 +187,25 @@ struct LiveScoreView: View {
                     .padding(.bottom, 20)
                 }
             }
+        }
+    }
+
+    private func resetMatch() {
+        DispatchQueue.main.async {
+            session.matchStatus = "idle"
+            session.scoreA = 0
+            session.scoreB = 0
+            session.gameA = 0
+            session.gameB = 0
+            session.gameIndex = 0
+            session.totalGames = 3
+            session.isMatchOver = false
+            session.isGameOver = false
+            session.servingTeamIsA = true
+            session.court = "右区"
+            session.teamAName = languageManager.liveDefaultTeamA
+            session.teamBName = languageManager.liveDefaultTeamB
+            session.winningScore = 21
         }
     }
 

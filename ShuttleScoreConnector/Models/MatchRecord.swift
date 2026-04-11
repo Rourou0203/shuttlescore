@@ -1,4 +1,30 @@
 import Foundation
+import SwiftUI
+
+// MARK: - Match Tag
+
+enum MatchTag: String, Codable, CaseIterable {
+    case training = "training"
+    case friendly = "friendly"
+    case serious = "serious"
+
+    var displayName: String {
+        let lang = LanguageManager.shared.language
+        switch self {
+        case .training: return lang == "zh" ? "训练" : "Training"
+        case .friendly: return lang == "zh" ? "友谊" : "Friendly"
+        case .serious: return lang == "zh" ? "正式" : "Competitive"
+        }
+    }
+
+    var color: Color {
+        switch self {
+        case .training: return .blue
+        case .friendly: return .green
+        case .serious: return .red
+        }
+    }
+}
 
 // MARK: - Match Record
 
@@ -16,6 +42,7 @@ struct MatchRecord: Codable, Identifiable {
     var startTime: Date
     var endTime: Date
     var isCompleted: Bool
+    var matchTag: MatchTag? = nil
 
     var elapsedMinutes: Int {
         Int(endTime.timeIntervalSince(startTime) / 60)
@@ -151,7 +178,7 @@ struct MatchRecord: Codable, Identifiable {
             winnerName = "未分胜负"
         }
 
-        return MatchRecord(
+        var record = MatchRecord(
             id: UUID(uuidString: matchId) ?? UUID(),
             teamAName: teamAName,
             teamBName: teamBName,
@@ -166,5 +193,11 @@ struct MatchRecord: Codable, Identifiable {
             endTime: endTime,
             isCompleted: isCompleted
         )
+
+        if let tagRaw = payload["matchTag"] as? String {
+            record.matchTag = MatchTag(rawValue: tagRaw)
+        }
+
+        return record
     }
 }

@@ -14,4 +14,8 @@ enum MatchType: String, CaseIterable, Codable {
             self = MatchType(rawValue: raw) ?? .singles
         }
     }
+
+    var displayName: String {
+        String(localized: String.LocalizationValue(rawValue))
+    }
 }

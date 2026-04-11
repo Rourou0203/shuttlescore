@@ -770,13 +770,21 @@ struct EditScoreSheet: View {
     @State var record: MatchRecord
     let store: MatchHistoryStore
 
-    // Editable game scores
+    // Editable fields
     @State private var editableGames: [(scoreA: Int, scoreB: Int)] = []
+    @State private var teamAName: String = ""
+    @State private var teamBName: String = ""
+    @State private var matchType: MatchType = .singles
+    @State private var matchTag: MatchTag? = nil
 
     init(record: MatchRecord, store: MatchHistoryStore) {
         self.store = store
         self._record = State(initialValue: record)
         self._editableGames = State(initialValue: record.gameScores.map { ($0.scoreA, $0.scoreB) })
+        self._teamAName = State(initialValue: record.teamAName)
+        self._teamBName = State(initialValue: record.teamBName)
+        self._matchType = State(initialValue: record.matchType)
+        self._matchTag = State(initialValue: record.matchTag)
     }
 
     var body: some View {
@@ -786,16 +794,7 @@ struct EditScoreSheet: View {
 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Match header
-                        HStack {
-                            Text(record.teamAName)
-                                .foregroundColor(.orange)
-                            Text("vs")
-                                .foregroundColor(.gray)
-                            Text(record.teamBName)
-                                .foregroundColor(.cyan)
-                        }
-                        .font(.system(.headline, design: .rounded, weight: .medium))
+                        matchInfoEditor
 
                         // Editable game scores
                         ForEach(Array(editableGames.indices), id: \.self) { index in
@@ -917,9 +916,99 @@ struct EditScoreSheet: View {
         }
     }
 
+    @ObservedObject private var opponentStore = PhoneOpponentStore.shared
+
+    private var matchInfoEditor: some View {
+        VStack(spacing: 12) {
+            // Team A name
+            VStack(alignment: .leading, spacing: 4) {
+                Text(languageManager.editMyTeam)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundColor(.orange)
+                TextField(languageManager.editMyTeam, text: $teamAName)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.white.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+            }
+
+            // Team B name with opponent picker
+            VStack(alignment: .leading, spacing: 4) {
+                Text(languageManager.editOpponent)
+                    .font(.system(.caption, design: .rounded))
+                    .foregroundColor(.cyan)
+                TextField(languageManager.editOpponent, text: $teamBName)
+                    .font(.system(.body, design: .rounded))
+                    .foregroundColor(.white)
+                    .padding(8)
+                    .background(Color.white.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                if !opponentStore.opponents.isEmpty {
+                    opponentQuickPicker
+                }
+            }
+
+            // Match type & tag pickers
+            HStack(spacing: 12) {
+                Picker(languageManager.editMatchType, selection: $matchType) {
+                    ForEach(MatchType.allCases, id: \.self) { type in
+                        Text(type.displayName).tag(type)
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(.orange)
+
+                Picker(languageManager.editMatchTag, selection: $matchTag) {
+                    Text(languageManager.editTagNone).tag(MatchTag?.none)
+                    ForEach(MatchTag.allCases, id: \.self) { tag in
+                        Text(tag.displayName).tag(MatchTag?.some(tag))
+                    }
+                }
+                .pickerStyle(.menu)
+                .tint(.orange)
+
+                Spacer()
+            }
+        }
+        .padding()
+        .background(Color.white.opacity(0.06))
+        .clipShape(RoundedRectangle(cornerRadius: 14))
+    }
+
+    private var opponentQuickPicker: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(opponentStore.opponents.prefix(10), id: \.self) { name in
+                    Button {
+                        teamBName = name
+                    } label: {
+                        Text(name)
+                            .font(.system(.caption, design: .rounded))
+                            .foregroundColor(teamBName == name ? .black : .cyan)
+                            .padding(.horizontal, 10)
+                            .padding(.vertical, 5)
+                            .background(teamBName == name ? Color.cyan : Color.cyan.opacity(0.15))
+                            .clipShape(Capsule())
+                    }
+                }
+            }
+        }
+    }
+
     private func saveChanges() {
-        // Update game scores (keep history intact)
         var updatedRecord = record
+
+        // Update team names & match info
+        let trimmedA = teamAName.trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedB = teamBName.trimmingCharacters(in: .whitespacesAndNewlines)
+        if !trimmedA.isEmpty { updatedRecord.teamAName = trimmedA }
+        if !trimmedB.isEmpty { updatedRecord.teamBName = trimmedB }
+        updatedRecord.matchType = matchType
+        updatedRecord.matchTag = matchTag
+
+        // Update game scores (keep history intact)
         for i in editableGames.indices where i < updatedRecord.gameScores.count {
             updatedRecord.gameScores[i] = GameScore(
                 scoreA: editableGames[i].scoreA,
@@ -932,7 +1021,7 @@ struct EditScoreSheet: View {
         updatedRecord.gamesWonByA = editableGames.filter { $0.scoreA > $0.scoreB }.count
         updatedRecord.gamesWonByB = editableGames.filter { $0.scoreB > $0.scoreA }.count
 
-        // Update winner
+        // Update winner based on new team names
         if updatedRecord.gamesWonByA > updatedRecord.gamesWonByB {
             updatedRecord.winnerName = updatedRecord.teamAName
         } else if updatedRecord.gamesWonByB > updatedRecord.gamesWonByA {
@@ -1109,7 +1198,7 @@ struct MatchRowView: View {
 // MARK: - Score Chart Data Point
 
 /// Data point for the score progression chart (defined at file level for Swift Charts compatibility)
-private struct ScoreChartPoint: Identifiable {
+struct ScoreChartPoint: Identifiable {
     let id = UUID()
     let rally: Int
     let score: Int
@@ -1305,20 +1394,29 @@ struct MatchDetailView: View {
 
     /// Build a SwiftUI Chart for one game's score history
     private func chartForGame(_ game: GameScore) -> some View {
+        // history snapshots are pre-point states; add final score as last point
         var points: [ScoreChartPoint] = []
         for (i, snap) in game.history.enumerated() {
             points.append(ScoreChartPoint(rally: i, score: snap.scoreA, team: record.teamAName))
             points.append(ScoreChartPoint(rally: i, score: snap.scoreB, team: record.teamBName))
         }
+        // Append final score
+        let lastRally = game.history.count
+        points.append(ScoreChartPoint(rally: lastRally, score: game.scoreA, team: record.teamAName))
+        points.append(ScoreChartPoint(rally: lastRally, score: game.scoreB, team: record.teamBName))
 
         return Chart(points) { point in
             LineMark(
                 x: .value("Rally", point.rally),
                 y: .value("Score", point.score)
             )
-            .foregroundStyle(point.team == record.teamAName ? Color.orange : Color.cyan)
-            .interpolationMethod(.linear)
+            .foregroundStyle(by: .value("Team", point.team))
+            .interpolationMethod(.stepEnd)
         }
+        .chartForegroundStyleScale([
+            record.teamAName: Color.orange,
+            record.teamBName: Color.cyan
+        ])
         .chartXAxis {
             AxisMarks(values: .automatic(desiredCount: 5)) { _ in
                 AxisGridLine(stroke: StrokeStyle(lineWidth: 0.3))

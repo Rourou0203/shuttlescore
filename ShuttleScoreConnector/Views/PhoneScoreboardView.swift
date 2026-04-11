@@ -2,6 +2,7 @@ import SwiftUI
 
 struct PhoneScoreboardView: View {
     @ObservedObject var match: PhoneMatchState
+    @ObservedObject private var languageManager = LanguageManager.shared
     @Environment(\.dismiss) private var dismiss
 
     @State private var showGameEndSheet = false
@@ -61,7 +62,6 @@ struct PhoneScoreboardView: View {
         .onChange(of: match.currentGame.isOver) { _, isOver in
             if isOver {
                 if match.isMatchOver {
-                    // 延迟一下让分数动画播放完
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                         showMatchEnd = true
                     }
@@ -78,16 +78,16 @@ struct PhoneScoreboardView: View {
         .fullScreenCover(isPresented: $showMatchEnd) {
             matchEndView
         }
-        .alert("退出比赛", isPresented: $showExitAlert) {
-            Button("继续比赛", role: .cancel) {}
-            Button("保存并退出") {
+        .alert(languageManager.phoneExitMatch, isPresented: $showExitAlert) {
+            Button(languageManager.phoneContinue, role: .cancel) {}
+            Button(languageManager.phoneSaveExit) {
                 saveAndDismiss()
             }
-            Button("放弃本场", role: .destructive) {
+            Button(languageManager.phoneAbandon, role: .destructive) {
                 dismiss()
             }
         } message: {
-            Text("当前比分 \(match.currentGame.scoreA):\(match.currentGame.scoreB)，局分 \(match.gamesWonByA):\(match.gamesWonByB)")
+            Text("\(languageManager.phoneGameScore) \(match.currentGame.scoreA):\(match.currentGame.scoreB), \(languageManager.phoneGameScore) \(match.gamesWonByA):\(match.gamesWonByB)")
         }
     }
 
@@ -106,10 +106,10 @@ struct PhoneScoreboardView: View {
 
             // Match info
             VStack(spacing: 2) {
-                Text("\(match.matchType.rawValue) \u{00B7} 第\(match.currentGameIndex + 1)局")
+                Text(languageManager.formatPhoneGameInfo(match.matchType.rawValue, match.currentGameIndex + 1))
                     .font(.system(.subheadline, design: .rounded))
                     .foregroundColor(.gray)
-                Text("局分 \(match.gamesWonByA) : \(match.gamesWonByB)")
+                Text("\(languageManager.phoneGameScore) \(match.gamesWonByA) : \(match.gamesWonByB)")
                     .font(.system(.headline, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -118,7 +118,7 @@ struct PhoneScoreboardView: View {
             Spacer()
 
             // Timer
-            Text("\(match.elapsedMinutes)分钟")
+            Text(languageManager.formatElapsedMinutes(match.elapsedMinutes))
                 .font(.system(.caption, design: .rounded))
                 .foregroundColor(.gray)
         }
@@ -146,7 +146,7 @@ struct PhoneScoreboardView: View {
                     Circle()
                         .fill(Color.yellow)
                         .frame(width: 6, height: 6)
-                    Text("发球")
+                    Text(languageManager.phoneServe)
                         .font(.system(.caption2, design: .rounded))
                         .foregroundColor(.yellow)
                 }
@@ -178,7 +178,7 @@ struct PhoneScoreboardView: View {
 
             // Gesture hint
             if !isGameOver {
-                Text("↑加分  ↓撤销")
+                Text(languageManager.phoneUpDown)
                     .font(.system(.caption2, design: .rounded))
                     .foregroundColor(.gray.opacity(0.5))
             }
@@ -220,7 +220,7 @@ struct PhoneScoreboardView: View {
                 Circle()
                     .fill(Color.yellow)
                     .frame(width: 8, height: 8)
-                Text("\(match.currentGame.servingTeamIsA ? match.teamAName : match.teamBName)发球")
+                Text(languageManager.formatPhoneServing(match.currentGame.servingTeamIsA ? match.teamAName : match.teamBName))
                     .font(.system(.body, design: .rounded))
                     .foregroundColor(.yellow)
                 Text("\u{00B7}")
@@ -240,7 +240,7 @@ struct PhoneScoreboardView: View {
             }) {
                 HStack(spacing: 4) {
                     Image(systemName: "arrow.uturn.backward")
-                    Text("撤销")
+                    Text(languageManager.phoneUndo)
                 }
                 .font(.system(.body, design: .rounded))
                 .foregroundColor(.orange)
@@ -263,7 +263,7 @@ struct PhoneScoreboardView: View {
             Color.black.ignoresSafeArea()
 
             VStack(spacing: 24) {
-                Text("第\(match.currentGameIndex + 1)局结束")
+                Text(languageManager.formatPhoneGameEnd(match.currentGameIndex + 1))
                     .font(.system(.title, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(.white)
@@ -293,7 +293,7 @@ struct PhoneScoreboardView: View {
                     }
                 }
 
-                Text("局分 \(match.gamesWonByA) : \(match.gamesWonByB)")
+                Text("\(languageManager.phoneGameScore) \(match.gamesWonByA) : \(match.gamesWonByB)")
                     .font(.system(.title3, design: .rounded))
                     .foregroundColor(.gray)
 
@@ -303,7 +303,7 @@ struct PhoneScoreboardView: View {
                 }) {
                     HStack {
                         Image(systemName: "forward.fill")
-                        Text("下一局")
+                        Text(languageManager.phoneNextGame)
                     }
                     .font(.system(.title3, design: .rounded))
                     .fontWeight(.bold)
@@ -337,27 +337,27 @@ struct PhoneScoreboardView: View {
                 TeamAvatarView(isTeamA: winnerIsA, size: 100)
                     .overlay(Circle().stroke(winnerColor, lineWidth: 3))
 
-                Text("\(winnerName) 获胜!")
+                Text("\(winnerName) \(languageManager.phoneWins)")
                     .font(.system(.largeTitle, design: .rounded))
                     .fontWeight(.bold)
                     .foregroundColor(winnerColor)
 
                 // Game scores
                 VStack(spacing: 8) {
-                    Text("局分 \(match.gamesWonByA) : \(match.gamesWonByB)")
+                    Text("\(languageManager.phoneGameScore) \(match.gamesWonByA) : \(match.gamesWonByB)")
                         .font(.system(.title2, design: .rounded))
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
 
                     ForEach(0..<match.games.count, id: \.self) { i in
                         let g = match.games[i]
-                        Text("第\(i + 1)局  \(g.scoreA) : \(g.scoreB)")
+                        Text("\(languageManager.formatGameNumber(i + 1))  \(g.scoreA) : \(g.scoreB)")
                             .font(.system(.body, design: .rounded))
                             .foregroundColor(.gray)
                     }
                 }
 
-                Text("用时 \(match.elapsedMinutes) 分钟")
+                Text("\(languageManager.phoneUsedTime) \(languageManager.formatElapsedMinutes(match.elapsedMinutes))")
                     .font(.system(.subheadline, design: .rounded))
                     .foregroundColor(.gray)
 
@@ -369,7 +369,7 @@ struct PhoneScoreboardView: View {
                 }) {
                     HStack {
                         Image(systemName: "checkmark.circle.fill")
-                        Text("保存并返回")
+                        Text(languageManager.phoneSaveBack)
                     }
                     .font(.system(.title3, design: .rounded))
                     .fontWeight(.bold)

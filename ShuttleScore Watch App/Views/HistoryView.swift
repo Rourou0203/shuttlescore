@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct HistoryView: View {
+    @ObservedObject private var langMgr = WatchLanguageManager.shared
     @State private var records: [MatchRecord] = []
 
     private static let timeFormatter: DateFormatter = {
@@ -16,11 +17,11 @@ struct HistoryView: View {
     var body: some View {
         List {
             if records.isEmpty {
-                Text("今天还没有比赛记录")
+                Text(langMgr.historyNoRecords)
                     .foregroundStyle(.gray)
             } else {
                 Section {
-                    Text("共\(records.count)场 · \(totalMinutes)分钟")
+                    Text(langMgr.historySummary(count: records.count, minutes: totalMinutes))
                         .font(.system(.footnote, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
@@ -40,7 +41,7 @@ struct HistoryView: View {
                                     .font(.system(.caption2, design: .monospaced))
                                     .foregroundStyle(.secondary)
                                 Spacer()
-                                Text("\(record.elapsedMinutes)分钟")
+                                Text(langMgr.detailMinutes(record.elapsedMinutes))
                                     .font(.system(.caption2, design: .rounded))
                                     .foregroundStyle(.secondary)
                             }
@@ -55,7 +56,7 @@ struct HistoryView: View {
                 }
             }
         }
-        .navigationTitle("今日记录")
+        .navigationTitle(langMgr.historyTitle)
         .onAppear {
             records = MatchStore.shared.todayRecords()
         }

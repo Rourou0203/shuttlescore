@@ -36,10 +36,25 @@ class ProfileStore: ObservableObject {
     static let availableCats = ["cat_orange", "cat_robe", "cat_scarf"]
     static let catNames = ["橘猫", "长袍猫", "围巾猫"]
 
+    @Published var appLanguage: String {
+        didSet {
+            UserDefaults.standard.set(appLanguage, forKey: "app_language")
+        }
+    }
+
     init() {
         self.favoriteCat = UserDefaults.standard.string(forKey: favCatKey) ?? "cat_orange"
-        self.username = UserDefaults.standard.string(forKey: "user_name") ?? "羽毛球小将"
+        self.username = UserDefaults.standard.string(forKey: "user_name") ?? String(localized: "羽毛球小将")
         self.customAvatarData = UserDefaults.standard.data(forKey: "user_avatar")
+        self.appLanguage = UserDefaults.standard.string(forKey: "app_language") ?? "system"
+    }
+
+    var locale: Locale {
+        switch appLanguage {
+        case "zh-Hans": return Locale(identifier: "zh-Hans")
+        case "en": return Locale(identifier: "en")
+        default: return .current
+        }
     }
 }
 

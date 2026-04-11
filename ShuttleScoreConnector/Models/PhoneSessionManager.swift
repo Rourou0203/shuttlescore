@@ -10,8 +10,8 @@ final class PhoneSessionManager: NSObject, ObservableObject, WCSessionDelegate {
     @Published var gameB: Int = 0
     @Published var servingTeamIsA: Bool = true
     @Published var court: String = "右区"
-    @Published var teamAName: String = "我方"
-    @Published var teamBName: String = "对手"
+    @Published var teamAName: String = "Us"
+    @Published var teamBName: String = "Them"
     @Published var gameIndex: Int = 0
     @Published var totalGames: Int = 3
     @Published var isMatchOver: Bool = false
@@ -134,6 +134,18 @@ final class PhoneSessionManager: NSObject, ObservableObject, WCSessionDelegate {
             self.winningScore = payload["winningScore"] as? Int ?? self.winningScore
             self.matchStatus = "playing"
             self.isConnected = true
+        }
+    }
+
+    // MARK: - Send Language Setting to Watch
+
+    func sendLanguageSetting(_ language: String) {
+        guard WCSession.default.activationState == .activated else { return }
+        let payload: [String: Any] = ["type": "languageSetting", "language": language]
+        if WCSession.default.isReachable {
+            WCSession.default.sendMessage(payload, replyHandler: nil, errorHandler: nil)
+        } else {
+            WCSession.default.transferUserInfo(payload)
         }
     }
 

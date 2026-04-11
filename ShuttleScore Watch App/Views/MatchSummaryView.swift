@@ -3,6 +3,7 @@ import SwiftUI
 struct MatchSummaryView: View {
     let match: MatchState
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject private var langMgr = WatchLanguageManager.shared
     @State private var catScale: CGFloat = 0.3
     @State private var milestoneText: String?
     @State private var saved = false
@@ -34,7 +35,9 @@ struct MatchSummaryView: View {
                         .multilineTextAlignment(.center)
                 }
 
-                Text(match.matchWinner == true ? "\(match.teamAName)赢了！" : "\(match.teamBName)赢了！")
+                Text(match.matchWinner == true
+                     ? langMgr.matchWinText(match.teamAName)
+                     : langMgr.matchWinText(match.teamBName))
                     .font(.system(.headline, design: .rounded))
                     .foregroundStyle(match.matchWinner == true ? .yellow : .white)
 
@@ -42,7 +45,7 @@ struct MatchSummaryView: View {
                     .font(.system(.title2, design: .rounded))
                     .bold()
 
-                Text("用时 \(match.elapsedMinutes) 分钟")
+                Text(langMgr.matchElapsedTime(match.elapsedMinutes))
                     .font(.system(.footnote, design: .rounded))
                     .foregroundStyle(.gray)
 
@@ -72,7 +75,7 @@ struct MatchSummaryView: View {
                     dismiss()
                 }) {
                     Label {
-                        Text(WorkoutManager.shared.isSessionActive ? "下一场" : "新建比赛")
+                        Text(WorkoutManager.shared.isSessionActive ? langMgr.matchNextMatch : langMgr.matchNewMatch)
                     } icon: {
                         Image("cat_robe")
                             .resizable()
@@ -84,13 +87,12 @@ struct MatchSummaryView: View {
                 .buttonStyle(.borderedProminent)
                 .tint(.blue)
 
-                // 结束比赛：保存记录后回到首页
                 Button(action: {
                     saveMatchIfNeeded()
                     MatchStore.shared.clear()
                     dismiss()
                 }) {
-                    Label("结束比赛", systemImage: "house")
+                    Label(langMgr.matchEndMatch, systemImage: "house")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
@@ -98,20 +100,15 @@ struct MatchSummaryView: View {
             }
             .padding()
         }
-        // TOP-LEVEL .task — guaranteed to fire when view appears
         .task {
-            // 1. Save immediately
             saveMatchIfNeeded()
 
-            // 2. Animation
             withAnimation(.spring(response: 0.5, dampingFraction: 0.5)) {
                 catScale = 1.0
             }
 
-            // 3. Compute milestone (after save so history count is accurate)
             computeMilestone()
 
-            // 4. Notify iPhone
             WatchSessionManager.shared.sendMatchEnded(match: match)
         }
     }
@@ -136,16 +133,16 @@ struct MatchSummaryView: View {
             for record in history {
                 if record.gamesWonByA > record.gamesWonByB { streak += 1 } else { break }
             }
-            if streak >= 10 { milestoneText = "\u{1F525} \(streak)连胜！无人能挡！"; return }
-            if streak >= 5 { milestoneText = "\u{1F525} \(streak)连胜！势不可挡！"; return }
-            if streak >= 3 { milestoneText = "\u{2728} \(streak)连胜！继续保持！"; return }
+            if let text = langMgr.milestoneStreak(streak) {
+                milestoneText = text
+                return
+            }
         }
 
-        if totalMatches == 1 { milestoneText = "\u{1F389} 第一场比赛！旅程开始！"; return }
-        if totalMatches == 10 { milestoneText = "\u{2B50} 第10场比赛！初露锋芒！"; return }
-        if totalMatches == 50 { milestoneText = "\u{1F3C6} 第50场！羽毛球达人！"; return }
-        if totalMatches == 100 { milestoneText = "\u{1F451} 第100场！传奇之路！"; return }
-        if totalMatches % 50 == 0 { milestoneText = "\u{1F3AF} 第\(totalMatches)场！里程碑！"; return }
+        if let text = langMgr.milestoneMatch(totalMatches) {
+            milestoneText = text
+            return
+        }
     }
 }
 

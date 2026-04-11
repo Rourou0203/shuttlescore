@@ -3,6 +3,7 @@ import SwiftUI
 struct GameSummaryView: View {
     let match: MatchState
     let onContinue: () -> Void
+    @ObservedObject private var langMgr = WatchLanguageManager.shared
 
     private var justFinishedGame: GameState? {
         match.games[safe: match.currentGameIndex]
@@ -16,7 +17,7 @@ struct GameSummaryView: View {
 
             if let game = justFinishedGame {
                 let winnerName = game.winner == true ? match.teamAName : match.teamBName
-                Text("\(winnerName)赢得第\(match.currentGameIndex + 1)局")
+                Text(langMgr.gameSummaryWinner(winnerName, match.currentGameIndex + 1))
                     .font(.system(.footnote, design: .rounded))
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -30,13 +31,13 @@ struct GameSummaryView: View {
             Text("\u{1F43E}")
                 .font(.system(size: 20))
 
-            Text("⇄ 请换边！")
+            Text(langMgr.gameSummaryChangeSide)
                 .font(.system(.footnote, design: .rounded))
                 .foregroundStyle(.orange)
 
             Button(action: onContinue) {
                 Label {
-                    Text("开始第\(match.currentGameIndex + 2)局")
+                    Text(langMgr.gameSummaryNextGame(match.currentGameIndex + 2))
                         .font(.system(.footnote, design: .rounded))
                 } icon: {
                     Image("cat_orange")

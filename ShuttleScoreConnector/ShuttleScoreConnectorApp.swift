@@ -12,10 +12,13 @@ struct ShuttleScoreConnectorApp: App {
         UITabBar.appearance().unselectedItemTintColor = .gray
     }
 
+    @ObservedObject private var profile = ProfileStore.shared
+
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .preferredColorScheme(.dark)
+                .environment(\.locale, profile.locale)
         }
     }
 }

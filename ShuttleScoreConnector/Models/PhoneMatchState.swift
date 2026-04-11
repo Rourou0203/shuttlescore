@@ -47,8 +47,8 @@ struct PhoneGameState: Codable {
 class PhoneMatchState: ObservableObject, Identifiable {
     let id = UUID()
     @Published var matchType: MatchType = .singles
-    @Published var teamAName: String = "我方"
-    @Published var teamBName: String = "对手"
+    @Published var teamAName: String = String(localized: "我方")
+    @Published var teamBName: String = String(localized: "对手")
     @Published var totalGames: Int = 3
     @Published var games: [PhoneGameState]
     @Published var currentGameIndex: Int = 0
@@ -56,7 +56,7 @@ class PhoneMatchState: ObservableObject, Identifiable {
     @Published var endTime: Date?
     @Published var winningScore: Int = 21
 
-    init(matchType: MatchType = .singles, teamAName: String = "我方", teamBName: String = "对手",
+    init(matchType: MatchType = .singles, teamAName: String = String(localized: "我方"), teamBName: String = String(localized: "对手"),
          totalGames: Int = 3, firstServeIsA: Bool = true, winningScore: Int = 21) {
         self.matchType = matchType
         self.teamAName = teamAName

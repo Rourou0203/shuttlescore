@@ -18,15 +18,26 @@
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.clawd.shuttlescore.watchkitapp</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>shuttlescore</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
-	<key>WKApplication</key>
-	<true/>
-	<key>WKCompanionAppBundleIdentifier</key>
-	<string>com.clawd.shuttlescore</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>ShuttleScore 需要读取您的健康数据以在比赛中显示心率和卡路里</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>ShuttleScore 需要写入运动数据以记录您的羽毛球比赛</string>
+	<key>WKApplication</key>
+	<true/>
+	<key>WKCompanionAppBundleIdentifier</key>
+	<string>com.clawd.shuttlescore</string>
 </dict>
 </plist>

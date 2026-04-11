@@ -2,41 +2,42 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @ObservedObject private var languageManager = LanguageManager.shared
 
     var body: some View {
         TabView(selection: $selectedTab) {
             LiveScoreView()
                 .tabItem {
                     Image(systemName: "sportscourt")
-                    Text("实时比分")
+                    Text(languageManager.tabLiveScore)
                 }
                 .tag(0)
 
             MatchHistoryView()
                 .tabItem {
                     Image(systemName: "chart.bar")
-                    Text("历史统计")
+                    Text(languageManager.tabHistory)
                 }
                 .tag(1)
 
             AchievementsView()
                 .tabItem {
                     Image(systemName: "trophy")
-                    Text("成就")
+                    Text(languageManager.tabAchievements)
                 }
                 .tag(2)
 
             OpponentStatsView()
                 .tabItem {
                     Image(systemName: "person.2")
-                    Text("对手")
+                    Text(languageManager.tabOpponents)
                 }
                 .tag(3)
 
             ProfileView()
                 .tabItem {
                     Image(systemName: "person.circle")
-                    Text("我的")
+                    Text(languageManager.tabProfile)
                 }
                 .tag(4)
         }

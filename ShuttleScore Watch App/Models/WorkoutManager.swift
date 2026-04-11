@@ -16,6 +16,9 @@ class WorkoutManager: NSObject, ObservableObject {
     @Published var isPaused: Bool = false
     @Published var sessionMatchCount: Int = 0
 
+    /// Tracks whether there's a currently active HKWorkoutActivity that needs ending
+    private var hasActiveActivity = false
+
     // MARK: - Authorization
 
     func requestAuthorization() {
@@ -81,9 +84,10 @@ class WorkoutManager: NSObject, ObservableObject {
     func pauseSession() {
         guard let session = workoutSession else { return }
 
-        // End current match activity segment so Fitness shows per-match duration/calories
-        session.endCurrentActivity(on: Date())
-
+        // Don't call endCurrentActivity here — doing so creates a gap between
+        // the ended activity and the next beginNewActivity, which HealthKit
+        // renders as a rest interval ("Unknown Goal" in Fitness).
+        // Instead, we end + begin atomically in beginMatchActivity().
         session.pause()
         isPaused = true
         isSessionActive = true
@@ -104,6 +108,12 @@ class WorkoutManager: NSObject, ObservableObject {
                 self.sessionMatchCount = 0
             }
             return
+        }
+
+        // End the current activity segment before ending the session
+        if hasActiveActivity {
+            session.endCurrentActivity(on: Date())
+            hasActiveActivity = false
         }
 
         session.end()
@@ -144,6 +154,7 @@ class WorkoutManager: NSObject, ObservableObject {
                 self.isSessionActive = false
                 self.isPaused = false
                 self.sessionMatchCount = 0
+                self.hasActiveActivity = false
                 self.workoutSession = nil
                 self.workoutBuilder = nil
                 SessionState.clear()
@@ -223,13 +234,23 @@ class WorkoutManager: NSObject, ObservableObject {
         }
     }
 
-    /// Begin a new HKWorkoutActivity for the current match, so Fitness shows per-match stats
+    /// Begin a new HKWorkoutActivity for the current match, so Fitness shows per-match stats.
+    /// Ends the previous activity and immediately starts a new one to avoid rest-interval gaps.
     private func beginMatchActivity() {
         guard let session = workoutSession else { return }
+
+        // End previous activity right before starting the new one — no time gap means
+        // HealthKit won't insert a rest interval that shows as "Unknown Goal" in Fitness
+        let now = Date()
+        if hasActiveActivity {
+            session.endCurrentActivity(on: now)
+        }
+
         let config = HKWorkoutConfiguration()
         config.activityType = .badminton
         config.locationType = .indoor
-        session.beginNewActivity(configuration: config, date: Date(), metadata: nil)
+        session.beginNewActivity(configuration: config, date: now, metadata: nil)
+        hasActiveActivity = true
     }
 
     // MARK: - Helpers
