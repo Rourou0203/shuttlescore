@@ -142,7 +142,7 @@ struct CalendarHeatmapView: View {
                 ForEach(languageManager.calendarWeekdays, id: \.self) { day in
                     Text(day)
                         .font(.system(.caption2, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.6))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
                         .frame(maxWidth: .infinity)
                 }
             }
@@ -262,7 +262,7 @@ struct CalendarHeatmapView: View {
                 .foregroundColor(.orange)
             Text(label)
                 .font(.system(.caption2, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
     }
 

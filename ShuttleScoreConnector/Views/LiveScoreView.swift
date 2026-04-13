@@ -8,7 +8,7 @@ struct LiveScoreView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             if session.isConnected {
                 connectedContent
@@ -38,7 +38,7 @@ struct LiveScoreView: View {
 
             Text(languageManager.liveWaitingForWatch)
                 .font(.system(.title3, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
 
             ProgressView()
                 .tint(.orange)
@@ -46,7 +46,7 @@ struct LiveScoreView: View {
 
             Text(languageManager.livePleaseStartOnWatch)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(.brandSecondary.opacity(0.7))
 
             // 手机独立计分入口
             VStack(spacing: 8) {
@@ -56,7 +56,7 @@ struct LiveScoreView: View {
 
                 Text(languageManager.liveNoWatch)
                     .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.6))
+                    .foregroundColor(.brandSecondary.opacity(0.6))
 
                 Button(action: { showPhoneSetup = true }) {
                     Label(languageManager.livePhoneScore, systemImage: "iphone")
@@ -92,7 +92,7 @@ struct LiveScoreView: View {
                 HStack(spacing: 8) {
                     Text(languageManager.liveGameScore)
                         .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                     Text("\(session.gameA) : \(session.gameB)")
                         .font(.system(.title2, design: .rounded))
                         .fontWeight(.bold)
@@ -104,7 +104,7 @@ struct LiveScoreView: View {
                 HStack {
                     Text("第\(session.gameIndex + 1)局")
                         .font(.system(.subheadline, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                     Spacer()
                     if session.isMatchOver {
                         Text(languageManager.liveMatchEnded)
@@ -139,7 +139,7 @@ struct LiveScoreView: View {
 
                     Text("VS")
                         .font(.system(.title3, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.6))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
                         .frame(width: 44)
 
                     VStack(spacing: 16) {

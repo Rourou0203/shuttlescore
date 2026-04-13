@@ -91,8 +91,9 @@ struct ShareCardView: View {
     private var headerSection: some View {
         HStack {
             HStack(spacing: 6) {
-                Text("🏸")
+                Image(systemName: "figure.badminton")
                     .font(.system(size: 14))
+                    .foregroundColor(.orange)
                 Text("ShuttleScore")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundColor(.orange)
@@ -146,7 +147,7 @@ struct ShareCardView: View {
                     .foregroundColor(record.teamAWon ? .orange : .white.opacity(0.5))
                 Text(":")
                     .font(.system(size: 32, weight: .medium, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
                 Text("\(record.gamesWonByB)")
                     .font(.system(size: 52, weight: .heavy, design: .rounded))
                     .foregroundColor(record.teamAWon ? .white.opacity(0.5) : .cyan)
@@ -227,7 +228,7 @@ struct ShareCardView: View {
                 // Date
                 Text(record.startTime, format: .dateTime.year().month().day())
                     .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.6))
+                    .foregroundColor(.brandSecondary.opacity(0.6))
 
                 Spacer()
 
@@ -245,9 +246,14 @@ struct ShareCardView: View {
                 Spacer()
 
                 // Brand
-                Text("🐱 ShuttleScore")
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.6))
+                HStack(spacing: 4) {
+                    Image(systemName: "cat.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
+                    Text("ShuttleScore")
+                        .font(.system(.caption2, design: .rounded))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
+                }
             }
             .padding(.horizontal, 24)
         }

@@ -17,7 +17,7 @@ struct AchievementsView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 16) {
@@ -39,7 +39,7 @@ struct AchievementsView: View {
 
                         Text(languageManager.achievementsUnlocked)
                             .font(.system(.subheadline, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                     }
                     .frame(maxWidth: .infinity)
 
@@ -90,7 +90,7 @@ struct AchievementsView: View {
 
                 Text("\(unlocked)/\(achievements.count)")
                     .font(.system(.caption, design: .rounded, weight: .medium))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
             }
 
             LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 16) {
@@ -145,7 +145,7 @@ struct AchievementCard: View {
 
                 Image(systemName: achievement.icon)
                     .font(.system(size: 22, weight: .semibold))
-                    .foregroundColor(achievement.isUnlocked ? tierColor : .gray.opacity(0.4))
+                    .foregroundColor(achievement.isUnlocked ? tierColor : .brandSecondary.opacity(0.4))
 
                 if !achievement.isUnlocked {
                     Circle()
@@ -153,20 +153,20 @@ struct AchievementCard: View {
                         .frame(width: 52, height: 52)
                     Image(systemName: "lock.fill")
                         .font(.system(size: 12))
-                        .foregroundColor(.gray.opacity(0.6))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
                 }
             }
 
             // Title
             Text(languageManager.language == "zh" ? achievement.title : achievement.titleEn)
                 .font(.system(.caption, design: .rounded, weight: .semibold))
-                .foregroundColor(achievement.isUnlocked ? .white : .gray)
+                .foregroundColor(achievement.isUnlocked ? .white : .brandSecondary)
                 .lineLimit(1)
 
             // Description
             Text(languageManager.language == "zh" ? achievement.description : achievement.descriptionEn)
                 .font(.system(size: 10, weight: .regular, design: .rounded))
-                .foregroundColor(.gray.opacity(0.6))
+                .foregroundColor(.brandSecondary.opacity(0.6))
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .frame(minHeight: 24)
@@ -187,7 +187,7 @@ struct AchievementCard: View {
 
                 Text("\(achievement.currentProgress)/\(achievement.maxProgress)")
                     .font(.system(size: 9, weight: .medium, design: .monospaced))
-                    .foregroundColor(achievement.isUnlocked ? tierColor : .gray.opacity(0.5))
+                    .foregroundColor(achievement.isUnlocked ? tierColor : .brandSecondary.opacity(0.5))
             }
         }
         .padding(.vertical, 14)

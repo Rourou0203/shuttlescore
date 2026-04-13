@@ -62,8 +62,9 @@ struct PeriodShareCardView: View {
     private var headerSection: some View {
         HStack {
             HStack(spacing: 6) {
-                Text("🏸")
+                Image(systemName: "figure.badminton")
                     .font(.system(size: 14))
+                    .foregroundColor(.orange)
                 Text("ShuttleScore")
                     .font(.system(.subheadline, design: .rounded, weight: .bold))
                     .foregroundColor(.orange)
@@ -184,7 +185,7 @@ struct PeriodShareCardView: View {
                 .lineLimit(1)
             Text(label)
                 .font(.system(.caption2, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity)
@@ -196,7 +197,7 @@ struct PeriodShareCardView: View {
         VStack(spacing: 8) {
             Text(isZh ? "主要对手" : "Top Rivals")
                 .font(.system(.caption, design: .rounded, weight: .medium))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
 
             HStack(spacing: 20) {
                 ForEach(stats.topOpponents) { opp in
@@ -209,7 +210,7 @@ struct PeriodShareCardView: View {
                             Text("\(opp.wins)")
                                 .foregroundColor(.green)
                             Text("-")
-                                .foregroundColor(.gray)
+                                .foregroundColor(.brandSecondary)
                             Text("\(opp.losses)")
                                 .foregroundColor(.red)
                         }
@@ -240,17 +241,22 @@ struct PeriodShareCardView: View {
                         .font(.system(.caption2, design: .rounded, weight: .semibold))
                         .foregroundColor(eloManager.tierColor(for: rating))
                     Text("·")
-                        .foregroundColor(.gray.opacity(0.4))
+                        .foregroundColor(.brandSecondary.opacity(0.4))
                     Text("\(rating)")
                         .font(.system(.caption2, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.6))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
                 }
 
                 Spacer()
 
-                Text("🐱 ShuttleScore")
-                    .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.6))
+                HStack(spacing: 4) {
+                    Image(systemName: "cat.fill")
+                        .font(.system(size: 10))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
+                    Text("ShuttleScore")
+                        .font(.system(.caption2, design: .rounded))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
+                }
             }
             .padding(.horizontal, 24)
         }

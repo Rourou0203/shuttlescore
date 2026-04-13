@@ -14,7 +14,7 @@ struct ProfileView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 16) {
@@ -42,7 +42,6 @@ struct ProfileView: View {
                                         .frame(width: 90, height: 90)
                                         .clipShape(Circle())
                                         .overlay(Circle().stroke(Color.orange, lineWidth: 3))
-                                        .shadow(color: .orange.opacity(0.3), radius: 8)
                                 } else {
                                     Image(profile.favoriteCat)
                                         .resizable()
@@ -50,7 +49,6 @@ struct ProfileView: View {
                                         .frame(width: 90, height: 90)
                                         .clipShape(Circle())
                                         .overlay(Circle().stroke(Color.orange, lineWidth: 3))
-                                        .shadow(color: .orange.opacity(0.3), radius: 8)
                                 }
 
                                 // Camera badge
@@ -81,7 +79,7 @@ struct ProfileView: View {
                             } label: {
                                 Label(languageManager.profileResetAvatar, systemImage: "arrow.uturn.backward")
                                     .font(.system(.caption2, design: .rounded))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.brandSecondary)
                             }
                         }
 
@@ -96,7 +94,7 @@ struct ProfileView: View {
                                     .foregroundColor(.white)
                                 Image(systemName: "pencil")
                                     .font(.caption)
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.brandSecondary)
                             }
                         }
                     }
@@ -136,7 +134,7 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 4) {
                             Text(languageManager.eloRating)
                                 .font(.system(.caption, design: .rounded))
-                                .foregroundColor(.gray)
+                                .foregroundColor(.brandSecondary)
                             Text("\(eloManager.myRating)")
                                 .font(.system(.title2, design: .rounded, weight: .bold))
                                 .foregroundColor(.white)
@@ -192,7 +190,7 @@ struct ProfileView: View {
 
                     Text("ShuttleScore v1.0")
                         .font(.system(.caption, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.5))
+                        .foregroundColor(.brandSecondary.opacity(0.5))
                         .padding(.top, 4)
                 }
                 .padding(.horizontal, 16)
@@ -224,13 +222,12 @@ struct ProfileView: View {
                         Circle()
                             .stroke(isSelected ? Color.orange : Color.gray.opacity(0.3), lineWidth: isSelected ? 3 : 1)
                     )
-                    .shadow(color: isSelected ? .orange.opacity(0.4) : .clear, radius: 6)
                 Text(name)
                     .font(.system(.caption, design: .rounded))
-                    .foregroundColor(isSelected ? .orange : .gray)
+                    .foregroundColor(isSelected ? .orange : .brandSecondary)
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(.caption2)
-                    .foregroundColor(isSelected ? .orange : .gray.opacity(0.3))
+                    .foregroundColor(isSelected ? .orange : .brandSecondary.opacity(0.3))
             }
         }
     }
@@ -246,7 +243,7 @@ struct ProfileView: View {
                 .foregroundColor(.white)
             Text(title)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
         .frame(maxWidth: .infinity)
     }
@@ -263,7 +260,7 @@ struct ProfileView: View {
             Spacer()
             Text(value)
                 .font(.system(.callout, design: .rounded, weight: .medium))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
     }
 

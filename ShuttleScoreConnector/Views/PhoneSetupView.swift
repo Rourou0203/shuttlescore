@@ -24,7 +24,7 @@ struct PhoneSetupView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 28) {
@@ -76,7 +76,7 @@ struct PhoneSetupView: View {
 
                             Text("VS")
                                 .font(.system(.caption, design: .rounded))
-                                .foregroundColor(.gray)
+                                .foregroundColor(.brandSecondary)
 
                             VStack(spacing: 6) {
                                 HStack(spacing: 4) {
@@ -216,7 +216,7 @@ struct PhoneSetupView: View {
                     // Cancel
                     Button(languageManager.setupCancel) { dismiss() }
                         .font(.system(.body, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                         .padding(.bottom, 20)
                 }
                 .padding(.horizontal, 24)
@@ -250,7 +250,7 @@ struct PhoneSetupView: View {
             Text(title)
                 .font(.system(.subheadline, design: .rounded))
                 .fontWeight(.medium)
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
             content()
         }
         .frame(maxWidth: .infinity, alignment: .leading)

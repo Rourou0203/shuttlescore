@@ -6,7 +6,7 @@ struct SettingsView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             VStack(spacing: 0) {
                 // Header with close button
@@ -21,7 +21,7 @@ struct SettingsView: View {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark.circle.fill")
                             .font(.system(size: 22))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                     }
                 }
                 .padding(16)

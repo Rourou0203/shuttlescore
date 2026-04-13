@@ -174,7 +174,7 @@ struct MatchHistoryView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color.brandBackground.ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -342,10 +342,10 @@ struct MatchHistoryView: View {
             if stats.totalMatches == 0 {
                 HStack(spacing: 8) {
                     Image(systemName: "calendar.badge.exclamationmark")
-                        .foregroundColor(.gray.opacity(0.4))
+                        .foregroundColor(.brandSecondary.opacity(0.4))
                     Text(languageManager.periodNoMatches)
                         .font(.system(.caption, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, 12)
@@ -369,7 +369,7 @@ struct MatchHistoryView: View {
                     VStack(alignment: .leading, spacing: 6) {
                         Text(languageManager.periodTopRivals)
                             .font(.system(.caption, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                         ForEach(stats.topOpponents) { opp in
                             HStack {
                                 Text(opp.name)
@@ -441,10 +441,10 @@ struct MatchHistoryView: View {
                 VStack(spacing: 8) {
                     Image(systemName: "chart.line.uptrend.xyaxis")
                         .font(.title2)
-                        .foregroundColor(.gray.opacity(0.4))
+                        .foregroundColor(.brandSecondary.opacity(0.4))
                     Text(languageManager.trendNoData)
                         .font(.system(.caption, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                         .multilineTextAlignment(.center)
                 }
                 .frame(maxWidth: .infinity)
@@ -484,7 +484,7 @@ struct MatchHistoryView: View {
                                     if let v = value.as(Int.self) {
                                         Text("\(v)%")
                                             .font(.system(.caption2, design: .rounded))
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.brandSecondary)
                                     }
                                 }
                             }
@@ -495,7 +495,7 @@ struct MatchHistoryView: View {
                                     if let label = value.as(String.self) {
                                         Text(label)
                                             .font(.system(.caption2, design: .rounded))
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.brandSecondary)
                                     }
                                 }
                             }
@@ -525,7 +525,7 @@ struct MatchHistoryView: View {
                                     if let v = value.as(Int.self) {
                                         Text("\(v)")
                                             .font(.system(.caption2, design: .rounded))
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.brandSecondary)
                                     }
                                 }
                             }
@@ -536,7 +536,7 @@ struct MatchHistoryView: View {
                                     if let label = value.as(String.self) {
                                         Text(label)
                                             .font(.system(.caption2, design: .rounded))
-                                            .foregroundColor(.gray)
+                                            .foregroundColor(.brandSecondary)
                                     }
                                 }
                             }
@@ -560,7 +560,7 @@ struct MatchHistoryView: View {
                 .lineLimit(1)
             Text(label)
                 .font(.system(.caption2, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 10)
@@ -636,17 +636,17 @@ struct MatchHistoryView: View {
                 if period == .day && selectedDate == nil && !isEditing {
                     Text(languageManager.historyLongPressHint)
                         .font(.system(.caption2, design: .rounded))
-                        .foregroundColor(.gray.opacity(0.6))
+                        .foregroundColor(.brandSecondary.opacity(0.6))
                 }
 
                 if filteredRecordsByDate.isEmpty && (selectedDate != nil || period != .day) {
                     VStack(spacing: 8) {
                         Image(systemName: "calendar.badge.exclamationmark")
                             .font(.title2)
-                            .foregroundColor(.gray.opacity(0.4))
+                            .foregroundColor(.brandSecondary.opacity(0.4))
                         Text(languageManager.historyNoMatchesToday)
                             .font(.system(.subheadline, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 30)
@@ -663,7 +663,7 @@ struct MatchHistoryView: View {
                             let total = group.records.count
                             Text(languageManager.formatWinLoss(wins: wins, losses: total - wins))
                                 .font(.system(.caption, design: .rounded))
-                                .foregroundColor(.gray)
+                                .foregroundColor(.brandSecondary)
                         }
 
                         ForEach(group.records) { record in
@@ -750,11 +750,11 @@ struct MatchHistoryView: View {
 
             Text(languageManager.historyNoRecords)
                 .font(.system(.body, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
 
             Text(languageManager.historyStartFirst)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(.brandSecondary.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -790,7 +790,7 @@ struct EditScoreSheet: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color.brandBackground.ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 20) {
@@ -801,7 +801,7 @@ struct EditScoreSheet: View {
                             VStack(spacing: 8) {
                                 Text(languageManager.formatGameNumber(index + 1))
                                     .font(.system(.caption, design: .rounded))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.brandSecondary)
 
                                 HStack(spacing: 20) {
                                     // Team A score
@@ -818,7 +818,7 @@ struct EditScoreSheet: View {
                                             } label: {
                                                 Image(systemName: "minus.circle.fill")
                                                     .font(.title2)
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(.brandSecondary)
                                             }
 
                                             Text("\(editableGames[index].scoreA)")
@@ -838,7 +838,7 @@ struct EditScoreSheet: View {
 
                                     Text(":")
                                         .font(.system(.title2, design: .rounded))
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.brandSecondary)
 
                                     // Team B score
                                     VStack(spacing: 4) {
@@ -854,7 +854,7 @@ struct EditScoreSheet: View {
                                             } label: {
                                                 Image(systemName: "minus.circle.fill")
                                                     .font(.title2)
-                                                    .foregroundColor(.gray)
+                                                    .foregroundColor(.brandSecondary)
                                             }
 
                                             Text("\(editableGames[index].scoreB)")
@@ -902,7 +902,7 @@ struct EditScoreSheet: View {
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button(languageManager.historyCancel) { dismiss() }
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button(languageManager.historySave) {
@@ -1056,7 +1056,7 @@ struct StatCard: View {
 
             Text(title)
                 .font(.system(.caption2, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 20)
@@ -1122,7 +1122,7 @@ struct MatchRowView: View {
                     Text(record.teamAName)
                         .foregroundColor(record.teamAWon ? .orange : .white)
                     Text("vs")
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                     Text(record.teamBName)
                         .foregroundColor(record.teamAWon ? .white : .cyan)
 
@@ -1142,7 +1142,7 @@ struct MatchRowView: View {
                         }
                     }
                     .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
                 }
                 .font(.system(.subheadline, design: .rounded, weight: .medium))
 
@@ -1161,7 +1161,7 @@ struct MatchRowView: View {
                         // 每局比分明细
                         Text(gameByGameText)
                             .font(.system(.caption, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                     }
                 }
 
@@ -1187,7 +1187,7 @@ struct MatchRowView: View {
 
             Image(systemName: "chevron.right")
                 .font(.caption)
-                .foregroundColor(.gray.opacity(0.5))
+                .foregroundColor(.brandSecondary.opacity(0.5))
         }
         .padding()
         .background(Color.white.opacity(0.06))
@@ -1215,7 +1215,7 @@ struct MatchDetailView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             ScrollView {
                 VStack(spacing: 20) {
@@ -1298,7 +1298,7 @@ struct MatchDetailView: View {
                     HStack {
                         Text(languageManager.formatGameNumber(index + 1))
                             .font(.system(.subheadline, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
 
                         Spacer()
 
@@ -1308,7 +1308,7 @@ struct MatchDetailView: View {
 
                         Text(":")
                             .font(.system(.title3, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
 
                         Text("\(game.scoreB)")
                             .font(.system(.title3, design: .rounded, weight: .bold))
@@ -1353,7 +1353,7 @@ struct MatchDetailView: View {
                             if record.totalGames > 1 {
                                 Text(languageManager.formatGameNumber(index + 1))
                                     .font(.system(.subheadline, design: .rounded))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.brandSecondary)
                             }
 
                             chartForGame(game)
@@ -1383,7 +1383,7 @@ struct MatchDetailView: View {
             } else {
                 Text(languageManager.noDetailData)
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding(.vertical, 20)
                     .background(Color.white.opacity(0.08))
@@ -1466,7 +1466,7 @@ struct MatchDetailView: View {
                 VStack(alignment: .leading, spacing: 8) {
                     Text(languageManager.historyServePoints)
                         .font(.system(.subheadline, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
 
                     HStack(spacing: 20) {
                         VStack {
@@ -1481,7 +1481,7 @@ struct MatchDetailView: View {
                                 HStack(spacing: 2) {
                                     Text("\(Int(rateA * 100))%")
                                         .font(.system(.caption2, design: .rounded))
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.brandSecondary)
                                     if let avg = avgServeWinRate {
                                         if rateA > avg {
                                             Text("↑")
@@ -1508,7 +1508,7 @@ struct MatchDetailView: View {
                             if totalServeB > 0 {
                                 Text("\(Int(Double(servePointsB) / Double(totalServeB) * 100))%")
                                     .font(.system(.caption2, design: .rounded))
-                                    .foregroundColor(.gray)
+                                    .foregroundColor(.brandSecondary)
                             }
                         }
                         .frame(maxWidth: .infinity)
@@ -1527,7 +1527,7 @@ struct MatchDetailView: View {
         VStack(spacing: 4) {
             Text(languageManager.historyMatchTime)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
             Text(record.startTime, format: .dateTime.year().month().day().hour().minute())
                 .font(.system(.subheadline, design: .rounded))
                 .foregroundColor(.white)
@@ -1558,7 +1558,7 @@ struct MatchDetailView: View {
                 .foregroundColor(color)
             Text(title)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 14)

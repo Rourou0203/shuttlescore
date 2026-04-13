@@ -11,7 +11,7 @@ struct PhoneScoreboardView: View {
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             GeometryReader { geo in
                 let avatarSize = geo.size.width * 0.16
@@ -99,7 +99,7 @@ struct PhoneScoreboardView: View {
             Button(action: { showExitAlert = true }) {
                 Image(systemName: "xmark.circle.fill")
                     .font(.system(size: 22))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
             }
 
             Spacer()
@@ -108,7 +108,7 @@ struct PhoneScoreboardView: View {
             VStack(spacing: 2) {
                 Text(languageManager.formatPhoneGameInfo(match.matchType.rawValue, match.currentGameIndex + 1))
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
                 Text("\(languageManager.phoneGameScore) \(match.gamesWonByA) : \(match.gamesWonByB)")
                     .font(.system(.headline, design: .rounded))
                     .fontWeight(.bold)
@@ -120,7 +120,7 @@ struct PhoneScoreboardView: View {
             // Timer
             Text(languageManager.formatElapsedMinutes(match.elapsedMinutes))
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
         }
         .padding(.horizontal, 20)
         .padding(.top, 12)
@@ -180,7 +180,7 @@ struct PhoneScoreboardView: View {
             if !isGameOver {
                 Text(languageManager.phoneUpDown)
                     .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.5))
+                    .foregroundColor(.brandSecondary.opacity(0.5))
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -224,7 +224,7 @@ struct PhoneScoreboardView: View {
                     .font(.system(.body, design: .rounded))
                     .foregroundColor(.yellow)
                 Text("\u{00B7}")
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
                 Text(match.currentGame.serviceCourt.label)
                     .font(.system(.body, design: .rounded))
                     .foregroundColor(.yellow.opacity(0.8))
@@ -260,7 +260,7 @@ struct PhoneScoreboardView: View {
 
     private var gameEndSheet: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             VStack(spacing: 24) {
                 Text(languageManager.formatPhoneGameEnd(match.currentGameIndex + 1))
@@ -276,12 +276,12 @@ struct PhoneScoreboardView: View {
                             .foregroundColor(.orange)
                         Text("\(game.scoreA)")
                             .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .foregroundColor(game.winner == true ? .orange : .gray)
+                            .foregroundColor(game.winner == true ? .orange : .brandSecondary)
                     }
 
                     Text(":")
                         .font(.system(size: 48, weight: .bold, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
 
                     VStack(spacing: 8) {
                         Text(match.teamBName)
@@ -289,13 +289,13 @@ struct PhoneScoreboardView: View {
                             .foregroundColor(.cyan)
                         Text("\(game.scoreB)")
                             .font(.system(size: 48, weight: .bold, design: .rounded))
-                            .foregroundColor(game.winner == false ? .cyan : .gray)
+                            .foregroundColor(game.winner == false ? .cyan : .brandSecondary)
                     }
                 }
 
                 Text("\(languageManager.phoneGameScore) \(match.gamesWonByA) : \(match.gamesWonByB)")
                     .font(.system(.title3, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
 
                 Button(action: {
                     match.startNextGame()
@@ -324,7 +324,7 @@ struct PhoneScoreboardView: View {
 
     private var matchEndView: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.brandBackground.ignoresSafeArea()
 
             VStack(spacing: 28) {
                 Spacer()
@@ -353,13 +353,13 @@ struct PhoneScoreboardView: View {
                         let g = match.games[i]
                         Text("\(languageManager.formatGameNumber(i + 1))  \(g.scoreA) : \(g.scoreB)")
                             .font(.system(.body, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                     }
                 }
 
                 Text("\(languageManager.phoneUsedTime) \(languageManager.formatElapsedMinutes(match.elapsedMinutes))")
                     .font(.system(.subheadline, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
 
                 Spacer()
 

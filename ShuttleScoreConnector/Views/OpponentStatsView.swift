@@ -70,7 +70,7 @@ struct OpponentStatsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color.black.ignoresSafeArea()
+                Color.brandBackground.ignoresSafeArea()
 
                 ScrollView {
                     VStack(spacing: 16) {
@@ -123,7 +123,7 @@ struct OpponentStatsView: View {
                                 VStack(alignment: .leading, spacing: 0) {
                                     Text(languageManager.opponentsSaved)
                                         .font(.system(.caption, design: .rounded))
-                                        .foregroundColor(.gray)
+                                        .foregroundColor(.brandSecondary)
                                         .padding(.bottom, 6)
 
                                     ForEach(Array(opponentStore.opponents.enumerated()), id: \.offset) { index, name in
@@ -249,7 +249,7 @@ struct OpponentStatsView: View {
                     HStack(spacing: 6) {
                         Text(languageManager.formatMatchCount(stat.totalMatches))
                             .font(.system(.caption, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
 
                         // ELO badge
                         if let eloScore = eloManager.opponentRatings[stat.opponentName] {
@@ -269,7 +269,7 @@ struct OpponentStatsView: View {
                         .foregroundColor(.green)
                     Text(":")
                         .font(.system(.subheadline, design: .rounded))
-                        .foregroundColor(.gray)
+                        .foregroundColor(.brandSecondary)
                     Text("\(stat.losses)")
                         .font(.system(.title3, design: .rounded, weight: .bold))
                         .foregroundColor(.red)
@@ -277,7 +277,7 @@ struct OpponentStatsView: View {
 
                 Image(systemName: expandedOpponent == stat.opponentName ? "chevron.up" : "chevron.down")
                     .font(.caption)
-                    .foregroundColor(.gray.opacity(0.5))
+                    .foregroundColor(.brandSecondary.opacity(0.5))
                     .padding(.leading, 4)
             }
 
@@ -337,7 +337,7 @@ struct OpponentStatsView: View {
             HStack(spacing: 6) {
                 Text(languageManager.opponentsRecent)
                     .font(.system(.caption, design: .rounded))
-                    .foregroundColor(.gray)
+                    .foregroundColor(.brandSecondary)
 
                 ForEach(Array(stat.recentResults.enumerated()), id: \.offset) { _, won in
                     Circle()
@@ -363,7 +363,7 @@ struct OpponentStatsView: View {
 
                         Text(record.startTime, format: .dateTime.month().day())
                             .font(.system(.caption, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
 
                         Spacer()
 
@@ -377,7 +377,7 @@ struct OpponentStatsView: View {
 
                         Image(systemName: "chevron.right")
                             .font(.caption2)
-                            .foregroundColor(.gray.opacity(0.4))
+                            .foregroundColor(.brandSecondary.opacity(0.4))
                     }
                     .padding(.horizontal, 16)
                     .padding(.vertical, 4)
@@ -387,7 +387,7 @@ struct OpponentStatsView: View {
             if stat.matchRecords.count > 5 {
                 Text(languageManager.formatTotalMatches(stat.matchRecords.count))
                     .font(.system(.caption2, design: .rounded))
-                    .foregroundColor(.gray.opacity(0.6))
+                    .foregroundColor(.brandSecondary.opacity(0.6))
                     .padding(.horizontal, 16)
             }
         }
@@ -402,27 +402,27 @@ struct OpponentStatsView: View {
 
         if languageManager.language == "zh" {
             if rate >= 0.8 {
-                return "你是\(name)的克星！\u{1F3F8}"
+                return "你是\(name)的克星！"
             } else if rate >= 0.6 {
-                return "对\(name)保持优势 \u{1F4AA}"
+                return "对\(name)保持优势"
             } else if rate == 0.5 {
-                return "势均力敌的对手 \u{2694}\u{FE0F}"
+                return "势均力敌的对手"
             } else if rate >= 0.3 {
-                return "\(name)实力不俗 \u{1F525}"
+                return "\(name)实力不俗"
             } else {
-                return "总有一天会赢ta！加油 \u{1F431}"
+                return "总有一天会赢ta！加油"
             }
         } else {
             if rate >= 0.8 {
-                return "You dominate \(name)! \u{1F3F8}"
+                return "You dominate \(name)!"
             } else if rate >= 0.6 {
-                return "Ahead vs \(name) \u{1F4AA}"
+                return "Ahead vs \(name)"
             } else if rate == 0.5 {
-                return "Evenly matched \u{2694}\u{FE0F}"
+                return "Evenly matched"
             } else if rate >= 0.3 {
-                return "\(name) is tough \u{1F525}"
+                return "\(name) is tough"
             } else {
-                return "You'll get them! \u{1F431}"
+                return "You'll get them!"
             }
         }
     }
@@ -433,15 +433,15 @@ struct OpponentStatsView: View {
         VStack(spacing: 16) {
             Image(systemName: "person.2.slash")
                 .font(.system(size: 48))
-                .foregroundColor(.gray.opacity(0.4))
+                .foregroundColor(.brandSecondary.opacity(0.4))
 
             Text(languageManager.opponentsNoRecords)
                 .font(.system(.body, design: .rounded))
-                .foregroundColor(.gray)
+                .foregroundColor(.brandSecondary)
 
             Text(languageManager.opponentsPlayToSee)
                 .font(.system(.caption, design: .rounded))
-                .foregroundColor(.gray.opacity(0.7))
+                .foregroundColor(.brandSecondary.opacity(0.7))
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -585,7 +585,7 @@ struct RadarChartView: View {
                         let labelRadius = radius + 20
                         Text(labels[i])
                             .font(.system(.caption2, design: .rounded))
-                            .foregroundColor(.gray)
+                            .foregroundColor(.brandSecondary)
                             .position(
                                 x: center.x + CGFloat(cos(angle)) * labelRadius,
                                 y: center.y + CGFloat(sin(angle)) * labelRadius
