@@ -28,8 +28,9 @@ struct GameSummaryView: View {
                     .foregroundStyle(.white)
             }
 
-            Text("\u{1F43E}")
+            Image(systemName: "pawprint.fill")
                 .font(.system(size: 20))
+                .foregroundStyle(.orange)
 
             Text(langMgr.gameSummaryChangeSide)
                 .font(.system(.footnote, design: .rounded))

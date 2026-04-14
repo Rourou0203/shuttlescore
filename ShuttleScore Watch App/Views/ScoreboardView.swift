@@ -90,12 +90,12 @@ struct ScoreboardView: View {
                     if workoutManager.isWorkoutActive {
                         HStack(spacing: 3) {
                             if workoutManager.heartRate > 0 {
-                                Text("\u{2764}\u{FE0F}\(Int(workoutManager.heartRate))")
+                                Label("\(Int(workoutManager.heartRate))", systemImage: "heart.fill")
                                     .font(.system(size: 9, design: .rounded))
                                     .foregroundStyle(.red.opacity(0.8))
                             }
                             if workoutManager.activeCalories > 0 {
-                                Text("\u{1F525}\(Int(workoutManager.activeCalories))")
+                                Label("\(Int(workoutManager.activeCalories))", systemImage: "flame.fill")
                                     .font(.system(size: 9, design: .rounded))
                                     .foregroundStyle(.orange.opacity(0.8))
                             }
@@ -202,7 +202,7 @@ struct ScoreboardView: View {
         }
         .overlay(alignment: .topTrailing) {
             if match.currentGame.opponentStreak >= 3 {
-                Text("🔥\(match.currentGame.opponentStreak)")
+                Label("\(match.currentGame.opponentStreak)", systemImage: "flame.fill")
                     .font(.system(size: 11, weight: .semibold, design: .rounded))
                     .foregroundStyle(.white)
                     .padding(.horizontal, 7)

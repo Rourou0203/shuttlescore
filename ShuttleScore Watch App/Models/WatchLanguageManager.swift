@@ -197,18 +197,18 @@ class WatchLanguageManager: ObservableObject {
     // MARK: - Milestones
 
     func milestoneStreak(_ n: Int) -> String? {
-        if n >= 10 { return language == "zh" ? "\u{1F525} \(n)连胜！无人能挡！" : "\u{1F525} \(n) wins in a row!" }
-        if n >= 5 { return language == "zh" ? "\u{1F525} \(n)连胜！势不可挡！" : "\u{1F525} \(n)-win streak!" }
-        if n >= 3 { return language == "zh" ? "\u{2728} \(n)连胜！继续保持！" : "\u{2728} \(n)-win streak!" }
+        if n >= 10 { return language == "zh" ? "★ \(n)连胜！无人能挡！" : "★ \(n) wins in a row!" }
+        if n >= 5 { return language == "zh" ? "★ \(n)连胜！势不可挡！" : "★ \(n)-win streak!" }
+        if n >= 3 { return language == "zh" ? "✦ \(n)连胜！继续保持！" : "✦ \(n)-win streak!" }
         return nil
     }
 
     func milestoneMatch(_ total: Int) -> String? {
-        if total == 1 { return language == "zh" ? "\u{1F389} 第一场比赛！旅程开始！" : "\u{1F389} First match ever!" }
-        if total == 10 { return language == "zh" ? "\u{2B50} 第10场比赛！初露锋芒！" : "\u{2B50} 10th match!" }
-        if total == 50 { return language == "zh" ? "\u{1F3C6} 第50场！羽毛球达人！" : "\u{1F3C6} 50th match!" }
-        if total == 100 { return language == "zh" ? "\u{1F451} 第100场！传奇之路！" : "\u{1F451} 100th match!" }
-        if total % 50 == 0 { return language == "zh" ? "\u{1F3AF} 第\(total)场！里程碑！" : "\u{1F3AF} \(total) matches!" }
+        if total == 1 { return language == "zh" ? "✦ 第一场比赛！旅程开始！" : "✦ First match ever!" }
+        if total == 10 { return language == "zh" ? "★ 第10场比赛！初露锋芒！" : "★ 10th match!" }
+        if total == 50 { return language == "zh" ? "★ 第50场！羽毛球达人！" : "★ 50th match!" }
+        if total == 100 { return language == "zh" ? "★ 第100场！传奇之路！" : "★ 100th match!" }
+        if total % 50 == 0 { return language == "zh" ? "★ 第\(total)场！里程碑！" : "★ \(total) matches!" }
         return nil
     }
 }

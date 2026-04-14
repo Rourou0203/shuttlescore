@@ -17,8 +17,9 @@ struct MatchSummaryView: View {
             VStack(spacing: 10) {
                 // Winning cat with crown
                 VStack(spacing: 2) {
-                    Text("\u{1F451}")
+                    Image(systemName: "crown.fill")
                         .font(.system(size: 20))
+                        .foregroundStyle(.yellow)
                     Image(winnerCatImage)
                         .resizable()
                         .scaledToFit()
@@ -53,7 +54,7 @@ struct MatchSummaryView: View {
                 HStack(spacing: 12) {
                     if WorkoutManager.shared.heartRate > 0 {
                         VStack(spacing: 2) {
-                            Text("\u{2764}\u{FE0F}").font(.system(size: 14))
+                            Image(systemName: "heart.fill").font(.system(size: 14)).foregroundStyle(.red)
                             Text("\(Int(WorkoutManager.shared.heartRate)) bpm")
                                 .font(.system(size: 10, design: .rounded))
                                 .foregroundStyle(.red.opacity(0.8))
@@ -61,7 +62,7 @@ struct MatchSummaryView: View {
                     }
                     if WorkoutManager.shared.activeCalories > 0 {
                         VStack(spacing: 2) {
-                            Text("\u{1F525}").font(.system(size: 14))
+                            Image(systemName: "flame.fill").font(.system(size: 14)).foregroundStyle(.orange)
                             Text("\(Int(WorkoutManager.shared.activeCalories)) kcal")
                                 .font(.system(size: 10, design: .rounded))
                                 .foregroundStyle(.orange.opacity(0.8))
