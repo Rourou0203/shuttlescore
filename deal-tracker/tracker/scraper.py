@@ -42,7 +42,7 @@ def _extract_json_ld_price(soup) -> Optional[float]:
 
 
 def _petlibro(url: str) -> Optional[float]:
-    """Shopify store — product JSON endpoint is cheaper than scraping HTML."""
+    """Shopify store — product JSON endpoint bypasses HTML scraping."""
     try:
         handle = url.rstrip("/").split("/products/")[-1].split("?")[0]
         resp = requests.get(
@@ -58,10 +58,22 @@ def _petlibro(url: str) -> Optional[float]:
 
 
 def _chewy(url: str) -> Optional[float]:
+    """Chewy uses Cloudflare — requires a real browser."""
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=15)
-        resp.raise_for_status()
-        soup = BeautifulSoup(resp.text, "html.parser")
+        from playwright.sync_api import sync_playwright
+
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            ctx = browser.new_context(
+                user_agent=HEADERS["User-Agent"],
+                locale="en-US",
+            )
+            page = ctx.new_page()
+            page.goto(url, wait_until="domcontentloaded", timeout=30000)
+            page.wait_for_load_state("networkidle", timeout=15000)
+
+            soup = BeautifulSoup(page.content(), "html.parser")
+            browser.close()
 
         price = _extract_json_ld_price(soup)
         if price:
@@ -75,7 +87,8 @@ def _chewy(url: str) -> Optional[float]:
                 if m:
                     return float(m.group(1))
         return None
-    except Exception:
+    except Exception as e:
+        print(f"Chewy scrape failed: {e}")
         return None
 
 
