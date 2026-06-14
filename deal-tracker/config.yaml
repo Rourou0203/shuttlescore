@@ -1,0 +1,17 @@
+products:
+  - name: Petlibro One RFID Smart Feeder
+    id: petlibro-one-rfid
+    urls:
+      - store: chewy
+        url: https://www.chewy.com/petlibro-one-rfid-automatic-cat/dp/1592534
+      - store: petsmart
+        url: https://www.petsmart.com/cat/bowls-and-feeders/automatic-feeders/petlibro-rfid-automatic-wifi-app-controlled-pet-feeder-3l-5362255.html
+      - store: petlibro
+        url: https://petlibro.com/products/one-rfid-pet-feeder
+    cashback_stores:
+      - chewy
+      - petsmart
+      - petlibro
+
+notification:
+  email: cynthia.xinge@gmail.com
